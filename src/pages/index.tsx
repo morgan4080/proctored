@@ -18,8 +18,8 @@ export default function Home() {
           <meta name="viewport" content="width=device-width, initial-scale=1" />
           <link rel="icon" href="/favicon.ico" />
         </Head>
-        <main className="flex min-h-screen flex-col items-center justify-between p-24">
-          <div className="z-10 w-full max-w-7xl items-center justify-between font-mono text-sm lg:flex">
+        <main className="flex min-h-screen flex-col items-center justify-between">
+          <div className="z-10 w-full max-w-7xl items-center justify-between font-mono text-sm lg:flex py-10">
             <div className="fixed border border-gray-300/50 rounded-2xl left-0 top-0 flex w-full justify-center pb-6 pt-8 backdrop-blur-2xl lg:static lg:w-auto lg:p-4">
               <NavigationMenu/>
             </div>
@@ -35,8 +35,8 @@ export default function Home() {
             </div>
           </div>
 
-          <Container className="lg:px-0 py-6">
-            <div className="grid grid-cols-2">
+          <Container className="lg:px-0 min-h-screen">
+            <div className="lg:grid lg:grid-cols-2">
               <div className="flex flex-col justify-center">
                 <h1 className="text-4xl max-w-xl md:text-5xl lg:text-7xl text-black font-black leading-tight tracking-tighter py-2 lg:py-0">
                   Professional Essay Academic Writers
@@ -48,7 +48,7 @@ export default function Home() {
                   Order Now
                 </button>
               </div>
-              <div className="flex justify-end">
+              <div className="lg:flex lg:justify-end">
                 <HeroArt/>
               </div>
             </div>
