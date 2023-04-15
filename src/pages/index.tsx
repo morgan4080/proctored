@@ -18,24 +18,26 @@ export default function Home() {
           <meta name="viewport" content="width=device-width, initial-scale=1" />
           <link rel="icon" href="/favicon.ico" />
         </Head>
-        <main className="flex min-h-screen flex-col items-center justify-between">
-          <div className="z-10 w-full max-w-7xl items-center justify-between font-mono text-sm lg:flex py-10">
-            <div className="fixed border border-gray-300/50 rounded-2xl left-0 top-0 flex w-full justify-center pb-6 pt-8 backdrop-blur-2xl lg:static lg:w-auto lg:p-4">
-              <NavigationMenu/>
-            </div>
-            <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-              <Link
-                  className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-                  href="/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-              >
-                <Logo className="w-56 dark:invert text-black"/>
-              </Link>
+        <main className="flex min-h-screen flex-col items-center justify-between relative">
+          <div className="fixed max-w-7xl w-full z-50">
+            <div className="z-10 w-full max-w-7xl items-center justify-between font-mono text-sm lg:flex py-10">
+              <div className="fixed border border-gray-300/50 rounded-2xl left-0 top-0 flex w-full justify-center pb-6 pt-8 backdrop-blur-md lg:static lg:w-auto lg:p-4">
+                <NavigationMenu/>
+              </div>
+              <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
+                <Link
+                    className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0 rounded-2xl backdrop-blur-md"
+                    href="/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                  <Logo className="w-56 dark:invert text-black"/>
+                </Link>
+              </div>
             </div>
           </div>
 
-          <Container className="lg:px-0 min-h-screen">
+          <Container className="lg:px-0 lg:mt-44 min-h-screen">
             <div className="lg:grid lg:grid-cols-2">
               <div className="flex flex-col justify-center">
                 <h1 className="text-4xl max-w-xl md:text-5xl lg:text-7xl text-black font-black leading-tight tracking-tighter py-2 lg:py-0">
