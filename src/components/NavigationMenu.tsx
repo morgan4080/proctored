@@ -6,13 +6,7 @@ const sulphur_point_400 = Sulphur_Point({subsets: ['latin'], weight: "400"})
 const NavigationMenu = () => {
     const [serviceMenuOpen, setServiceMenuOpen] = useState(false);
     return (
-        <div className={classNames(sulphur_point_400.className,"hidden lg:flex items-center relative text-black")}>
-            <Link href="/" className="uppercase mx-2 tracking-wide font-semibold px-4 hover:text-blue-700">
-                About Us
-            </Link>
-            <Link href="/" className="uppercase mx-2 tracking-wide font-semibold px-4 hover:text-blue-700">
-                Sample Papers
-            </Link>
+        <div className={classNames(sulphur_point_400.className,"flex items-center relative text-black")}>
             <div onMouseLeave={() => setServiceMenuOpen(!serviceMenuOpen)} className="group mx-2 tracking-wide font-semibold py-3 px-4 inline-block">
                 <button
                     type="button"
@@ -74,6 +68,12 @@ const NavigationMenu = () => {
                         : null
                 }
             </div>
+            <Link href="/" className="uppercase mx-2 tracking-wide font-semibold px-4 hover:text-blue-700">
+                About Us
+            </Link>
+            <Link href="/" className="uppercase mx-2 tracking-wide font-semibold px-4 hover:text-blue-700">
+                Sample Papers
+            </Link>
         </div>
     )
 }

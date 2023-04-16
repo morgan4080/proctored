@@ -15,7 +15,7 @@ const Footer = () => {
     return (
         <>
             <Container className="py-10 min-w-full dark:bg-gray-900">
-                <div className="sm:grid sm:grid-cols-2 sm:gap-8 xl:col-span-3">
+                <div className="sm:grid sm:grid-cols-2 sm:gap-8 xl:col-span-3 text-center lg:text-left">
                     <div className="md:grid md:grid-cols-2 md:gap-8">
                         <div className="hidden lg:block">
                             <ul role="list" className={classNames(sulphur_point_400.className, "mt-6")}>
@@ -58,7 +58,7 @@ const Footer = () => {
                             <h2 className="text-2xl italic font-semibold leading-none pb-1 dark:text-white">
                                 We accept:
                             </h2>
-                            <ul role="list" className={classNames(sulphur_point_400.className, "mt-6 space-x-2 flex")}>
+                            <ul role="list" className={classNames(sulphur_point_400.className, "mt-6 space-x-2 flex justify-center lg:justify-start")}>
 
                                 <li>
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48px"
@@ -110,9 +110,9 @@ const Footer = () => {
                     </div>
                 </div>
             </Container>
-            <div className="text-center pb-52 lg:py-5 dark:bg-gray-900">
+            <div className="text-center pb-48 lg:py-5 dark:bg-gray-900 px-4 sm:px-6 lg:px-8">
                 <p className={classNames(sulphur_point_400.className, "dark:text-white py-1")}>
-                    Copyright © 2020 <a className="text-sky-300" href="https://proctorowls.com">Proctor Owls</a> All Rights Reserved.
+                    Copyright © 2023 <a className="text-sky-300" href="https://proctorowls.com">Proctor Owls</a> All Rights Reserved.
                     <a href="https://morganmutugi.co.ke" target="_blank" className="hover:text-white text-sky-300"> By
                         Morgan.</a>
                 </p>
