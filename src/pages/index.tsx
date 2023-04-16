@@ -216,6 +216,120 @@ export default function Home() {
                 <div className=""></div>
             </div>
           </Container>
+
+          <Container className="xl:px-0 pb-20">
+            <div className="space-y-4 pb-14">
+              <h2 className="text-4xl font-bold leading-none text-gray-900 text-center">
+                  Proctor Owl Activity
+              </h2>
+            </div>
+            <div className="grid space-y-16 lg:space-y-0 lg:grid-cols-2 max-w-6xl mx-auto">
+                <div className=""></div>
+                <div className=""></div>
+            </div>
+          </Container>
+
+          <Container className="xl:px-0 pb-20">
+            <div className="grid space-y-16 lg:space-y-0 lg:grid-cols-2 max-w-6xl mx-auto">
+                <div className=""></div>
+                <div className=""></div>
+            </div>
+          </Container>
+
+            <Container className="xl:px-0 pb-20">
+                <div className="space-y-4 pb-14">
+                    <h2 className="text-4xl max-w-xl mx-auto font-bold leading-none text-gray-900 text-center capitalize">
+                        Reviews, comments, and love from essaydons2 customers and community
+                    </h2>
+                </div>
+                <div className="grid space-y-16 lg:space-y-0 lg:grid-cols-1 max-w-6xl mx-auto">
+                    <div className=""></div>
+                </div>
+            </Container>
+
+            <Container className="xl:px-0 pb-20">
+                <div className="space-y-4 pb-14">
+                    <h2 className="text-4xl font-bold leading-none text-gray-900 text-center">
+                        Guarantees
+                    </h2>
+                </div>
+                <div className="grid space-y-16 lg:space-y-0 lg:grid-cols-3 max-w-6xl mx-auto">
+                    <div className=""></div>
+                    <div className=""></div>
+                    <div className=""></div>
+                </div>
+            </Container>
+
+            <Container className="xl:px-0 pb-20">
+                <div className="space-y-4 pb-14">
+                    <h2 className="text-4xl font-bold leading-none text-gray-900 text-center">
+                        why choose us
+                    </h2>
+                </div>
+                <div className="grid space-y-16 lg:space-y-0 lg:grid-cols-3 max-w-6xl mx-auto">
+                    <div className=""></div>
+                    <div className=""></div>
+                    <div className=""></div>
+                </div>
+            </Container>
+
+            <Container className="xl:px-0 pb-20">
+                <div className="space-y-4 pb-14">
+                    <h2 className="text-4xl max-w-xl mx-auto font-bold leading-none text-gray-900 text-center">
+                        Frequently Asked Questions about Custom Writing.
+                    </h2>
+                </div>
+                <div className="grid space-y-16 lg:space-y-0 lg:grid-cols-2 max-w-6xl mx-auto">
+                    <div className=""></div>
+                    <div className=""></div>
+                </div>
+            </Container>
+
+            <Container className="xl:px-0 pb-20">
+                <div className="space-y-4 pb-14">
+                    <h2 className="text-4xl max-w-xl mx-auto font-bold leading-none text-gray-900 text-center">
+                        Do You Need an Essay Writer?
+                    </h2>
+                </div>
+                <div className="grid space-y-16 lg:space-y-0 lg:grid-cols-1 max-w-6xl mx-auto">
+                    <div className=""></div>
+                    <div className=""></div>
+                </div>
+            </Container>
+
+            <Container className="xl:px-0 pb-20">
+                <div className="space-y-4 pb-14">
+                    <h2 className="text-4xl max-w-xl mx-auto font-bold leading-none text-gray-900 text-center">
+                        What You Get in the End
+                    </h2>
+                </div>
+                <div className="grid space-y-16 lg:space-y-0 lg:grid-cols-2 max-w-6xl mx-auto">
+                    <div className=""></div>
+                    <div className=""></div>
+                </div>
+            </Container>
+
+            <Container className="xl:px-0 pb-20">
+                <div className="space-y-4 pb-14">
+                    <h2 className="text-4xl max-w-xl mx-auto font-bold leading-none text-gray-900 text-center">
+                        Blog
+                    </h2>
+                </div>
+                <div className="grid space-y-16 lg:space-y-0 lg:grid-cols-2 max-w-6xl mx-auto">
+                    <div className=""></div>
+                    <div className=""></div>
+                    <div className=""></div>
+                    <div className=""></div>
+                </div>
+            </Container>
+
+            <Container className="xl:px-0 pb-20">
+                <div className="space-y-4 pb-14">
+                    <h2 className="text-4xl max-w-xl mx-auto font-bold leading-none text-gray-900 text-center lg:text-left">
+                        Offers & Updates
+                    </h2>
+                </div>
+            </Container>
         </main>
         <Footer />
       </>
