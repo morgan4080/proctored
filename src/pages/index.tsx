@@ -26,7 +26,8 @@ export default function Home() {
                   paper_type: 'Essay (Any Type)',
                   subject: 'Literature',
                   style: 'APA',
-                  sources: 1
+                  sources: 1,
+                  image: '/img.png'
               }
           ]
       },
@@ -42,7 +43,8 @@ export default function Home() {
                   paper_type: 'Essay (Any Type)',
                   subject: 'Literature',
                   style: 'APA',
-                  sources: 1
+                  sources: 1,
+                  image: '/img.png'
               }
           ]
       },
@@ -58,7 +60,8 @@ export default function Home() {
                   paper_type: 'Essay (Any Type)',
                   subject: 'Literature',
                   style: 'APA',
-                  sources: 1
+                  sources: 1,
+                  image: '/img.png'
               }
           ]
       }
@@ -90,7 +93,7 @@ export default function Home() {
             </div>
           </div>
 
-          <Container className="xl:px-0 pt-32 pb-24 lg:pt-44 lg:pb-44">
+          <Container className="xl:px-0 pt-32 pb-24 lg:pt-44 lg:pb-36">
             <div className="lg:grid lg:grid-cols-2">
               <div className="flex flex-col justify-center">
                 <h1 className="text-4xl text-center lg:text-left md:text-5xl lg:text-7xl text-black font-black leading-tight tracking-tighter py-2 lg:py-0">
@@ -109,24 +112,24 @@ export default function Home() {
             </div>
           </Container>
 
-          <Container className="lg:px-0 pb-20">
-            <div className="space-y-4 pb-16">
+          <Container className="xl:px-0 pb-20">
+            <div className="space-y-4 pb-14">
               <h2 className="text-4xl font-bold leading-none text-gray-900 text-center">
                   Choose Your Writer
               </h2>
-              <p className="lg:text-md lg:max-w-lg mx-auto text-center mb-4">
+              <p className="lg:text-md lg:max-w-lg mx-auto text-center">
                   EssayDon expert writers are online and available for hire. Read through their profiles, and sample assignments to find your perfect match.
               </p>
             </div>
-            <div className="grid lg:grid-cols-3">
+            <div className="grid space-y-16 lg:space-y-0 lg:grid-cols-3 max-w-6xl mx-auto">
                 {
                     writers.map((writer, index) => (
                         <Link
                             key={index}
                             href="/"
-                            className="group rounded-lg mx-auto lg:mx-0 max-w-sm border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
+                            className="group rounded-lg mx-auto max-w-xs border px-5 py-4 border-gray-300 bg-gray-100 dark:border-neutral-700 dark:bg-neutral-800/30"
                         >
-                            <div className="flex-1 flex relative">
+                            <div className="flex-1 flex relative pb-4 border-b">
                                 <div className="mr-6">
                                     <Image
                                         src={writer.profile_image}
@@ -154,9 +157,63 @@ export default function Home() {
                                     </div>
                                 </div>
                             </div>
+                            {writer.featured_work.map((work,i) => (
+                                <div key={i} className="flex flex-col">
+                                    <h5 className="font-semibold text-black text-sm leading-tight text-center pt-3">{work.title}</h5>
+                                    <div className="grid grid-cols-2 pt-5">
+                                        <div className="flex flex-col space-y-5">
+                                            <div className="">
+                                                <p className="text-xs capitalize">paper type:</p>
+                                                <p className="text-xs font-semibold text-black capitalize">{work.paper_type}</p>
+                                            </div>
+                                            <div className="">
+                                                <p className="text-xs capitalize">subject:</p>
+                                                <p className="text-xs font-semibold text-black capitalize">{work.subject}</p>
+                                            </div>
+                                            <div className="grid grid-cols-2">
+                                                <div>
+                                                    <p className="text-xs capitalize">style:</p>
+                                                    <p className="text-xs font-semibold text-black capitalize">{work.style}</p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-xs capitalize">sources:</p>
+                                                    <p className="text-xs font-semibold text-black capitalize">{work.sources}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <Image
+                                                className="ml-auto"
+                                                src={work.image}
+                                                alt="essay"
+                                                width={107}
+                                                height={151}
+                                                priority
+                                            />
+                                        </div>
+                                    </div>
+                                    <button type="button" className="bg-green-400 rounded-md text-white py-3 mt-4">
+                                        <span className="">Hire A Writer</span>
+                                    </button>
+                                </div>
+                            ))}
                         </Link>
                     ))
                 }
+            </div>
+          </Container>
+
+          <Container className="xl:px-0 pb-20">
+            <div className="space-y-4 pb-14">
+              <h2 className="text-4xl font-bold leading-none text-gray-900 text-center">
+                  How To Place An Order
+              </h2>
+            </div>
+            <div className="grid space-y-16 lg:space-y-0 lg:grid-cols-4 max-w-6xl mx-auto">
+                <div className=""></div>
+                <div className=""></div>
+                <div className=""></div>
+                <div className=""></div>
             </div>
           </Container>
         </main>
