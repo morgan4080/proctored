@@ -8,7 +8,6 @@ import NavigationMenu from "@/components/NavigationMenu";
 import {Container} from "@/components/Container";
 import HeroArt from "@/components/HeroArt";
 import { StarIcon } from "@heroicons/react/24/solid"
-import {write} from "fs";
 import classNames from "@/Utils/ClassNames";
 const inter = Inter({ subsets: ['latin'] })
 
@@ -204,28 +203,128 @@ export default function Home() {
           </Container>
 
           <Container className="xl:px-0 pb-20">
-            <div className="space-y-4 pb-14">
+            <div className="space-y-4 pt-20 pb-16">
               <h2 className="text-4xl font-bold leading-none text-gray-900 text-center">
                   How To Place An Order
               </h2>
             </div>
-            <div className="grid space-y-16 lg:space-y-0 lg:grid-cols-4 max-w-6xl mx-auto">
-                <div className=""></div>
-                <div className=""></div>
-                <div className=""></div>
-                <div className=""></div>
+            <div className="grid space-y-16 lg:space-y-0 lg:grid-cols-4 max-w-6xl mx-auto relative">
+                <div className="flex flex-col">
+                    <div className="flex-1 flex items-center justify-center pb-11">
+                        <Image
+                            className="overflow-hidden z-10"
+                            src={"/image 10.png"}
+                            alt="how to place your order 1"
+                            width={151}
+                            height={151}
+                            priority
+                        />
+                    </div>
+                    <div className="flex-1 flex flex-col items-center justify-center">
+                        <h6 className="text-center font-semibold text-slate-900 text-xl pb-1.5">1. Submit instructions</h6>
+                        <p className="text-center text-xl font-medium">
+                            Fill out an order form and include as much detail as possible.
+                        </p>
+                    </div>
+                </div>
+                <div className="flex flex-col-reverse lg:flex-col">
+                    <div className="flex-1 flex flex-col items-center justify-center pb-0 lg:pb-11">
+                        <h6 className="text-center font-semibold text-slate-900 text-xl pb-1.5">2. Choose writer</h6>
+                        <p className="text-center text-xl font-medium">
+                            Pick a writer or leave it to our AI matching system, then add funds
+                        </p>
+                    </div>
+                    <div className="flex-1 flex items-center justify-center pb-11 lg:pb-0">
+                        <Image
+                            className="overflow-hidden z-10"
+                            src={"/image 11.png"}
+                            alt="how to place your order 2"
+                            width={151}
+                            height={151}
+                            priority
+                        />
+                    </div>
+                </div>
+                <div className="flex flex-col">
+                    <div className="flex-1 flex items-center justify-center pb-11">
+                        <Image
+                            className="overflow-hidden z-10"
+                            src={"/image 12.png"}
+                            alt="how to place your order 3"
+                            width={151}
+                            height={151}
+                            priority
+                        />
+                    </div>
+                    <div className="flex-1 flex flex-col items-center justify-center">
+                        <h6 className="text-center font-semibold text-slate-900 text-xl pb-1.5">3.Track order</h6>
+                        <p className="text-center text-xl font-medium">
+                            Check the status of your order or chat with your writer at any time.
+                        </p>
+                    </div>
+                </div>
+                <div className="flex flex-col-reverse lg:flex-col">
+                    <div className="flex-1 flex flex-col items-center justify-center pb-0 lg:pb-11">
+                        <h6 className="text-center font-semibold text-slate-900 text-xl pb-1.5">4.Check paper</h6>
+                        <p className="text-center text-xl font-medium">
+                            Revise your paper and release funds to the writer when you’re satisfied.
+                        </p>
+                    </div>
+                    <div className="flex-1 flex items-center justify-center pb-11 lg:pb-0">
+                        <Image
+                            className="overflow-hidden z-10"
+                            src={"/image 13.png"}
+                            alt="how to place your order 4"
+                            width={151}
+                            height={151}
+                            priority
+                        />
+                    </div>
+                </div>
+                <div className="absolute w-full h-full hidden lg:flex items-center justify-center">
+                    <Image
+                        className="w-2/3"
+                        src={"/img_1.png"}
+                        alt="how to place your order 1"
+                        width={868.5}
+                        height={192.74}
+                        priority
+                    />
+                </div>
             </div>
           </Container>
 
           <Container className="xl:px-0 pb-20">
-            <div className="space-y-4 pb-14">
+            <div className="space-y-4 pt-20 pb-16">
               <h2 className="text-4xl font-bold leading-none text-gray-900 text-center">
                   Proctor Owl Activity
               </h2>
             </div>
             <div className="grid space-y-16 lg:space-y-0 lg:grid-cols-2 max-w-6xl mx-auto">
-                <div className=""></div>
-                <div className=""></div>
+                <div className="flex items-center justify-center">
+                    <div className="space-y-3">
+                        <h1 className="font-bold text-8xl">95,000</h1>
+                        <p>completed orders</p>
+                    </div>
+                </div>
+                <div className="grid grid-cols-2">
+                    <div>
+                        <h1 className="font-bold text-6xl">512</h1>
+                        <p>Professional Writers</p>
+                    </div>
+                    <div>
+                        <h1 className="font-bold text-6xl">60</h1>
+                        <p>Writers Online</p>
+                    </div>
+                    <div>
+                        <h1 className="font-bold text-6xl">12</h1>
+                        <p>Support Staff  Online</p>
+                    </div>
+                    <div>
+                        <h1 className="font-bold text-6xl">4.9/5</h1>
+                        <p>Average Writer’s Score</p>
+                    </div>
+                </div>
             </div>
           </Container>
 
@@ -237,7 +336,7 @@ export default function Home() {
           </Container>
 
             <Container className="xl:px-0 pb-20">
-                <div className="space-y-4 pb-14">
+                <div className="space-y-4 pt-20 pb-16">
                     <h2 className="text-4xl max-w-xl mx-auto font-bold leading-none text-gray-900 text-center capitalize">
                         Reviews, comments, and love from essaydons2 customers and community
                     </h2>
@@ -248,7 +347,7 @@ export default function Home() {
             </Container>
 
             <Container className="xl:px-0 pb-20">
-                <div className="space-y-4 pb-14">
+                <div className="space-y-4 pt-20 pb-16">
                     <h2 className="text-4xl font-bold leading-none text-gray-900 text-center">
                         Guarantees
                     </h2>
@@ -261,7 +360,7 @@ export default function Home() {
             </Container>
 
             <Container className="xl:px-0 pb-20">
-                <div className="space-y-4 pb-14">
+                <div className="space-y-4 pt-20 pb-16">
                     <h2 className="text-4xl font-bold leading-none text-gray-900 text-center">
                         why choose us
                     </h2>
@@ -274,7 +373,7 @@ export default function Home() {
             </Container>
 
             <Container className="xl:px-0 pb-20">
-                <div className="space-y-4 pb-14">
+                <div className="space-y-4 pt-20 pb-16">
                     <h2 className="text-4xl max-w-xl mx-auto font-bold leading-none text-gray-900 text-center">
                         Frequently Asked Questions about Custom Writing.
                     </h2>
@@ -286,7 +385,7 @@ export default function Home() {
             </Container>
 
             <Container className="xl:px-0 pb-20">
-                <div className="space-y-4 pb-14">
+                <div className="space-y-4 pt-20 pb-16">
                     <h2 className="text-4xl max-w-xl mx-auto font-bold leading-none text-gray-900 text-center">
                         Do You Need an Essay Writer?
                     </h2>
@@ -298,7 +397,7 @@ export default function Home() {
             </Container>
 
             <Container className="xl:px-0 pb-20">
-                <div className="space-y-4 pb-14">
+                <div className="space-y-4 pt-20 pb-16">
                     <h2 className="text-4xl max-w-xl mx-auto font-bold leading-none text-gray-900 text-center">
                         What You Get in the End
                     </h2>
@@ -310,7 +409,7 @@ export default function Home() {
             </Container>
 
             <Container className="xl:px-0 pb-20">
-                <div className="space-y-4 pb-14">
+                <div className="space-y-4 pt-20 pb-16">
                     <h2 className="text-4xl max-w-xl mx-auto font-bold leading-none text-gray-900 text-center">
                         Blog
                     </h2>

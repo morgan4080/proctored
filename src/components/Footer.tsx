@@ -1,5 +1,5 @@
 import {Container} from "@/components/Container";
-import {Sulphur_Point, Stalinist_One} from "@next/font/google";
+import {Sulphur_Point} from "next/font/google";
 import classNames from "@/Utils/ClassNames";
 import Link from "next/link";
 import Logo from "@/components/Logo";
