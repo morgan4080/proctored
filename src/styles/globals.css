@@ -51,3 +51,7 @@ body {
     )
     rgb(var(--background-start-rgb));
 }
+
+a:hover {
+    color: rgb(22 163 74) !important;
+}
