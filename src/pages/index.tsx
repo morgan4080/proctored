@@ -1132,14 +1132,6 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
             </div>
           </Container>
         </div>
-
-        <Container className="xl:px-0 pb-20">
-          <div className="space-y-4 pb-14">
-            <h2 className="text-4xl max-w-xl mx-auto font-bold leading-none text-gray-900 text-center lg:text-left">
-              Offers & Updates
-            </h2>
-          </div>
-        </Container>
       </main>
       <Footer />
     </>
