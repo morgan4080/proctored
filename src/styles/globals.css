@@ -61,3 +61,13 @@ body {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+#tes {
+    background-image: url('https://images.unsplash.com/photo-1499336315816-097655dcfbda?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=2710&amp;q=80');
+}
+#gt {
+    transform: translateZ(0px)
+}
+
+.h-500-px {
+    height: 350px;
+}

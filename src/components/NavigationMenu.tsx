@@ -2,11 +2,13 @@ import classNames from '@/Utils/ClassNames'
 import { signIn, signOut, useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { useRef, useState } from 'react'
-import { Sulphur_Point } from 'next/font/google'
+import { Comfortaa } from 'next/font/google'
 import { useOnClickOutside } from '@/Utils/hooks'
-import Image from 'next/image'
 import { ArrowRightOnRectangleIcon } from '@heroicons/react/20/solid'
-const sulphur_point_400 = Sulphur_Point({ subsets: ['latin'], weight: '400' })
+const comfortaa = Comfortaa({
+  weight: ['300', '400', '500', '600', '700'],
+  subsets: ['latin'],
+})
 const NavigationMenu = () => {
   const { data: session, status } = useSession()
 
@@ -22,11 +24,11 @@ const NavigationMenu = () => {
     <div className="left-0 top-0 flex w-full justify-center pb-6 pt-8 lg:static lg:w-auto lg:p-4">
       <div
         className={classNames(
-          sulphur_point_400.className,
-          'flex items-center relative text-base text-slate-800',
+          comfortaa.className,
+          'flex items-center space-x-6 sm:space-x-8 md:space-x-10 lg:space-x-12 relative text-base text-slate-800',
         )}
       >
-        <div className="group mx-2 tracking-wide font-semibold py-3 inline-block">
+        <div className="group tracking-wide font-semibold py-3 inline-block">
           <button
             onClick={() => setServiceMenuOpen(!serviceMenuOpen)}
             type="button"
@@ -118,14 +120,10 @@ const NavigationMenu = () => {
             </div>
           ) : null}
         </div>
-        <Link
-          href="/"
-          className="mx-2 tracking-wide font-semibold px-4 text-white"
-        >
+        <Link href="/" className="tracking-wide font-semibold text-white">
           Papers
         </Link>
-
-        <div className="mx-2 flex items-center justify-between tracking-wide font-semibold rounded-2xl">
+        <div className="flex items-center justify-between tracking-wide font-semibold rounded-2xl">
           {!session && (
             <>
               <Link

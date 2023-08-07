@@ -135,7 +135,7 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
             <NavigationMenu />
           </div>
         </div>
-        <div className="w-full bg-gradient-radial from-plumes to-bermuda -mt-44 lg:-mt-28 md:-mt-20">
+        <div className="w-full bg-gradient-radial from-plumes to-bermuda -mt-44 md:-mt-44 lg:-mt-28">
           <Container className="xl:px-0 pb-24 pt-56 lg:pt-44 lg:pb-36">
             <div className="lg:grid lg:grid-cols-2">
               <div className="flex flex-col justify-center">

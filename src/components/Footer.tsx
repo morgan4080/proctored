@@ -1,10 +1,13 @@
 import { Container } from '@/components/Container'
-import { Sulphur_Point } from 'next/font/google'
+import { Comfortaa } from 'next/font/google'
 import classNames from '@/Utils/ClassNames'
 import Link from 'next/link'
 import Logo from '@/components/Logo'
 import PaymentIcons from '@/components/PaymentIcons'
-const sulphur_point_400 = Sulphur_Point({ subsets: ['latin'], weight: '400' })
+const comfortaa = Comfortaa({
+  weight: ['300', '400', '500', '600', '700'],
+  subsets: ['latin'],
+})
 const Footer = () => {
   const backToTop = () => {
     if (document) {
@@ -21,7 +24,7 @@ const Footer = () => {
             <div className="hidden lg:block">
               <ul
                 role="list"
-                className={classNames(sulphur_point_400.className, 'mt-6')}
+                className={classNames(comfortaa.className, 'mt-6')}
               >
                 <Logo className="w-52 md:mx-auto dark:text-white" />
               </ul>
@@ -29,10 +32,7 @@ const Footer = () => {
             <div className="mt-10 md:mt-0">
               <ul
                 role="list"
-                className={classNames(
-                  sulphur_point_400.className,
-                  'mt-6 space-y-4',
-                )}
+                className={classNames(comfortaa.className, 'mt-6 space-y-4')}
               >
                 <li>
                   <Link href="/" className="dark:text-white">
@@ -51,10 +51,7 @@ const Footer = () => {
             <div>
               <ul
                 role="list"
-                className={classNames(
-                  sulphur_point_400.className,
-                  'mt-6 space-y-4',
-                )}
+                className={classNames(comfortaa.className, 'mt-6 space-y-4')}
               >
                 <li>
                   <Link href="/" className="dark:text-white">
@@ -75,7 +72,7 @@ const Footer = () => {
               <ul
                 role="list"
                 className={classNames(
-                  sulphur_point_400.className,
+                  comfortaa.className,
                   'mt-6 space-x-2 flex justify-center lg:justify-start',
                 )}
               >
@@ -94,12 +91,7 @@ const Footer = () => {
         </div>
       </Container>
       <div className="text-center pb-8 lg:py-5 dark:bg-gray-900 px-4 sm:px-6 lg:px-8">
-        <p
-          className={classNames(
-            sulphur_point_400.className,
-            'dark:text-white py-1',
-          )}
-        >
+        <p className={classNames(comfortaa.className, 'dark:text-white py-1')}>
           Copyright © 2023{' '}
           <a className="text-sky-300" href="https://proctorowls.com">
             Proctor Owls
