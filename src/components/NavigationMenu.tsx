@@ -1,9 +1,11 @@
 import classNames from '@/Utils/ClassNames'
+import { signIn, signOut, useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { useRef, useState } from 'react'
 import { Sulphur_Point } from 'next/font/google'
-import { useSession } from 'next-auth/react'
 import { useOnClickOutside } from '@/Utils/hooks'
+import Image from 'next/image'
+import { ArrowRightOnRectangleIcon } from '@heroicons/react/20/solid'
 const sulphur_point_400 = Sulphur_Point({ subsets: ['latin'], weight: '400' })
 const NavigationMenu = () => {
   const { data: session, status } = useSession()
@@ -17,18 +19,18 @@ const NavigationMenu = () => {
   useOnClickOutside(refDropDown, () => setServiceMenuOpen(false))
 
   return (
-    <div className="fixed rounded-2xl left-0 top-0 flex w-full justify-center pb-6 pt-8 backdrop-blur-md lg:static lg:w-auto lg:p-4">
+    <div className="left-0 top-0 flex w-full justify-center pb-6 pt-8 lg:static lg:w-auto lg:p-4">
       <div
         className={classNames(
           sulphur_point_400.className,
           'flex items-center relative text-base text-slate-800',
         )}
       >
-        <div className="group mx-2 tracking-wide font-semibold py-3 px-4 inline-block">
+        <div className="group mx-2 tracking-wide font-semibold py-3 inline-block">
           <button
             onClick={() => setServiceMenuOpen(!serviceMenuOpen)}
             type="button"
-            className="flex flex-row items-center hover:text-green-600"
+            className="flex flex-row items-center text-white"
           >
             Services
             <svg
@@ -118,24 +120,59 @@ const NavigationMenu = () => {
         </div>
         <Link
           href="/"
-          className="mx-2 tracking-wide font-semibold px-4 hover:text-blue-700"
+          className="mx-2 tracking-wide font-semibold px-4 text-white"
         >
-          Sample Papers
+          Papers
         </Link>
 
-        <div className="mx-2 flex tracking-wide font-semibold hover:text-blue-700 rounded-2xl bg-green-200">
-          <button
-            type={'button'}
-            className="rounded-2xl z-20 bg-green-700 hover:bg-green-900 px-3 text-white font-black"
-          >
-            Sign Up
-          </button>
-          <button
-            type={'button'}
-            className="rounded-r-2xl z-10 -ml-2 px-4 text-black font-black hover:text-white hover:bg-green-900"
-          >
-            Log in
-          </button>
+        <div className="mx-2 flex items-center justify-between tracking-wide font-semibold rounded-2xl">
+          {!session && (
+            <>
+              <Link
+                href="/api/auth/signin"
+                className="rounded-2xl z-20 bg-black px-3 text-white font-black"
+                onClick={(e) => {
+                  e.preventDefault()
+                  signIn().catch((e) => console.log(e))
+                }}
+              >
+                Sign Up
+              </Link>
+              <button
+                type={'button'}
+                className="rounded-r-2xl z-10 -ml-2 px-4 text-black font-black bg-white"
+                onClick={(e) => {
+                  e.preventDefault()
+                  signIn().catch((e) => console.log(e))
+                }}
+              >
+                Log in
+              </button>
+            </>
+          )}
+
+          {session?.user && (
+            <div className="space-x-2 flex items-center">
+              {session.user.name && (
+                <Link href={`/me`}>
+                  <span id={'name'} className="text-white mr-2 underline">
+                    {session.user.name}
+                  </span>
+                </Link>
+              )}
+              <Link
+                id={'logout'}
+                className="rounded-2xl z-20 text-white"
+                href={`/api/auth/signout`}
+                onClick={(e) => {
+                  e.preventDefault()
+                  signOut().catch((e) => console.log(e))
+                }}
+              >
+                <ArrowRightOnRectangleIcon className="w-6 h-6" />
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </div>

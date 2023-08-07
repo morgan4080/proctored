@@ -3,7 +3,6 @@ import { Inter } from 'next/font/google'
 import Head from 'next/head'
 import Footer from '@/components/Footer'
 import Link from 'next/link'
-import Logo from '@/components/Logo'
 import NavigationMenu from '@/components/NavigationMenu'
 import { Container } from '@/components/Container'
 import HeroArt from '@/components/HeroArt'
@@ -11,6 +10,10 @@ import { StarIcon } from '@heroicons/react/24/solid'
 import classNames from '@/Utils/ClassNames'
 import PaymentIcons from '@/components/PaymentIcons'
 import PriceCalc from '@/components/PriceCalc'
+import { Listbox, Transition } from '@headlessui/react'
+import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
+import { Fragment, useState } from 'react'
+import { LogoImg } from '@/components/LogoImg'
 const inter = Inter({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
   subsets: ['latin'],
@@ -70,6 +73,46 @@ export default function Home() {
       ],
     },
   ]
+
+  const FAQ = [
+    {
+      name: 'Who are essay dons?',
+      description: `
+          In recent years, there has been rising demand among students for online homework help.
+           Owing to this demand, Essaydons.com was established with an aim to offer high quality homework help services to anyone that came knocking our door.
+            We are one of those companies that have been of great help to many students for the past eight years. Over time we have built trust among our clients through continuously providing high-quality homework help services.
+             So far we have served over forty thousand clients in different fields of study.
+           The company has recruited over three hundred professional writers to ensure that you always have a writer to personally attend to any of your homework needs.
+      `,
+    },
+    {
+      name: 'About free inquiry?',
+      description: `We're an expert essay writing service that offers a wealth of academic writing experience to students from all over the world. We aim to match the most qualified essay writer to your order, and for that, we hire the most seasoned essay writers from various disciplines.
+Quality is our top priority, so you can rest assured that every order you place via our website will be completed on the highest level possible. To order your first essay with us, simply fill out an order form, pay for the piece, and get in touch with the assigned essay writer.`,
+    },
+    {
+      name: 'Is your service legal?',
+      description: `Quality is our top priority, so you can rest assured that every order you place via our website will be completed on the highest level possible. To order your first essay with us, simply fill out an order form, pay for the piece, and get in touch with the assigned essay writer.
+Make sure to familiarize yourselves with our Guarantees should you have any doubts or questions. And feel free to contact us via our 24/7 chat support: our team is working around-the-clock helping you with any issues you might face.`,
+    },
+    {
+      name: 'Do you have any discounts?',
+      description: `
+      We're an expert essay writing service that offers a wealth of academic writing experience to students from all over the world. We aim to match the most qualified essay writer to your order, and for that, we hire the most seasoned essay writers from various disciplines.
+Make sure to familiarize yourselves with our Guarantees should you have any doubts or questions. And feel free to contact us via our 24/7 chat support: our team is working around-the-clock helping you with any issues you might face.`,
+    },
+    {
+      name: 'Which formats do you provide?',
+      description: `We're an expert essay writing service that offers a wealth of academic writing experience to students from all over the world. We aim to match the most qualified essay writer to your order, and for that, we hire the most seasoned essay writers from various disciplines.`,
+    },
+    {
+      name: 'How will i receive the complete paper?',
+      description: `Expert essay writing service that offers a wealth of academic writing experience to students from all over the world. We aim to match the most qualified essay writer to your order, and for that, we hire the most seasoned essay writers from various disciplines.`,
+    },
+  ]
+
+  const [selected, setSelected] = useState(FAQ[0])
+
   return (
     <>
       <Head>
@@ -84,24 +127,16 @@ export default function Home() {
           'flex min-h-screen flex-col items-center justify-between relative',
         )}
       >
-        <div className="fixed max-w-7xl w-full z-50 py-10 px-4 xl:px-0">
-          <div className="z-10 w-full items-center justify-between font-mono text-sm lg:flex lg:flex-row-reverse">
+        <div className="w-full z-50 px-4 xl:px-0">
+          <div className="z-10 max-w-7xl mx-auto w-full items-center justify-between font-mono text-sm lg:flex">
+            <Link href="/">
+              <LogoImg />
+            </Link>
             <NavigationMenu />
-
-            <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-              <Link
-                className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0 rounded-2xl backdrop-blur-md"
-                href="/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Logo className="w-56 dark:invert text-black" />
-              </Link>
-            </div>
           </div>
         </div>
-        <div className="w-full bg-gradient-radial from-plumes to-bermuda">
-          <Container className="xl:px-0 pt-32 pb-24 lg:pt-44 lg:pb-36">
+        <div className="w-full bg-gradient-radial from-plumes to-bermuda -mt-44 lg:-mt-28 md:-mt-20">
+          <Container className="xl:px-0 pb-24 pt-56 lg:pt-44 lg:pb-36">
             <div className="lg:grid lg:grid-cols-2">
               <div className="flex flex-col justify-center">
                 <h1 className="text-4xl text-center lg:text-left md:text-5xl lg:text-7xl text-white font-black leading-tight tracking-tight py-2 lg:py-0">
@@ -453,18 +488,35 @@ export default function Home() {
               community
             </h2>
           </div>
-          <div className="grid space-y-16 lg:space-y-0 lg:grid-cols-1 max-w-6xl mx-auto">
-            <figure className="md:flex bg-slate-100 rounded-xl p-8 md:p-0 dark:bg-slate-800">
-              <Image
-                className="w-24 h-24 md:w-48 md:h-auto md:rounded-none rounded-full mx-auto"
-                src="/img_2.png"
-                alt=""
-                width="384"
-                height="512"
-              />
+          <div className="grid space-y-16 lg:space-y-0 lg:grid-cols-1 max-w-5xl mx-auto">
+            <figure className="md:flex rounded-xl p-8 md:p-0 bg-reef">
+              <div className="p-6">
+                <Image
+                  className="w-24 h-24 md:w-56 md:h-auto md:rounded-none rounded-full mx-auto"
+                  src="/img_2.png"
+                  alt=""
+                  width="384"
+                  height="512"
+                />
+              </div>
               <div className="pt-6 md:p-8 text-center md:text-left space-y-4">
                 <blockquote>
-                  <p className="text-lg font-medium">
+                  <span className="flex">
+                    {[0, 1, 2, 3, 4].map((rating) => (
+                      <StarIcon
+                        key={rating}
+                        className={classNames(
+                          4.9 > rating ? 'text-yellow-400' : 'text-gray-200',
+                          'flex-shrink-0 h-5 w-5',
+                        )}
+                        aria-hidden="true"
+                      />
+                    ))}
+                  </span>
+                  <h5 className="text-lg font-semibold text-black">
+                    Paper was written before the deadline.
+                  </h5>
+                  <p className="text-lg font-medium pt-2">
                     “Prof. Alicia is very professional and I am happy about her
                     work. She helped me a lot and saved me a huge amount of
                     time. I will be very happy to contact her for future
@@ -550,68 +602,536 @@ export default function Home() {
           </Container>
         </div>
 
-        <Container className="xl:px-0 pb-20">
-          <div className="space-y-2 pt-20 pb-16">
-            <h2 className="text-5xl font-bold leading-none text-gray-900 text-center">
-              Why Choose Us
-            </h2>
-          </div>
-          <div className="grid space-y-16 lg:space-y-0 lg:grid-cols-3 mx-auto">
-            <div className=""></div>
-            <div className=""></div>
-            <div className=""></div>
-          </div>
-        </Container>
+        <div className="w-full bg-gradient-radial from-plumes to-bermuda">
+          <Container className="xl:px-0 pb-20">
+            <div className="space-y-2 pt-20 pb-16">
+              <h2 className="text-white font-bold text-[52px] tracking-tight leading-[63px] capitalize text-center">
+                Why Choose Us
+              </h2>
+              <p className="md:text-md md:max-w-xs mx-auto text-center text-white ">
+                We guide you through your toughest academic task.
+              </p>
+            </div>
+            <div className="space-y-32 flex flex-col items-center">
+              <div className="grid space-y-16 md:gap-16 md:space-y-0 md:grid-cols-3 mx-auto">
+                <div className="block">
+                  <h6 className="text-center text-white font-semibold text-xl pb-1.5 capitalize">
+                    we understand your style
+                  </h6>
+                  <p className="text-center text-xl text-white font-normal">
+                    Our seasoned writers can imitate your desired style
+                  </p>
+                </div>
+
+                <div className="block">
+                  <h6 className="text-center text-white font-semibold text-xl pb-1.5 capitalize">
+                    Young and Ambitious
+                  </h6>
+                  <p className="text-center text-xl text-white font-normal">
+                    We break away from huge conglomerates whose interest is in
+                    your dollar
+                  </p>
+                </div>
+
+                <div className="block">
+                  <h6 className="text-center text-white font-semibold text-xl pb-1.5 capitalize">
+                    We take data privacy seriously
+                  </h6>
+                  <p className="text-center text-xl text-white font-normal">
+                    Our seasoned writers can imitate your desired style
+                  </p>
+                </div>
+              </div>
+              <div className="grid space-y-16 md:gap-16 lg:space-y-0 lg:grid-cols-3 mx-auto">
+                <div className="block">
+                  <h6 className="text-center text-white font-semibold text-xl pb-1.5 capitalize">
+                    High quality for affordable prices
+                  </h6>
+                  <p className="text-center text-xl text-white font-normal">
+                    High-quality content for the most affordable prices on the
+                    market
+                  </p>
+                </div>
+
+                <div className="block">
+                  <h6 className="text-center text-white font-semibold text-xl pb-1.5 capitalize">
+                    Any subject, any deadline
+                  </h6>
+                  <p className="text-center text-xl text-white font-normal">
+                    We will meet your expectations, just hire an essay writer
+                    and take a look
+                  </p>
+                </div>
+
+                <div className="block">
+                  <h6 className="text-center text-white font-semibold text-xl pb-1.5 capitalize">
+                    Quality Samples
+                  </h6>
+                  <p className="text-center text-xl text-white font-normal">
+                    Some of the best work of our experienced essay writers
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                className="bg-green-400 rounded-md text-white py-3 px-12"
+              >
+                <span className="font-bold">Order Now</span>
+              </button>
+            </div>
+          </Container>
+        </div>
 
         <Container className="xl:px-0 pb-20">
-          <div className="space-y-2 pt-20 pb-16">
-            <h2 className="text-5xl max-w-xl mx-auto font-bold leading-none text-gray-900 text-center">
+          <div className="space-y-4 pt-20 pb-8">
+            <h2 className="text-5xl max-w-2xl mx-auto font-bold leading-none text-bermuda text-center capitalize">
               Frequently Asked Questions about Custom Writing.
             </h2>
+            <p className="text-2xl lg:max-w-lg mx-auto text-center text-bermuda">
+              What to expect in this virtual service?
+            </p>
           </div>
-          <div className="grid space-y-16 lg:space-y-0 lg:grid-cols-2 max-w-7xl mx-auto">
-            <div className=""></div>
-            <div className=""></div>
+          <div className="grid space-y-16 md:gap-16 md:space-y-0 md:grid-cols-10 max-w-7xl mx-auto bg-gray-50 px-2 md:px-8 py-8 rounded-2xl">
+            <div className="col-span-12 md:col-span-4">
+              <Listbox value={selected} onChange={setSelected}>
+                <div className="relative mt-1">
+                  <Listbox.Button className="relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
+                    <span className="block truncate font-medium text-lg text-center md:text-left">
+                      {selected.name}
+                    </span>
+                    <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                      <ChevronUpDownIcon
+                        className="h-5 w-5 text-gray-400"
+                        aria-hidden="true"
+                      />
+                    </span>
+                  </Listbox.Button>
+                  <Transition
+                    as={Fragment}
+                    leave="transition ease-in duration-250"
+                    leaveFrom="transform translate-y-2"
+                    leaveTo="transform translate-y-0"
+                    enter="transition ease-in duration-250"
+                    enterFrom="transform translate-y-0"
+                    enterTo="transform translate-y-2"
+                  >
+                    <Listbox.Options className="block overflow-auto mt-4 px-2">
+                      {FAQ.map((faq, faqIdx) => (
+                        <Listbox.Option
+                          key={faqIdx}
+                          className={({ active }) =>
+                            `relative cursor-default select-none py-2 ${
+                              active
+                                ? 'bg-amber-100 text-amber-900'
+                                : 'text-gray-900'
+                            }`
+                          }
+                          value={faq}
+                        >
+                          {() => (
+                            <>
+                              <span
+                                className={`block truncate text-center md:text-left ${
+                                  selected.name == faq.name
+                                    ? 'font-medium'
+                                    : 'font-normal'
+                                }`}
+                              >
+                                {faq.name}
+                              </span>
+                              {selected.name == faq.name ? (
+                                <span className="absolute inset-y-0 right-0 flex items-center pl-3 text-amber-600">
+                                  <CheckIcon
+                                    className="h-5 w-5"
+                                    aria-hidden="true"
+                                  />
+                                </span>
+                              ) : null}
+                            </>
+                          )}
+                        </Listbox.Option>
+                      ))}
+                    </Listbox.Options>
+                  </Transition>
+                </div>
+              </Listbox>
+            </div>
+            <div className="col-span-12 md:col-span-6">
+              <p className="font-normal text-lg text-center md:text-left">
+                {selected.description}
+              </p>
+            </div>
           </div>
         </Container>
 
-        <Container className="xl:px-0 pb-20">
-          <div className="space-y-2 pt-20 pb-16">
-            <h2 className="text-4xl max-w-xl mx-auto font-bold leading-none text-gray-900 text-center">
-              Do You Need an Essay Writer?
-            </h2>
-          </div>
-          <div className="grid space-y-16 lg:space-y-0 lg:grid-cols-1 max-w-6xl mx-auto">
-            <div className=""></div>
-            <div className=""></div>
-          </div>
-        </Container>
+        <div className="w-full bg-reef">
+          <Container className="xl:px-0 pb-20 bg-reef">
+            <div className="space-y-2 pt-20 pb-16">
+              <h2 className="text-4xl max-w-xl mx-auto font-bold leading-none text-gray-900 text-center">
+                Do You Need an Essay Writer?
+              </h2>
+              <p className="text-2xl lg:max-w-lg mx-auto text-center  text-bermuda">
+                What to expect in this virtual service?
+              </p>
+              <p className="max-w-5xl mx-auto text-center text-slate-600 pt-6">
+                Can’t remember the last time you went out with your friends for
+                a cup of tea? Do you feel like your tutors are completely
+                oblivious of the fact that you have a life outside of college?
+                Can’t deal with yet another academic piece you have to compose
+                overnight? You are not alone! Thousands of students from all
+                over the world feel the same way about their studying. However,
+                the smartest of them choose to seek our custom essay writing
+                service whenever they get overwhelmed with their education. Just
+                think about it. No more sleepless nights! No more rush and
+                gallons of coffee to keep you awake again and again. Just drop
+                us a line and our essay writers will be on their way to craft an
+                A+ piece for you whenever needed day or night. Your top-notch
+                essay is just one click away. Do not lose your chance for top
+                grades with the help of a professional essay writing service. No
+                matter what subject you need an essay for, we have got it all
+                covered.
+              </p>
+            </div>
+            <div className="space-y-6 mx-auto max-w-6xl">
+              <div className="flex flex-col">
+                <h5 className="font-bold text-2xl text-bermuda">
+                  Our Unique Features
+                </h5>
+                <p className="pt-4">
+                  After years in this business, we know for sure what a student
+                  needs from an online essay writing service. We have fine-tuned
+                  our services to these needs to stay on top of things. Meet an
+                  extensive list of every single feature that makes us unique
+                  and outstanding. And believe us, we are not bragging. We are
+                  just being realistic
+                </p>
+              </div>
+              <div className="flex flex-col">
+                <h5 className="font-bold text-2xl text-bermuda">
+                  A massive team of online essay writers.
+                </h5>
+                <p className="pt-4">
+                  We do our best to hire as many talents on our as possible. We
+                  scan each resume that comes our way to ensure that not one
+                  excellent essay writer is left unnoticed. Our team consists of
+                  dozens of experts from various fields and backgrounds. And all
+                  this is done to meet the growing demand for quality online
+                  ghost writing.
+                </p>
+              </div>
+              <div className="flex flex-col">
+                <h5 className="font-bold text-2xl text-bermuda">
+                  Reasonable prices.
+                </h5>
+                <p className="pt-4">
+                  We aim to establish prices that will both motivate the essay
+                  writers and not leave our customers wanting. Affordability is
+                  at the core of our principles, so be sure you will not have to
+                  rob the bank to get your piece written by our experts.
+                </p>
+              </div>
+              <div className="flex flex-col">
+                <h5 className="font-bold text-2xl text-bermuda">
+                  100% originality.
+                </h5>
+                <p className="pt-4">
+                  Yes, we do have a substantial base of ready-made essays. But
+                  rest assured: we craft each new essay from scratch. Knowing
+                  how bad plagiarism is to your good name at school, we avoid it
+                  by all means and check each paper for its instances...
+                </p>
+              </div>
+              <div className="flex flex-col">
+                <h5 className="font-bold text-2xl text-bermuda">
+                  Excellent quality-price ratio.
+                </h5>
+                <p className="pt-4">
+                  When you pay us to write your essay, you are practically
+                  investing fair money into top college grades. With our help,
+                  you get to stretch a buck and meet every single deadline at
+                  school without sacrificing your sleep, social life, and sanity
+                </p>
+              </div>
+              <div className="flex flex-col">
+                <h5 className="font-bold text-2xl text-bermuda">
+                  How It Works
+                </h5>
+                <p className="pt-4">
+                  By now, you might probably be looking for ways to place your
+                  first order. If so, then we’ve got fantastic news for you! It
+                  will only take a couple of minutes.
+                </p>
+              </div>
+              <div className="flex flex-col">
+                <h5 className="font-bold text-2xl text-bermuda">
+                  Why Choose us
+                </h5>
+                <p className="pt-4">
+                  Well, there are multiple reasons for it. The most important
+                  among them include but are not limited to:
+                </p>
+              </div>
+              <div className="flex flex-col">
+                <h5 className="font-bold text-2xl text-bermuda">
+                  Plagiarism Free Assignments.
+                </h5>
+                <p className="pt-4">
+                  All our services are 100% original content, expect no trace of
+                  plagiarism in any of your assignments handled by our competent
+                  homework writers. The company has clear guidelines and rules
+                  on plagiarism which our writers have always been keen to
+                  adhere to. The level of discipline and commitment our writers
+                  have has ensured that essaydons.com never gets to deal with
+                  any plagiarism case for all the time we have been in the
+                  homework help service industry. With the advancement of
+                  plagiarism checking tools, it is even hard for us to submit
+                  plagiarised work to you as our quality assurance team pass all
+                  your assignments through these plagiarism checking tools
+                  before your assignment is uploaded to you.
+                </p>
+              </div>
+              <div className="flex flex-col">
+                <h5 className="font-bold text-2xl text-bermuda">
+                  Professional writing team.
+                </h5>
+                <p className="pt-4">
+                  Our team of writers has been hired after a thorough
+                  recruitment exercise conducted after every two years. We want
+                  to ensure consistency, and for this reason, we like to train
+                  and perfect on the writers we have as opposed to having new
+                  writers in the company every other month, which will certainly
+                  not work in favour of the company’s standards.
+                </p>
+              </div>
+              <div className="flex flex-col">
+                <h5 className="font-bold text-2xl text-bermuda">
+                  Timely delivery.
+                </h5>
+                <p className="pt-4">
+                  Your assignment will be delivered on time. We know the
+                  implications late assignment submission could have on your
+                  academic life, for this reason, we will ensure that you get to
+                  submit all your assignments in time by having our writers
+                  upload to you your homework in good time to allow you go
+                  through your homework and have any necessary corrections made
+                  on it by your homework writer. All we ask of you is to simply
+                  place your order with us right away for our writers to
+                  immediately start working on it. Timely order requests allow
+                  our writers to have ample time and less pressure working on
+                  your assignments. It is not late, place your order now.
+                </p>
+              </div>
+              <div className="flex flex-col">
+                <h5 className="font-bold text-2xl text-bermuda">
+                  High quality.
+                </h5>
+                <p className="pt-4">
+                  Our writers have gained industry experience in their various
+                  fields of expertise. Therefore, they not only apply academic
+                  knowledge to your homework but also add a professional touch
+                  to it. Essaydons.com assures you that your assignment is in
+                  the best hands and brains. Our quality assurance team also
+                  conducts training and tests on our writers to ensure that
+                  essaydons.com homework quality standards are always met by our
+                  writers.
+                </p>
+              </div>
+              <div className="flex flex-col">
+                <h5 className="font-bold text-2xl text-bermuda">
+                  Round-the-clock support.
+                </h5>
+                <p className="pt-4">
+                  You can always get your homework needs tended to 24/7
+                  regardless of your location. Essaydons.com has hired enough
+                  writers and support personnel to ensure that you do not have
+                  to wait to get your homework needs attended to. Our response
+                  from both our writers and customer support is prompt and comes
+                  as soon as you reach out to us. Our 24/7 availability has
+                  especially been of great help to students with urgent homework
+                  needs. Place your homework order with us anytime you wish. It
+                  does not matter how close you are to your deadline; we will
+                  effectively work on your assignment and deliver high-quality
+                  homework help to you and on time.
+                </p>
+              </div>
+            </div>
+          </Container>
+        </div>
 
         <Container className="xl:px-0 pb-20">
           <div className="space-y-2 pt-20 pb-16">
             <h2 className="text-4xl max-w-xl mx-auto font-bold leading-none text-gray-900 text-center">
               What You Get in the End
             </h2>
+            <p className="text-2xl lg:max-w-lg mx-auto text-center text-bermuda">
+              We get you quality grades.
+            </p>
+            <div className="max-w-5xl mx-auto md:grid md:grid-cols-2 md:gap-12 pt-12">
+              <p className="text-left text-slate-600 pt-6">
+                Wondering why you should order an essay at our essay writing
+                service? “What’s in it for me?” you might wonder. It’s a fair
+                question! Here are several results of choosing to order a piece
+                online. We are sure, they will speak louder than any of our
+                words:
+              </p>
+
+              <div className="flex justify-center items-center">
+                <Image
+                  src="/illustrations1.png"
+                  alt="writer 1"
+                  width={548}
+                  height={247}
+                  priority
+                />
+              </div>
+            </div>
           </div>
-          <div className="grid space-y-16 lg:space-y-0 lg:grid-cols-2 max-w-7xl mx-auto">
-            <div className=""></div>
-            <div className=""></div>
+          <div className="space-y-6 mx-auto max-w-6xl">
+            <div className="flex flex-col">
+              <h5 className="font-bold text-2xl text-bermuda">Top Grades.</h5>
+              <p className="pt-4">
+                They are important. After all, we are all striving to achieve
+                the highest grades. They have the potential to directly
+                influence what jobs we get in the future. That is why it is in
+                your best interest to hire a professional essay writing service
+                to compose a decent piece.
+              </p>
+            </div>
+
+            <div className="flex flex-col">
+              <h5 className="font-bold text-2xl text-bermuda">
+                A happy professor.
+              </h5>
+              <p className="pt-4">
+                Don&apos;t look surprised! Earning a good reputation in the eyes
+                of your college professor is vital, since in many cases your
+                reputation will work for you even when you&apos;re far from
+                being the best student.
+              </p>
+            </div>
+
+            <div className="flex flex-col">
+              <h5 className="font-bold text-2xl text-bermuda">
+                Top-notch paper.
+              </h5>
+              <p className="pt-4">
+                A decent paper can help you get into a college of your dream,
+                improve your GPA, or even get you a scholarship. No matter which
+                of these you&apos;re pursuing, it&apos;s always a good idea to
+                have an essay professionally crafted.
+              </p>
+            </div>
+
+            <div className="flex flex-col">
+              <h5 className="font-bold text-2xl text-bermuda">
+                Good social and academic life balance.
+              </h5>
+              <p className="pt-4">
+                It is often essential for students to hire essay writing
+                services to craft pieces for them because otherwise, students
+                will have no personal life with all the overwhelming academic
+                tasks they have to deal with daily. Can&apos;t help but miss
+                going out with your friends? We&apos;re here to help! These are
+                but a few benefits you get when ordering an essay online instead
+                of writing it on your own. Look at this list again and if it
+                sounds ike something you&apos;d like to take advantage of right
+                now, drop us a line!
+              </p>
+            </div>
           </div>
         </Container>
 
-        <Container className="xl:px-0 pb-20">
-          <div className="space-y-2 pt-20 pb-16">
-            <h2 className="text-4xl max-w-xl mx-auto font-bold leading-none text-gray-900 text-center">
-              Blog
-            </h2>
-          </div>
-          <div className="grid space-y-16 lg:space-y-0 lg:grid-cols-2 max-w-7xl mx-auto">
-            <div className=""></div>
-            <div className=""></div>
-            <div className=""></div>
-            <div className=""></div>
-          </div>
-        </Container>
+        <div className="w-full bg-gradient-radial from-plumes to-bermuda">
+          <Container className="xl:px-0 pb-20">
+            <div className="space-y-2 pt-20 pb-16">
+              <h2 className="text-white font-bold text-[52px] tracking-tight leading-[63px] capitalize text-center">
+                Blog
+              </h2>
+              <p className="text-2xl lg:max-w-lg mx-auto text-center text-white">
+                Read about matters writing.
+              </p>
+            </div>
+            <div className="grid space-y-16 md:gap-16 md:space-y-0 md:grid-cols-2 max-w-4xl mx-auto">
+              <div className="flex items-center justify-between">
+                <div className="flex flex-col">
+                  <Image
+                    className="ml-auto"
+                    src="/image15.png"
+                    alt="essay"
+                    width={107}
+                    height={151}
+                    priority
+                  />
+                </div>
+                <div className="flex flex-col max-w-xs">
+                  <h6 className="text-center text-white font-semibold text-xl pb-1.5 capitalize">
+                    Steps Towards Mastering Proposal Essay Writing
+                  </h6>
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="flex flex-col">
+                  <Image
+                    className="ml-auto"
+                    src="/image15.png"
+                    alt="essay"
+                    width={107}
+                    height={151}
+                    priority
+                  />
+                </div>
+                <div className="flex flex-col max-w-xs">
+                  <h6 className="text-center text-white font-semibold text-xl pb-1.5 capitalize">
+                    How to write a character analysis essay?
+                  </h6>
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="flex flex-col">
+                  <Image
+                    className="ml-auto"
+                    src="/image15.png"
+                    alt="essay"
+                    width={107}
+                    height={151}
+                    priority
+                  />
+                </div>
+                <div className="flex flex-col max-w-xs">
+                  <h6 className="text-center text-white font-semibold text-xl pb-1.5 capitalize">
+                    How To Write A Character Analysis Essay?
+                  </h6>
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="flex flex-col">
+                  <Image
+                    className="ml-auto"
+                    src="/image15.png"
+                    alt="essay"
+                    width={107}
+                    height={151}
+                    priority
+                  />
+                </div>
+                <div className="flex flex-col max-w-sm">
+                  <h6 className="text-center text-white font-semibold text-xl pb-1.5 capitalize">
+                    We understand your style
+                  </h6>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-center align-center pt-16">
+              <button
+                type="button"
+                className="bg-green-400 w-44 py-3 px-8 text-xl rounded-2xl text-white font-semibold hidden lg:inline-block mt-4 transform hover:scale-105 transition ease-in-out duration-100"
+              >
+                Order Now
+              </button>
+            </div>
+          </Container>
+        </div>
 
         <Container className="xl:px-0 pb-20">
           <div className="space-y-4 pb-14">

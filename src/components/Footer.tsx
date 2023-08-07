@@ -93,7 +93,7 @@ const Footer = () => {
           </div>
         </div>
       </Container>
-      <div className="text-center pb-48 lg:py-5 dark:bg-gray-900 px-4 sm:px-6 lg:px-8">
+      <div className="text-center pb-8 lg:py-5 dark:bg-gray-900 px-4 sm:px-6 lg:px-8">
         <p
           className={classNames(
             sulphur_point_400.className,
