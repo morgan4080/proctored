@@ -1,5 +1,5 @@
 import { Comfortaa } from 'next/font/google'
-import classNames from '@/Utils/ClassNames'
+import classNames from '../../libs/utils/ClassNames'
 
 const comfortaa = Comfortaa({
   weight: ['700'],

@@ -1,6 +1,6 @@
 import { Container } from '@/components/Container'
 import { Comfortaa } from 'next/font/google'
-import classNames from '@/Utils/ClassNames'
+import classNames from '../../libs/utils/ClassNames'
 import Link from 'next/link'
 import Logo from '@/components/Logo'
 import PaymentIcons from '@/components/PaymentIcons'

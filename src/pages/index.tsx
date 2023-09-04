@@ -3,23 +3,50 @@ import { Inter } from 'next/font/google'
 import Head from 'next/head'
 import Footer from '@/components/Footer'
 import Link from 'next/link'
-import NavigationMenu from '@/components/NavigationMenu'
+import Navigation from '@/components/Navigation'
 import { Container } from '@/components/Container'
 import HeroArt from '@/components/HeroArt'
 import { StarIcon } from '@heroicons/react/24/solid'
-import classNames from '@/Utils/ClassNames'
+import classNames from '../../libs/utils/ClassNames'
 import PaymentIcons from '@/components/PaymentIcons'
 import PriceCalc from '@/components/PriceCalc'
 import { Listbox, Transition } from '@headlessui/react'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
 import { Fragment, useState } from 'react'
 import { LogoImg } from '@/components/LogoImg'
+
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import clientPromise from '../../libs/mongodb'
+import type { InferGetServerSidePropsType, GetServerSideProps } from 'next'
+
+type ConnectionStatus = {
+  isConnected: boolean
+}
+
+export const getServerSideProps: GetServerSideProps<
+  ConnectionStatus
+> = async () => {
+  try {
+    await clientPromise
+    return {
+      props: { isConnected: true },
+    }
+  } catch (e) {
+    console.error(e)
+    return {
+      props: { isConnected: false },
+    }
+  }
+}
+
 const inter = Inter({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
   subsets: ['latin'],
 })
 
-export default function Home() {
+export default function Home({
+  isConnected,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const writers = [
     {
       name: 'Dr. Shayla',
@@ -114,7 +141,7 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
   const [selected, setSelected] = useState(FAQ[0])
 
   return (
-    <>
+    <div className="relative">
       <Head>
         <title>PROCTOR OWLS</title>
         <meta name="description" content="We take proctored exams for you" />
@@ -127,14 +154,7 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
           'flex min-h-screen flex-col items-center justify-between relative',
         )}
       >
-        <div className="w-full z-50 px-4 xl:px-0">
-          <div className="z-10 max-w-7xl mx-auto w-full items-center justify-between font-mono text-sm lg:flex">
-            <Link href="/">
-              <LogoImg />
-            </Link>
-            <NavigationMenu />
-          </div>
-        </div>
+        <Navigation />
         <div className="w-full bg-gradient-radial from-plumes to-bermuda -mt-44 md:-mt-44 lg:-mt-28">
           <Container className="xl:px-0 pb-24 pt-56 lg:pt-44 lg:pb-36">
             <div className="lg:grid lg:grid-cols-2">
@@ -1134,6 +1154,17 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
         </div>
       </main>
       <Footer />
-    </>
+
+      {!isConnected ? (
+        <div className="sticky z-50 w-1/4 bottom-2 right-2 ml-auto">
+          <Alert>
+            <AlertTitle>Heads up!</AlertTitle>
+            <AlertDescription>
+              You are NOT connected to the database.
+            </AlertDescription>
+          </Alert>
+        </div>
+      ) : null}
+    </div>
   )
 }
