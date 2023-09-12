@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import { Toaster } from '@/components/ui/toaster'
 import { Inter } from 'next/font/google'
 import Head from 'next/head'
 import Footer from '@/components/Footer'
@@ -12,12 +13,11 @@ import PaymentIcons from '@/components/PaymentIcons'
 import PriceCalc from '@/components/PriceCalc'
 import { Listbox, Transition } from '@headlessui/react'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
-import { Fragment, useState } from 'react'
-import { LogoImg } from '@/components/LogoImg'
-
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Fragment, useEffect, useState } from 'react'
 import clientPromise from '../../libs/mongodb'
 import type { InferGetServerSidePropsType, GetServerSideProps } from 'next'
+import { useToast } from '@/components/ui/use-toast'
+import { ToastAction } from '@/components/ui/toast'
 
 type ConnectionStatus = {
   isConnected: boolean
@@ -47,6 +47,20 @@ const inter = Inter({
 export default function Home({
   isConnected,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  const { toast } = useToast()
+
+  useEffect(() => {
+    if (!isConnected) {
+      toast({
+        title: 'Heads Up!',
+        description: 'You are NOT connected to the database.',
+        action: (
+          <ToastAction altText="Goto schedule to undo">Clear</ToastAction>
+        ),
+      })
+    }
+  }, [isConnected, toast])
+
   const writers = [
     {
       name: 'Dr. Shayla',
@@ -1154,17 +1168,7 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
         </div>
       </main>
       <Footer />
-
-      {!isConnected ? (
-        <div className="sticky z-50 w-1/4 bottom-2 right-2 ml-auto">
-          <Alert>
-            <AlertTitle>Heads up!</AlertTitle>
-            <AlertDescription>
-              You are NOT connected to the database.
-            </AlertDescription>
-          </Alert>
-        </div>
-      ) : null}
+      <Toaster />
     </div>
   )
 }
