@@ -5,8 +5,6 @@ import classNames from '../../../libs/utils/ClassNames'
 import Navigation from '@/components/Navigation'
 import { Inter } from 'next/font/google'
 import Footer from '@/components/Footer'
-import { LogoImg } from '@/components/LogoImg'
-import Link from 'next/link'
 import { UserCircleIcon, InboxIcon, PhoneIcon } from '@heroicons/react/24/solid'
 import { useEffect, useState } from 'react'
 const inter = Inter({
@@ -45,14 +43,7 @@ export default function MePage() {
           'flex min-h-screen flex-col items-center',
         )}
       >
-        <div className="bg-bermuda w-full z-50 px-4 xl:px-0">
-          <div className="z-10 max-w-7xl mx-auto w-full items-center justify-between font-mono text-sm lg:flex">
-            <Link href="/">
-              <LogoImg />
-            </Link>
-            <NavigationMenu />
-          </div>
-        </div>
+        <Navigation />
         <div className="w-full">
           <section className="relative block h-500-px">
             <div className="absolute top-0 w-full h-full bg-center bg-cover bg-gray-600">
