@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import { Toaster } from '@/components/ui/toaster'
-import { Inter } from 'next/font/google'
+import { Inter, Lexend } from 'next/font/google'
 import Head from 'next/head'
 import Footer from '@/components/Footer'
 import Link from 'next/link'
@@ -40,6 +40,11 @@ export const getServerSideProps: GetServerSideProps<
 }
 
 const inter = Inter({
+  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
+  subsets: ['latin'],
+})
+
+const lexend = Lexend({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
   subsets: ['latin'],
 })
@@ -173,15 +178,20 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
           <Container className="xl:px-0 pb-24 pt-56 lg:pt-44 lg:pb-36">
             <div className="lg:grid lg:grid-cols-2">
               <div className="flex flex-col justify-center">
-                <h1 className="text-4xl text-center lg:text-left md:text-5xl lg:text-7xl text-white font-black leading-tight tracking-tight py-2 lg:py-0">
+                <h1
+                  className={classNames(
+                    lexend.className,
+                    'text-4xl text-center lg:text-left md:text-5xl lg:text-7xl text-white font-medium leading-tight tracking-tight py-2 lg:py-0',
+                  )}
+                >
                   Professional Essay & Academic Writers
                 </h1>
-                <p className="text-white opacity-75 text-lg text-center lg:text-left lg:text-2xl py-6 leading-normal">
+                <p className="py-6 max-w-2xl text-lg tracking-tight text-white/80">
                   We write your papers - you get top grades!
                 </p>
                 <button
                   type="button"
-                  className="bg-green-400 w-44 py-3 px-8 text-xl rounded-2xl text-white font-semibold hidden lg:inline-block mt-4 transform hover:scale-105 transition ease-in-out duration-100"
+                  className="bg-teal-300 w-44 py-3 px-8 text-xl rounded-full text-black font-semibold hidden lg:inline-block mt-4 transform hover:scale-105 transition ease-in-out duration-100"
                 >
                   Order Now
                 </button>
@@ -193,19 +203,24 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
           </Container>
         </div>
 
-        <Container className="xl:px-0 pb-20">
-          <div className="space-y-2 pt-20 pb-16">
-            <h2 className="text-5xl font-bold leading-none text-bermuda text-center">
+        <Container className="xl:px-0 pb-28 pt-20 sm:py-32">
+          <div className="max-w-2xl md:mx-auto md:text-center xl:max-w-none">
+            <h2
+              className={classNames(
+                lexend.className,
+                'text-3xl tracking-tight sm:text-4xl md:text-5xl text-bermuda text-center',
+              )}
+            >
               Choose Your Writer
             </h2>
-            <p className="lg:text-md lg:max-w-lg mx-auto text-center text-gray-900">
+            <p className="mt-6 text-lg tracking-tight text-slate-600">
               EssayDon expert writers are online and available for hire. Read
               through their profiles, and sample assignments to find your
               perfect match.
             </p>
           </div>
-          <div className="flex flex-col lg:flex-row">
-            <div className="flex flex-col items-center justify-center pb-16 lg:pb-0">
+          <div className="mt-16 flex flex-col lg:flex-row">
+            <div className="flex flex-col items-center justify-center pb-16 lg:pr-4 lg:pb-0">
               <button type={'button'}>
                 <svg
                   width="60"
@@ -216,12 +231,12 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
                 >
                   <path
                     d="M30 41.6666L34.0834 37.5833L29.4167 32.9166L41.6667 32.9166L41.6667 27.0833H29.4167L34.0834 22.4166L30 18.3333L18.3334 30L30 41.6666ZM30 59.1666C25.9653 59.1666 22.1737 58.4005 18.625 56.8683C15.0764 55.338 11.9896 53.2604 9.36463 50.6354C6.73963 48.0104 4.66199 44.9236 3.13171 41.375C1.59949 37.8264 0.833374 34.0347 0.833374 30C0.833374 25.9653 1.59949 22.1736 3.13171 18.625C4.66199 15.0764 6.73963 11.9896 9.36463 9.36456C11.9896 6.73956 15.0764 4.66095 18.625 3.12873C22.1737 1.59845 25.9653 0.833313 30 0.833313C34.0348 0.833313 37.8264 1.59845 41.375 3.12873C44.9237 4.66095 48.0105 6.73956 50.6355 9.36456C53.2605 11.9896 55.3381 15.0764 56.8684 18.625C58.4006 22.1736 59.1667 25.9653 59.1667 30C59.1667 34.0347 58.4006 37.8264 56.8684 41.375C55.3381 44.9236 53.2605 48.0104 50.6355 50.6354C48.0105 53.2604 44.9237 55.338 41.375 56.8683C37.8264 58.4005 34.0348 59.1666 30 59.1666Z"
-                    fill="#36C880"
+                    fill="#0f80de"
                   />
                 </svg>
               </button>
             </div>
-            <div className="flex-1 grid space-y-16 lg:space-y-0 lg:grid-cols-3 max-w-6xl mx-auto">
+            <div className="flex-1 grid lg:gap-16 space-y-16 lg:space-y-0 lg:grid-cols-3 max-w-6xl mx-auto">
               {writers.map((writer, index) => (
                 <Link
                   key={index}
@@ -239,7 +254,12 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
                       />
                     </div>
                     <div>
-                      <h4 className="text-lg font-semibold leading-none">
+                      <h4
+                        className={classNames(
+                          lexend.className,
+                          'text-lg font-semibold leading-none',
+                        )}
+                      >
                         {writer.name}
                       </h4>
                       <p className="text-sm leading-tight py-2">
@@ -258,7 +278,7 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
                             aria-hidden="true"
                           />
                         ))}
-                        <span>
+                        <span className={classNames(lexend.className)}>
                           {writer.rating} ({writer.reviewCount})
                         </span>
                       </div>
@@ -266,7 +286,12 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
                   </div>
                   {writer.featured_work.map((work, i) => (
                     <div key={i} className="flex flex-col">
-                      <h5 className="font-semibold text-black text-sm leading-tight text-center pt-3">
+                      <h5
+                        className={classNames(
+                          lexend.className,
+                          'font-semibold text-slate-700 text-sm leading-tight text-center pt-3',
+                        )}
+                      >
                         {work.title}
                       </h5>
                       <div className="grid grid-cols-2 pt-5">
@@ -311,16 +336,16 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
                       </div>
                       <button
                         type="button"
-                        className="bg-green-400 rounded-md text-white py-3 mt-4"
+                        className="bg-bermuda rounded-full text-white text-sm font-semibold py-3 mt-4"
                       >
-                        <span className="">Hire A Writer</span>
+                        <span className="">Hire Writer</span>
                       </button>
                     </div>
                   ))}
                 </Link>
               ))}
             </div>
-            <div className="flex flex-col items-center justify-center pt-16 lg:pt-0">
+            <div className="flex flex-col items-center justify-center pt-16 lg:pl-4 lg:pt-0">
               <button type={'button'}>
                 <svg
                   width="60"
@@ -331,7 +356,7 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
                 >
                   <path
                     d="M30.0001 18.3334L25.9167 22.4167L30.5834 27.0834L18.3334 27.0834L18.3334 32.9167L30.5834 32.9167L25.9167 37.5834L30.0001 41.6667L41.6667 30L30.0001 18.3334ZM30.0001 0.833356C34.0348 0.833357 37.8265 1.59947 41.3751 3.13169C44.9237 4.66197 48.0105 6.7396 50.6355 9.3646C53.2605 11.9896 55.3381 15.0764 56.8684 18.625C58.4006 22.1736 59.1668 25.9653 59.1668 30C59.1668 34.0347 58.4006 37.8264 56.8684 41.375C55.3381 44.9236 53.2605 48.0104 50.6355 50.6354C48.0105 53.2604 44.9237 55.339 41.3751 56.8713C37.8265 58.4015 34.0348 59.1667 30.0001 59.1667C25.9654 59.1667 22.1737 58.4015 18.6251 56.8713C15.0765 55.339 11.9897 53.2604 9.36466 50.6354C6.73966 48.0104 4.66202 44.9236 3.13174 41.375C1.59952 37.8264 0.833411 34.0347 0.833411 30C0.833411 25.9653 1.59952 22.1736 3.13174 18.625C4.66203 15.0764 6.73966 11.9896 9.36466 9.3646C11.9897 6.7396 15.0765 4.66196 18.6251 3.13169C22.1737 1.59946 25.9654 0.833356 30.0001 0.833356Z"
-                    fill="#36C880"
+                    fill="#0f80de"
                   />
                 </svg>
               </button>
@@ -340,13 +365,18 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
         </Container>
 
         <div className="bg-reef w-full">
-          <Container className="xl:px-0 pb-20">
-            <div className="space-y-2 pt-20 pb-16">
-              <h2 className="text-5xl font-bold leading-none text-bermuda text-center">
+          <Container className="xl:px-0 pb-28 pt-20 sm:py-32">
+            <div className="max-w-2xl md:mx-auto md:text-center xl:max-w-none">
+              <h2
+                className={classNames(
+                  lexend.className,
+                  'text-3xl tracking-tight sm:text-4xl md:text-5xl text-bermuda text-center',
+                )}
+              >
                 How To Place An Order
               </h2>
             </div>
-            <div className="grid lg:gap-8 lg:grid-cols-4 space-y-16 lg:space-y-0 mx-auto relative">
+            <div className="mt-32 mb-20 grid lg:gap-8 lg:grid-cols-4 space-y-16 lg:space-y-0 mx-auto relative">
               <div className="flex flex-col">
                 <div className="flex-1 flex items-center justify-center pb-11">
                   <Image
@@ -359,10 +389,15 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
                   />
                 </div>
                 <div className="flex-1 flex flex-col items-center justify-center">
-                  <h6 className="text-center font-semibold text-slate-900 text-xl pb-1.5">
+                  <h6
+                    className={classNames(
+                      lexend.className,
+                      'text-center font-semibold text-slate-900 text-xl pb-1.5',
+                    )}
+                  >
                     1. Submit instructions
                   </h6>
-                  <p className="text-center text-xl font-medium">
+                  <p className="text-center text-lg font-light">
                     Fill out an order form and include as much detail as
                     possible.
                   </p>
@@ -370,10 +405,15 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
               </div>
               <div className="flex flex-col-reverse lg:flex-col">
                 <div className="flex-1 flex flex-col items-center justify-center pb-0 lg:pb-11">
-                  <h6 className="text-center font-semibold text-slate-900 text-xl pb-1.5">
+                  <h6
+                    className={classNames(
+                      lexend.className,
+                      'text-center font-semibold text-slate-900 text-xl pb-1.5',
+                    )}
+                  >
                     2. Choose writer
                   </h6>
-                  <p className="text-center text-xl font-medium">
+                  <p className="text-center text-lg font-light">
                     Pick a writer or leave it to our AI matching system, then
                     add funds
                   </p>
@@ -401,10 +441,15 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
                   />
                 </div>
                 <div className="flex-1 flex flex-col items-center justify-center">
-                  <h6 className="text-center font-semibold text-slate-900 text-xl pb-1.5">
-                    3.Track order
+                  <h6
+                    className={classNames(
+                      lexend.className,
+                      'text-center font-semibold text-slate-900 text-xl pb-1.5',
+                    )}
+                  >
+                    3. Track order
                   </h6>
-                  <p className="text-center text-xl font-medium">
+                  <p className="text-center text-lg font-light">
                     Check the status of your order or chat with your writer at
                     any time.
                   </p>
@@ -412,10 +457,15 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
               </div>
               <div className="flex flex-col-reverse lg:flex-col">
                 <div className="flex-1 flex flex-col items-center justify-center pb-0 lg:pb-11">
-                  <h6 className="text-center font-semibold text-slate-900 text-xl pb-1.5">
-                    4.Check paper
+                  <h6
+                    className={classNames(
+                      lexend.className,
+                      'text-center font-semibold text-slate-900 text-xl pb-1.5',
+                    )}
+                  >
+                    4. Check paper
                   </h6>
-                  <p className="text-center text-xl font-medium">
+                  <p className="text-center text-lg font-light">
                     Revise your paper and release funds to the writer when
                     you’re satisfied.
                   </p>
@@ -445,37 +495,77 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
           </Container>
         </div>
 
-        <Container className="xl:px-0 pb-20">
-          <div className="space-y-4 pt-20 pb-24">
-            <h2 className="text-5xl font-bold leading-none text-bermuda text-center">
+        <Container className="xl:px-0 pb-28 pt-20 sm:py-32">
+          <div className="max-w-2xl md:mx-auto md:text-center xl:max-w-none">
+            <h2
+              className={classNames(
+                lexend.className,
+                'text-3xl tracking-tight sm:text-4xl md:text-5xl text-bermuda text-center',
+              )}
+            >
               Proctor Owl Activity
             </h2>
           </div>
-          <div className="grid space-y-16 lg:space-y-0 lg:grid-cols-2 mx-auto">
+          <div className="mt-16 grid gap-12 space-y-16 lg:space-y-0 lg:grid-cols-2 mx-auto">
             <div className="flex items-center justify-center">
               <div className="space-y-3">
-                <h1 className="font-bold text-8xl text-bermuda">95,000</h1>
+                <h1
+                  className={classNames(
+                    lexend.className,
+                    'font-semibold text-8xl text-bermuda',
+                  )}
+                >
+                  95,000
+                </h1>
                 <p>completed orders</p>
               </div>
             </div>
             <div className="flex flex-col space-y-6">
-              <div className="grid grid-cols-2">
+              <div className="grid gap-4 grid-cols-2">
                 <div>
-                  <h1 className="font-bold text-6xl text-bermuda">512</h1>
+                  <h1
+                    className={classNames(
+                      lexend.className,
+                      'font-bold text-6xl text-bermuda',
+                    )}
+                  >
+                    512
+                  </h1>
                   <p>Professional Writers</p>
                 </div>
                 <div>
-                  <h1 className="font-bold text-6xl text-bermuda">60</h1>
+                  <h1
+                    className={classNames(
+                      lexend.className,
+                      'font-bold text-6xl text-bermuda',
+                    )}
+                  >
+                    60
+                  </h1>
                   <p>Writers Online</p>
                 </div>
               </div>
-              <div className="grid grid-cols-2">
+              <div className="grid gap-4 grid-cols-2">
                 <div>
-                  <h1 className="font-bold text-6xl text-bermuda">12</h1>
+                  <h1
+                    className={classNames(
+                      lexend.className,
+                      'font-bold text-6xl text-bermuda',
+                    )}
+                  >
+                    12
+                  </h1>
                   <p>Support Staff Online</p>
                 </div>
                 <div>
-                  <h1 className="font-bold text-6xl text-bermuda">4.9/5</h1>
+                  <h1
+                    className={classNames(
+                      lexend.className,
+                      'font-bold text-6xl text-bermuda',
+                    )}
+                  >
+                    4.9/5
+                  </h1>
                   <p>Average Writer’s Score</p>
                 </div>
               </div>
@@ -487,10 +577,15 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
           <Container className="xl:px-0 py-32">
             <div className="grid space-y-16 lg:space-y-0 lg:grid-cols-2 max-w-6xl mx-auto">
               <div className="col-span-1">
-                <h1 className="text-white font-bold text-[52px] tracking-tight leading-[63px] capitalize pb-2">
+                <h1
+                  className={classNames(
+                    lexend.className,
+                    'text-white font-bold text-[52px] tracking-tight leading-[63px] capitalize pb-2',
+                  )}
+                >
                   Find out what your paper will cost
                 </h1>
-                <p className="text-white font-normal text-xl">
+                <p className="my-6 text-white/80 font-normal text-xl">
                   Prices start at $13.5 for writing and $8.5 for editing.
                 </p>
                 <ul
@@ -517,7 +612,12 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
 
         <Container className="xl:px-0 pb-20">
           <div className="space-y-2 pt-20 pb-16">
-            <h2 className="text-4xl max-w-xl mx-auto font-bold leading-none text-gray-900 text-center capitalize">
+            <h2
+              className={classNames(
+                lexend.className,
+                'text-4xl max-w-xl mx-auto font-bold leading-none text-gray-900 text-center capitalize',
+              )}
+            >
               Reviews, comments, and love from papers owl customers and
               community
             </h2>
@@ -573,7 +673,12 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
         <div className="bg-reef w-full">
           <Container className="xl:px-0 pb-20">
             <div className="space-y-2 pt-20 pb-16">
-              <h2 className="text-5xl font-bold leading-none text-bermuda text-center">
+              <h2
+                className={classNames(
+                  lexend.className,
+                  'text-5xl font-bold leading-none text-bermuda text-center',
+                )}
+              >
                 Guarantees
               </h2>
               <p className="lg:text-md lg:max-w-lg mx-auto text-center text-gray-900">
@@ -639,7 +744,12 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
         <div className="w-full bg-gradient-radial from-plumes to-bermuda">
           <Container className="xl:px-0 pb-20">
             <div className="space-y-2 pt-20 pb-16">
-              <h2 className="text-white font-bold text-[52px] tracking-tight leading-[63px] capitalize text-center">
+              <h2
+                className={classNames(
+                  lexend.className,
+                  'text-white font-bold text-[52px] tracking-tight leading-[63px] capitalize text-center',
+                )}
+              >
                 Why Choose Us
               </h2>
               <p className="md:text-md md:max-w-xs mx-auto text-center text-white ">
@@ -708,9 +818,9 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
               </div>
               <button
                 type="button"
-                className="bg-green-400 rounded-md text-white py-3 px-12"
+                className="bg-teal-300 rounded-md text-white py-3 px-12"
               >
-                <span className="font-bold">Order Now</span>
+                <span className="font-bold text-black">Order Now</span>
               </button>
             </div>
           </Container>
@@ -718,10 +828,15 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
 
         <Container className="xl:px-0 pb-20">
           <div className="space-y-4 pt-20 pb-8">
-            <h2 className="text-5xl max-w-2xl mx-auto font-bold leading-none text-bermuda text-center capitalize">
+            <h2
+              className={classNames(
+                lexend.className,
+                'text-5xl max-w-2xl mx-auto font-bold leading-none text-bermuda text-center capitalize',
+              )}
+            >
               Frequently Asked Questions about Custom Writing.
             </h2>
-            <p className="text-2xl lg:max-w-lg mx-auto text-center text-bermuda">
+            <p className="text-2xl lg:max-w-lg mx-auto text-center tracking-tight text-slate-600">
               What to expect in this virtual service?
             </p>
           </div>
@@ -801,10 +916,15 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
         <div className="w-full bg-reef">
           <Container className="xl:px-0 pb-20 bg-reef">
             <div className="space-y-2 pt-20 pb-16">
-              <h2 className="text-4xl max-w-xl mx-auto font-bold leading-none text-gray-900 text-center">
+              <h2
+                className={classNames(
+                  lexend.className,
+                  'text-4xl max-w-xl mx-auto font-bold leading-none tracking-tight text-gray-900 text-center',
+                )}
+              >
                 Do You Need an Essay Writer?
               </h2>
-              <p className="text-2xl lg:max-w-lg mx-auto text-center  text-bermuda">
+              <p className="text-2xl lg:max-w-lg mx-auto text-center tracking-tight text-slate-600">
                 What to expect in this virtual service?
               </p>
               <p className="max-w-5xl mx-auto text-center text-slate-600 pt-6">
@@ -994,7 +1114,12 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
 
         <Container className="xl:px-0 pb-20">
           <div className="space-y-2 pt-20 pb-16">
-            <h2 className="text-4xl max-w-xl mx-auto font-bold leading-none text-gray-900 text-center">
+            <h2
+              className={classNames(
+                lexend.className,
+                'text-4xl max-w-xl mx-auto font-bold leading-none text-gray-900 text-center',
+              )}
+            >
               What You Get in the End
             </h2>
             <p className="text-2xl lg:max-w-lg mx-auto text-center text-bermuda">
@@ -1078,7 +1203,12 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
         <div className="w-full bg-gradient-radial from-plumes to-bermuda">
           <Container className="xl:px-0 pb-20">
             <div className="space-y-2 pt-20 pb-16">
-              <h2 className="text-white font-bold text-[52px] tracking-tight leading-[63px] capitalize text-center">
+              <h2
+                className={classNames(
+                  lexend.className,
+                  'text-white font-bold text-[52px] tracking-tight leading-[63px] capitalize text-center',
+                )}
+              >
                 Blog
               </h2>
               <p className="text-2xl lg:max-w-lg mx-auto text-center text-white">
@@ -1159,7 +1289,7 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
             <div className="flex justify-center align-center pt-16">
               <button
                 type="button"
-                className="bg-green-400 w-44 py-3 px-8 text-xl rounded-2xl text-white font-semibold hidden lg:inline-block mt-4 transform hover:scale-105 transition ease-in-out duration-100"
+                className="bg-teal-300 w-44 py-3 px-8 text-xl rounded-2xl text-black font-semibold hidden lg:inline-block mt-4 transform hover:scale-105 transition ease-in-out duration-100"
               >
                 Order Now
               </button>

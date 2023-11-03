@@ -12,6 +12,11 @@ const inter = Inter({
   subsets: ['latin'],
 })
 
+const fetchJWT = async () => {
+  const res = await fetch('/api/examples/jwt')
+  return await res.json()
+}
+
 export default function MePage() {
   const { data: session, status } = useSession()
 
@@ -19,14 +24,9 @@ export default function MePage() {
 
   // Fetch content from protected route
   useEffect(() => {
-    const fetchData = async () => {
-      const res = await fetch('/api/examples/jwt')
-      const json = await res.json()
-      if (json) {
-        setContent(json)
-      }
-    }
-    fetchData().catch((e) => console.log(e))
+    fetchJWT()
+      .then((json) => setContent(json))
+      .catch((e) => console.log(e))
   }, [session])
 
   return (

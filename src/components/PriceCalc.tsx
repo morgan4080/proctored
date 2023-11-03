@@ -1,6 +1,7 @@
 import { useForm } from 'react-hook-form'
-import { useEffect, useState } from 'react'
-import ListBox from '@/components/ListBox'
+import React, { useEffect, useState } from 'react'
+import { Inter, Lexend } from 'next/font/google'
+import classNames from '../../libs/utils/ClassNames'
 type StoreDataType = {
   id: number
   level: string
@@ -9,6 +10,17 @@ type StoreDataType = {
   subjects0: string[]
   subjects: string[]
 }
+
+const inter = Inter({
+  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
+  subsets: ['latin'],
+})
+
+const lexend = Lexend({
+  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
+  subsets: ['latin'],
+})
+
 const PriceCalc = (): JSX.Element => {
   const [storedata, setStoreData] = useState<StoreDataType[]>([])
 
@@ -93,7 +105,12 @@ const PriceCalc = (): JSX.Element => {
   }, [getValues, setValue, watch])
 
   return (
-    <div className="flex flex-col py-6 lg:py-0 max-w-xs">
+    <div
+      className={classNames(
+        inter.className,
+        'flex flex-col py-6 lg:py-0 max-w-xs',
+      )}
+    >
       <select
         {...register('subject')}
         className="bg-transparent border-2 border-white font-bold text-white p-3 rounded shadow-sm focus:outline-none focus:shadow-outline-blue"
@@ -159,7 +176,11 @@ const PriceCalc = (): JSX.Element => {
           </button>
         </div>
       </div>
-      <div className="bg-transparent font-black text-white text-5xl mt-4 p-3 text-center">
+      <div
+        className={classNames(
+          'bg-transparent font-black text-white text-5xl mt-4 p-3 text-center',
+        )}
+      >
         {totalPrice} $
       </div>
     </div>

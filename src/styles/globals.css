@@ -74,3 +74,36 @@
     @apply bg-background text-foreground;
   }
 }
+
+.NavigationMenuTrigger,
+.NavigationMenuLink {
+  padding: 8px 12px;
+  outline: none;
+  user-select: none;
+  font-weight: 500;
+  line-height: 1;
+  border-radius: 4px;
+  font-size: 15px;
+  background-color: transparent;
+  color: white;
+}
+
+.NavigationMenuContent {
+  background-color: blanchedalmond;
+}
+
+.tip {
+  font-size: inherit;
+  font-family: inherit;
+  color: #000;
+  margin: 0.1rem;
+  border: 1px solid black;
+  border-radius: 0.3rem;
+  padding: 0.1rem 0.4rem;
+  background: white;
+  accent-color: black;
+}
+
+div > .tiptap .ProseMirror .added {
+  @apply border
+}
