@@ -1,38 +1,77 @@
+import React, { useEffect } from 'react'
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+import Link from 'next/link'
 import Head from 'next/head'
 import classNames from '../../../libs/utils/ClassNames'
 import Navigation from '@/components/Navigation'
 import { Inter, Lexend } from 'next/font/google'
 import { Container } from '@/components/Container'
-import React from 'react'
-import { GetStaticProps, InferGetServerSidePropsType } from 'next'
-import { fetcher } from '@/lib/utils'
 import { Service } from '@/lib/service_types'
 import Footer from '@/components/Footer'
-import Link from 'next/link'
+import mongoClient from '../../../libs/mongodb'
+import { useToast } from '@/components/ui/use-toast'
+import { ToastAction } from '@/components/ui/toast'
+import { Toaster } from '@/components/ui/toaster'
 
 const inter = Inter({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
   subsets: ['latin'],
 })
+
 const lexend = Lexend({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
   subsets: ['latin'],
 })
 
+const { clientPromise } = mongoClient
+
 export const getServerSideProps = (async () => {
-  const { data, message } = await fetcher(
-    process.env.NEXTAUTH_URL + '/api/blogs',
-  )
-  const blogs: Service[] = data
-  return {
-    props: { blgs: blogs, revalidate: 60 },
+  try {
+    const client = await clientPromise
+    const db = client.db('proctor')
+    let blogs = await db
+      .collection<Service>('blogs')
+      .find({})
+      .sort({ metacritic: -1 })
+      .limit(10)
+      .toArray()
+    blogs = blogs.map((blog) => {
+      return {
+        ...blog,
+        _id: blog._id.toString(),
+      }
+    })
+    return {
+      props: { blogs: blogs, isConnected: true },
+    }
+  } catch (e) {
+    console.error(e)
+    return {
+      props: { blogs: [], isConnected: false },
+    }
   }
-}) satisfies GetStaticProps<{
-  blgs: Service[]
+}) satisfies GetServerSideProps<{
+  blogs: Service[]
+  isConnected: boolean
 }>
 const Blogs = ({
-  blgs,
+  blogs,
+  isConnected,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+  const { toast } = useToast()
+
+  useEffect(() => {
+    if (!isConnected) {
+      toast({
+        title: 'Heads Up!',
+        description: 'You are NOT connected to the database.',
+        action: (
+          <ToastAction altText="Goto schedule to undo">Clear</ToastAction>
+        ),
+      })
+    }
+  }, [isConnected, toast])
+
   return (
     <div className="relative">
       <Head>
@@ -70,7 +109,7 @@ const Blogs = ({
               </p>
             </div>
             <div className="mx-auto mt-10 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 border-t border-gray-200 pt-10 sm:mt-16 sm:pt-16 lg:mx-0 lg:max-w-none lg:grid-cols-3">
-              {blgs.map((blog) => (
+              {blogs.map((blog) => (
                 <article
                   key={blog._id}
                   className="flex max-w-xl flex-col items-start justify-between"
@@ -106,6 +145,7 @@ const Blogs = ({
         </Container>
       </main>
       <Footer />
+      <Toaster />
     </div>
   )
 }

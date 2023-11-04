@@ -19,4 +19,13 @@ export default withAuth({
     },
   },
 })
-export const config = { matcher: ['/admin', '/me'] }
+export const config = {
+  matcher: [
+    '/admin',
+    '/all-services',
+    '/all-blogs',
+    '/all-orders',
+    '/all-papers',
+    '/me',
+  ],
+}

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import ErrorPage from 'next/error'
-import useSWR from 'swr'
 import type { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import Navigation from '@/components/Navigation'
 import Head from 'next/head'
@@ -9,7 +8,7 @@ import { Inter, Lexend } from 'next/font/google'
 import { Container } from '@/components/Container'
 import Footer from '@/components/Footer'
 import { Toaster } from '@/components/ui/toaster'
-import { EditorProvider, useCurrentEditor, FloatingMenu } from '@tiptap/react'
+import { EditorProvider, useCurrentEditor } from '@tiptap/react'
 import { Color } from '@tiptap/extension-color'
 import ListItem from '@tiptap/extension-list-item'
 import TextStyle from '@tiptap/extension-text-style'
@@ -21,9 +20,10 @@ import { Button } from '@/components/ui/button'
 import { ToastAction } from '@/components/ui/toast'
 import { useSession } from 'next-auth/react'
 import { Loader2 } from 'lucide-react'
-import { useRouter } from 'next/router'
-import { fetcher, updateService } from '@/lib/utils'
 import { Service } from '@/lib/service_types'
+import mongoClient from '../../../libs/mongodb'
+import useSWR from 'swr'
+import { fetcher, updateService } from '@/lib/utils'
 
 const inter = Inter({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
@@ -37,10 +37,10 @@ const lexend = Lexend({
 
 const Blog = ({
   blg,
+  isConnected,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const [editing, setEditing] = useState(false)
   const [loading, setLoading] = useState(false)
-  const router = useRouter()
   const { data: session, status } = useSession()
   const [blog, setService] = useState(blg)
   const url = blg == null ? '' : blg.slug
@@ -81,11 +81,10 @@ const Blog = ({
           setLoading(false)
           setEditing(false)
         })
-        .catch((error) => {})
     }
   }
 
-  if ((!router.isFallback && !blog?.slug) || blog == null) {
+  if (blog == null) {
     return <ErrorPage statusCode={404} />
   } else {
     return (
@@ -451,14 +450,35 @@ const MenuBar = ({
 }
 
 export const getServerSideProps = (async ({ params }) => {
-  const url = params ? '/api/blogs?slug=' + params.slug : '/api/blogs'
-  const { data, message } = await fetcher(process.env.NEXTAUTH_URL + url)
-  const blogs: Service[] = data
-  return {
-    props: { blg: blogs.length > 0 ? blogs[0] : null, revalidate: 60 },
+  try {
+    const { slug } = params as { slug: string }
+    const { clientPromise } = mongoClient
+    const client = await clientPromise
+    const db = client.db('proctor')
+    const blog = await db.collection<Service>('blogs').findOne({ slug: slug })
+    return {
+      props: {
+        blg: blog
+          ? {
+              ...blog,
+              _id: blog._id.toString(),
+            }
+          : null,
+        isConnected: true,
+      },
+    }
+  } catch (e) {
+    console.error(e)
+    return {
+      props: {
+        blg: null,
+        isConnected: false,
+      },
+    }
   }
 }) satisfies GetServerSideProps<{
   blg: Service | null
+  isConnected: boolean
 }>
 
 export default Blog

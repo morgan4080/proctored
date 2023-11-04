@@ -3,219 +3,155 @@ import Image from 'next/image'
 import Head from 'next/head'
 import classNames from '../../../libs/utils/ClassNames'
 import Navigation from '@/components/Navigation'
-import { Inter } from 'next/font/google'
+import { Inter, Lexend } from 'next/font/google'
 import Footer from '@/components/Footer'
 import { UserCircleIcon, InboxIcon, PhoneIcon } from '@heroicons/react/24/solid'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { Container } from '@/components/Container'
+import OrderTable from '@/components/OrdersTable'
 const inter = Inter({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
   subsets: ['latin'],
 })
 
-const fetchJWT = async () => {
-  const res = await fetch('/api/examples/jwt')
-  return await res.json()
-}
+const lexend = Lexend({
+  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
+  subsets: ['latin'],
+})
 
 export default function MePage() {
   const { data: session, status } = useSession()
 
-  const [content, setContent] = useState<any>()
-
-  // Fetch content from protected route
-  useEffect(() => {
-    fetchJWT()
-      .then((json) => setContent(json))
-      .catch((e) => console.log(e))
-  }, [session])
-
   return (
     <>
       <Head>
-        <title>PROCTOR OWLS</title>
-        <meta name="description" content="We take proctored exams for you" />
+        <title>PROCTOR OWLS | Personal Profile</title>
+        <meta name="description" content="Your profile" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main
         className={classNames(
           inter.className,
-          'flex min-h-screen flex-col items-center',
+          'flex min-h-screen flex-col relative',
         )}
       >
-        <Navigation />
-        <div className="w-full">
-          <section className="relative block h-500-px">
-            <div className="absolute top-0 w-full h-full bg-center bg-cover bg-gray-600">
-              <span
-                id="blackOverlay"
-                className="w-full h-full absolute opacity-50 bg-black"
-              ></span>
-            </div>
-            <div
-              className="top-auto bottom-0 left-0 right-0 w-full absolute pointer-events-none overflow-hidden h-70-px"
-              style={{ transform: 'translateZ(0px)' }}
-            >
-              <svg
-                className="absolute bottom-0 overflow-hidden"
-                xmlns="http://www.w3.org/2000/svg"
-                preserveAspectRatio="none"
-                version="1.1"
-                viewBox="0 0 2560 100"
-                x="0"
-                y="0"
-              >
-                <polygon
-                  className="text-gray-200 fill-current"
-                  points="2560 0 2560 100 0 100"
-                ></polygon>
-              </svg>
-            </div>
-          </section>
-          <section className="relative py-16">
-            <div className="container mx-auto px-4">
-              <div className="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-xl rounded-lg -mt-64">
-                <div className="px-6">
-                  <div className="flex flex-wrap justify-center">
-                    <div className="w-full lg:w-3/12 px-4 lg:order-2 flex justify-center relative">
-                      {session?.user && (
-                        <Image
-                          unoptimized
-                          alt={'logo'}
-                          width={100}
-                          height={100}
-                          src={`${session.user?.image}`}
-                          className="shadow-xl rounded-full h-auto align-middle absolute -top-12 border-none"
-                        />
-                      )}
-                    </div>
-                    <div className="w-full lg:w-4/12 px-4 lg:order-3 lg:text-right lg:self-center">
-                      <div className="py-6 px-3 mt-32 sm:mt-0 max-w-xs space-x-4">
-                        <button
-                          className="bg-bermuda active:bg-black uppercase text-white font-bold hover:shadow-md shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 mb-1 ease-linear transition-all duration-150"
-                          type="button"
-                        >
-                          ODER NOW
-                        </button>
-                        <button
-                          className="bg-green-400 active:bg-black uppercase text-white font-bold hover:shadow-md shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 mb-1 ease-linear transition-all duration-150"
-                          type="button"
-                        >
-                          CONTACT US
-                        </button>
-                      </div>
-                    </div>
-                    <div className="w-full lg:w-4/12 px-4 lg:order-1">
-                      <div className="flex justify-center py-4 lg:pt-4 pt-8">
-                        <div className="mr-4 p-3 text-center">
-                          <span className="text-xl font-bold block uppercase tracking-wide text-gray-600">
-                            22
-                          </span>
-                          <span className="text-sm text-gray-400">Orders</span>
-                        </div>
-                        <div className="mr-4 p-3 text-center">
-                          <span className="text-xl font-bold block uppercase tracking-wide text-gray-600">
-                            10
-                          </span>
-                          <span className="text-sm text-gray-400">Pending</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="text-center mt-12">
-                    <h3 className="text-4xl font-semibold leading-normal mb-2">
-                      {session ? session.user?.name : ''}
-                    </h3>
-                    <div className="text-sm leading-normal mt-0 mb-2 font-bold uppercase">
-                      <UserCircleIcon className="h-6 w-6 text-gray-500 mr-2 inline-flex" />
-                      {content ? content.userRole : ''} PAGE
-                    </div>
-                    <div className="mb-2 mt-10">
-                      <InboxIcon className="h-4 w-4 text-gray-500 mr-2 inline-flex" />
-                      {session?.user?.email}
-                    </div>
-                    {content && content.phoneNumber && (
-                      <div className="mb-2">
-                        <PhoneIcon className="h-4 w-4 text-gray-500 mr-2 inline-flex" />
-                        {content.phoneNumber}
-                      </div>
-                    )}
-                  </div>
-                  <div className="mt-10 py-10 border-t border-gray-200 text-center">
-                    <div className="flex flex-wrap justify-center">
-                      <div className="w-full lg:w-9/12 px-4">
-                        <div className="overflow-x-scroll">
-                          <table className="min-w-full">
-                            <thead className="bg-white border-b">
-                              <tr>
-                                <th
-                                  scope="col"
-                                  className="text-sm font-medium text-gray-900 px-6 py-4 text-center"
-                                >
-                                  #
-                                </th>
-                                <th
-                                  scope="col"
-                                  className="text-sm font-medium text-gray-900 px-6 py-4 text-center"
-                                >
-                                  First
-                                </th>
-                                <th
-                                  scope="col"
-                                  className="text-sm font-medium text-gray-900 px-6 py-4 text-center"
-                                >
-                                  Last
-                                </th>
-                                <th
-                                  scope="col"
-                                  className="text-sm font-medium text-gray-900 px-6 py-4 text-center"
-                                >
-                                  Handle
-                                </th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <tr className="bg-gray-100 border-b">
-                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                  1
-                                </td>
-                                <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                                  Mark
-                                </td>
-                                <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                                  Otto
-                                </td>
-                                <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                                  @mdo
-                                </td>
-                              </tr>
-                              <tr className="bg-white border-b">
-                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                  2
-                                </td>
-                                <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                                  Jacob
-                                </td>
-                                <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                                  Dillan
-                                </td>
-                                <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                                  @fat
-                                </td>
-                              </tr>
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
+        <div className="bg-bermuda/95 w-full">
+          <Navigation />
         </div>
-      </main>
 
+        <Container
+          className="xl:px-0"
+          parentClassName="pt-10 md:pt-20 bg-white w-full"
+        >
+          <div className="lg:flex lg:items-center lg:justify-between">
+            <div className="min-w-0 flex-1">
+              <h2
+                className={classNames(
+                  lexend.className,
+                  'text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl',
+                )}
+              >
+                {session ? session.user?.name : ''}
+              </h2>
+              <p className="mt-1 flex flex-col sm:mt-0 sm:flex-row sm:flex-wrap sm:space-x-6">
+                <div className="mt-2 flex items-center text-sm text-gray-500">
+                  <svg
+                    className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M6 3.75A2.75 2.75 0 018.75 1h2.5A2.75 2.75 0 0114 3.75v.443c.572.055 1.14.122 1.706.2C17.053 4.582 18 5.75 18 7.07v3.469c0 1.126-.694 2.191-1.83 2.54-1.952.599-4.024.921-6.17.921s-4.219-.322-6.17-.921C2.694 12.73 2 11.665 2 10.539V7.07c0-1.321.947-2.489 2.294-2.676A41.047 41.047 0 016 4.193V3.75zm6.5 0v.325a41.622 41.622 0 00-5 0V3.75c0-.69.56-1.25 1.25-1.25h2.5c.69 0 1.25.56 1.25 1.25zM10 10a1 1 0 00-1 1v.01a1 1 0 001 1h.01a1 1 0 001-1V11a1 1 0 00-1-1H10z"
+                      clipRule="evenodd"
+                    ></path>
+                    <path d="M3 15.055v-.684c.126.053.255.1.39.142 2.092.642 4.313.987 6.61.987 2.297 0 4.518-.345 6.61-.987.135-.041.264-.089.39-.142v.684c0 1.347-.985 2.53-2.363 2.686a41.454 41.454 0 01-9.274 0C3.985 17.585 3 16.402 3 15.055z"></path>
+                  </svg>
+                  Orders (0)
+                </div>
+                <div className="mt-2 flex items-center text-sm text-gray-500">
+                  <svg
+                    className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M5.75 2a.75.75 0 01.75.75V4h7V2.75a.75.75 0 011.5 0V4h.25A2.75 2.75 0 0118 6.75v8.5A2.75 2.75 0 0115.25 18H4.75A2.75 2.75 0 012 15.25v-8.5A2.75 2.75 0 014.75 4H5V2.75A.75.75 0 015.75 2zm-1 5.5c-.69 0-1.25.56-1.25 1.25v6.5c0 .69.56 1.25 1.25 1.25h10.5c.69 0 1.25-.56 1.25-1.25v-6.5c0-.69-.56-1.25-1.25-1.25H4.75z"
+                      clipRule="evenodd"
+                    ></path>
+                  </svg>
+                  Last order date (0)
+                </div>
+              </p>
+            </div>
+            <div className="mt-5 flex lg:ml-4 lg:mt-0">
+              <span className="block">
+                <button
+                  type="button"
+                  className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                >
+                  <svg
+                    className="-ml-0.5 mr-1.5 h-5 w-5 text-gray-400"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path d="M2.695 14.763l-1.262 3.154a.5.5 0 00.65.65l3.155-1.262a4 4 0 001.343-.885L17.5 5.5a2.121 2.121 0 00-3-3L3.58 13.42a4 4 0 00-.885 1.343z" />
+                  </svg>
+                  Edit
+                </button>
+              </span>
+              <span className="ml-3 block">
+                <button
+                  type="button"
+                  className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                >
+                  <svg
+                    className="-ml-0.5 mr-1.5 h-5 w-5 text-gray-400"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  Order
+                </button>
+              </span>
+              <span className="ml-3 block">
+                <button
+                  type="button"
+                  className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                >
+                  <svg
+                    className="-ml-0.5 mr-1.5 h-5 w-5 text-gray-400"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path d="M12.232 4.232a2.5 2.5 0 013.536 3.536l-1.225 1.224a.75.75 0 001.061 1.06l1.224-1.224a4 4 0 00-5.656-5.656l-3 3a4 4 0 00.225 5.865.75.75 0 00.977-1.138 2.5 2.5 0 01-.142-3.667l3-3z" />
+                    <path d="M11.603 7.963a.75.75 0 00-.977 1.138 2.5 2.5 0 01.142 3.667l-3 3a2.5 2.5 0 01-3.536-3.536l1.225-1.224a.75.75 0 00-1.061-1.06l-1.224 1.224a4 4 0 105.656 5.656l3-3a4 4 0 00-.225-5.865z" />
+                  </svg>
+                  View
+                </button>
+              </span>
+            </div>
+          </div>
+        </Container>
+        <Container
+          className="xl:px-0 pb-24"
+          parentClassName="pt-10 bg-white w-full"
+        >
+          <OrderTable />
+        </Container>
+      </main>
       <Footer />
     </>
   )

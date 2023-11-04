@@ -14,10 +14,12 @@ import PriceCalc from '@/components/PriceCalc'
 import { Listbox, Transition } from '@headlessui/react'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
 import { Fragment, useEffect, useState } from 'react'
-import clientPromise from '../../libs/mongodb'
+import mongoClient from '../../libs/mongodb'
 import type { InferGetServerSidePropsType, GetServerSideProps } from 'next'
 import { useToast } from '@/components/ui/use-toast'
 import { ToastAction } from '@/components/ui/toast'
+
+const { clientPromise } = mongoClient
 
 type ConnectionStatus = {
   isConnected: boolean

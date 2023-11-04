@@ -18,7 +18,7 @@ const Footer = () => {
 
   return (
     <>
-      <Container className="py-10 min-w-full dark:bg-gray-900">
+      <Container className="py-10 min-w-full bg-gray-200 text-sm">
         <div className="sm:grid sm:grid-cols-2 sm:gap-8 xl:col-span-3 text-center lg:text-left">
           <div className="md:grid md:grid-cols-2 md:gap-8">
             <div className="hidden lg:block">
@@ -87,10 +87,15 @@ const Footer = () => {
           </div>
         </div>
       </Container>
-      <div className="text-center pb-8 lg:py-5 dark:bg-gray-900 px-4 sm:px-6 lg:px-8">
-        <p className={classNames(inter.className, 'dark:text-white py-1')}>
+      <div className="text-center pb-8 lg:py-5 bg-gray-200 px-4 sm:px-6 lg:px-8">
+        <p
+          className={classNames(
+            inter.className,
+            'dark:text-white py-1 text-xs',
+          )}
+        >
           Copyright © 2023{' '}
-          <a className="text-sky-300" href="https://proctorowls.com">
+          <a className="text-black" href="https://proctorowls.com">
             Proctor Owls
           </a>{' '}
           All Rights Reserved.

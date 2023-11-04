@@ -1,7 +1,9 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
-import clientPromise from '../../../libs/mongodb'
+import mongoClient from '../../../libs/mongodb'
 import { MongoInvalidArgumentError, ObjectId } from 'mongodb'
+
+const { clientPromise } = mongoClient
 
 type Page = {
   title: string
