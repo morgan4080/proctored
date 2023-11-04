@@ -65,9 +65,9 @@ const Navigation = () => {
       href: '/papers',
     },
     {
-      name: 'Blog',
+      name: 'Blogs',
       items: [],
-      href: '/papers',
+      href: '/blogs',
     },
     {
       name: 'Sign In',
@@ -78,16 +78,16 @@ const Navigation = () => {
 
   useEffect(() => {
     getLinks().then((links) => {
-      setMenu(
-        menu.map((m) => {
+      setMenu((men) => {
+        return men.map((m) => {
           if (m.name == 'Services' && m.items.length == 0) {
             m.items = links
             return m
           } else {
             return m
           }
-        }),
-      )
+        })
+      })
     })
   }, [])
 

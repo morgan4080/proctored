@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import ErrorPage from 'next/error'
 import useSWR from 'swr'
+import type { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import Navigation from '@/components/Navigation'
 import Head from 'next/head'
 import classNames from '../../../libs/utils/ClassNames'
@@ -23,7 +24,6 @@ import { Loader2 } from 'lucide-react'
 import { useRouter } from 'next/router'
 import { fetcher, updateService } from '@/lib/utils'
 import { Service } from '@/lib/service_types'
-import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 
 const inter = Inter({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
@@ -35,18 +35,20 @@ const lexend = Lexend({
   subsets: ['latin'],
 })
 
-const Service = ({
-  sv,
+const Blog = ({
+  blg,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+  const [editing, setEditing] = useState(false)
+  const [loading, setLoading] = useState(false)
   const router = useRouter()
   const { data: session, status } = useSession()
-  const [service, setService] = useState(sv)
-  const url = sv == null ? '' : sv.slug
+  const [blog, setService] = useState(blg)
+  const url = blg == null ? '' : blg.slug
   const { data: updatedData, mutate } = useSWR(
-    '/api/services?slug=' + url,
+    '/api/blogs?slug=' + url,
     fetcher,
     {
-      initialData: service,
+      initialData: blog,
     } as any,
   )
 
@@ -61,21 +63,18 @@ const Service = ({
     }
   }, [updatedData])
 
-  const [editing, setEditing] = useState(false)
-  const [loading, setLoading] = useState(false)
-
   const saveArticle = (htm: string) => {
     setLoading(true)
-    if (service !== null) {
+    if (blog !== null) {
       updateService(
         {
-          _id: service._id,
-          title: service.title,
-          slug: service.slug,
-          excerpt: service.excerpt,
+          _id: blog._id,
+          title: blog.title,
+          slug: blog.slug,
+          excerpt: blog.excerpt,
           description: htm,
         },
-        '/api/services',
+        '/api/blogs',
       )
         .then(() => mutate())
         .then((result: any) => {
@@ -86,14 +85,14 @@ const Service = ({
     }
   }
 
-  if ((!router.isFallback && !service?.slug) || service == null) {
+  if ((!router.isFallback && !blog?.slug) || blog == null) {
     return <ErrorPage statusCode={404} />
   } else {
     return (
       <div className="relative">
         <Head>
-          <title>{service.title}</title>
-          <meta name="description" content={service.description} />
+          <title>{blog.title}</title>
+          <meta name="description" content={blog.description} />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
           <link rel="icon" href="/favicon.ico" />
         </Head>
@@ -121,7 +120,7 @@ const Service = ({
                   'text-3xl font-bold tracking-tight text-gray-900 capitalise inline-flex relative w-auto',
                 )}
               >
-                {service.title}
+                {blog.title}
                 {session &&
                 session.user &&
                 (session.user as any).userRole == 'admin' ? (
@@ -145,7 +144,7 @@ const Service = ({
                 ) : null}
               </h2>
               <p className="mt-2 text-sm text-slate-500 hover:text-slate-600 max-w-lg">
-                {service.excerpt}
+                {blog.excerpt}
               </p>
             </div>
           </Container>
@@ -158,13 +157,13 @@ const Service = ({
                 <EditorProvider
                   slotBefore={
                     <MenuBar
-                      form={service}
+                      form={blog}
                       loading={loading}
                       saveArticle={saveArticle}
                     />
                   }
                   extensions={extensions}
-                  content={service.description}
+                  content={blog.description}
                   editable={true}
                 >
                   {''}
@@ -174,7 +173,7 @@ const Service = ({
                 <div
                   className="prose"
                   dangerouslySetInnerHTML={{
-                    __html: service.description,
+                    __html: blog.description,
                   }}
                   style={{ minWidth: '100%' }}
                 />
@@ -451,17 +450,15 @@ const MenuBar = ({
   )
 }
 
-export const getServerSideProps = (async (context) => {
-  const url = context.params
-    ? '/api/services?slug=' + context.params.slug
-    : '/api/services'
+export const getServerSideProps = (async ({ params }) => {
+  const url = params ? '/api/blogs?slug=' + params.slug : '/api/blogs'
   const { data, message } = await fetcher(process.env.NEXTAUTH_URL + url)
-  const services: Service[] = data
+  const blogs: Service[] = data
   return {
-    props: { sv: services.length > 0 ? services[0] : null, revalidate: 60 },
+    props: { blg: blogs.length > 0 ? blogs[0] : null, revalidate: 60 },
   }
 }) satisfies GetServerSideProps<{
-  sv: Service | null
+  blg: Service | null
 }>
 
-export default Service
+export default Blog

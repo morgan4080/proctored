@@ -13,16 +13,23 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import React, { useState } from 'react'
-import { GetStaticProps, InferGetStaticPropsType } from 'next'
+import React, { useEffect, useState } from 'react'
+import {
+  GetServerSideProps,
+  GetStaticProps,
+  InferGetServerSidePropsType,
+  InferGetStaticPropsType,
+} from 'next'
 import { Button } from '@/components/ui/button'
-import { fetcher } from '@/lib/utils'
+import { createService, fetcher, updateService } from '@/lib/utils'
 import { Service } from '@/lib/service_types'
 import ServiceDialogue from '@/components/ServiceDialogue'
 import { toast } from '@/components/ui/use-toast'
 import { ToastAction } from '@/components/ui/toast'
 import Footer from '@/components/Footer'
 import { Toaster } from '@/components/ui/toaster'
+import useSWR from 'swr'
+import { useRouter } from 'next/router'
 
 const inter = Inter({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
@@ -33,7 +40,7 @@ const lexend = Lexend({
   subsets: ['latin'],
 })
 
-export const getStaticProps = (async (context) => {
+export const getServerSideProps = (async (context) => {
   const { data, message } = await fetcher(
     process.env.NEXTAUTH_URL + '/api/services',
   )
@@ -41,20 +48,42 @@ export const getStaticProps = (async (context) => {
   return {
     props: { svs: services, revalidate: 60 },
   }
-}) satisfies GetStaticProps<{
+}) satisfies GetServerSideProps<{
   svs: Service[]
 }>
 const AllServices = ({
   svs,
-}: InferGetStaticPropsType<typeof getStaticProps>) => {
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+  const router = useRouter()
   const [services, setServices] = useState(svs)
   const [showDialogue, setShowDialogue] = useState(false)
   const [context, setContext] = useState('Create')
+  const [defaultID, setDefaultID] = useState('')
   const [defaultTitle, setDefaultTitle] = useState('')
   const [defaultSlug, setDefaultSlug] = useState('')
   const [defaultExcerpt, setDefaultExcerpt] = useState('')
   const [defaultDescription, setDefaultDescription] = useState('')
+  const [loading, setLoading] = useState(false)
   const deleteService = (id: string) => {}
+  const { data: updatedData, mutate } = useSWR('/api/services', fetcher, {
+    initialData: svs,
+  } as any)
+
+  useEffect(() => {
+    if (updatedData !== undefined) {
+      const { data, message } = updatedData
+      if (data.length > 0) setServices(data)
+    }
+    return () => {
+      setShowDialogue(false)
+      setDefaultID('')
+      setDefaultTitle('')
+      setDefaultSlug('')
+      setDefaultExcerpt('')
+      setDefaultDescription('')
+    }
+  }, [updatedData])
+
   return (
     <div className="relative">
       <Head>
@@ -88,6 +117,12 @@ const AllServices = ({
             </h2>
             <button
               onClick={() => {
+                setContext('Create')
+                setDefaultID('')
+                setDefaultTitle('')
+                setDefaultSlug('')
+                setDefaultExcerpt('')
+                setDefaultDescription('')
                 setShowDialogue(!showDialogue)
               }}
               type="button"
@@ -145,10 +180,11 @@ const AllServices = ({
                     <Button
                       onClick={() => {
                         setContext('Edit')
+                        setDefaultID(service._id)
                         setDefaultTitle(service.title)
                         setDefaultSlug(service.slug)
                         setDefaultExcerpt(service.excerpt)
-                        setDefaultDescription(service.excerpt)
+                        setDefaultDescription(service.description)
                         setShowDialogue(!showDialogue)
                       }}
                       type="button"
@@ -189,9 +225,62 @@ const AllServices = ({
       <Toaster />
       {showDialogue ? (
         <ServiceDialogue
-          submitForm={() => {}}
+          submitForm={(values) => {
+            return new Promise((resolve, reject) => {
+              if (values) {
+                if (context == 'Create') {
+                  // POST
+                  setLoading(true)
+                  createService(
+                    {
+                      ...values,
+                    },
+                    '/api/services',
+                  )
+                    .then((response) => {
+                      console.log('SERVICES', response)
+                      toast({
+                        description: 'The service was created successfully.',
+                      })
+                      return mutate()
+                    })
+                    .then((result) => {
+                      setLoading(false)
+                    })
+                    .catch((error) => {
+                      console.log(error)
+                    })
+                } else {
+                  // PUT
+                  setLoading(true)
+                  updateService(
+                    {
+                      _id: defaultID,
+                      ...values,
+                    },
+                    '/api/services',
+                  )
+                    .then((response) => {
+                      console.log('SERVICES', response)
+                      toast({
+                        description: 'The service was updated successfully.',
+                      })
+                      return mutate()
+                    })
+                    .then(() => {
+                      setLoading(false)
+                    })
+                    .catch((error) => {
+                      console.log(error)
+                    })
+                }
+              } else {
+                reject('Message to form')
+              }
+            })
+          }}
           title={context + ' Service'}
-          description="Create/ Edite your service here. Click save when you're done."
+          description="Create/ Edit your service here. Click save when you're done."
           defaultTitle={defaultTitle}
           defaultSlug={defaultSlug}
           defaultExcerpt={defaultExcerpt}

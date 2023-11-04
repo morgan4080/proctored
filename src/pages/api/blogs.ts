@@ -25,14 +25,14 @@ export default async function handler(
     case 'PUT':
       try {
         const { _id, title, slug, excerpt, description } = req.body
-        const service = {
+        const blog = {
           _id: _id,
           title: title,
           slug: slug,
           excerpt: excerpt,
           description: description,
         }
-        const services_collection = db.collection('services')
+        const services_collection = db.collection('blogs')
         const ddd = await services_collection.updateOne(
           { _id: new ObjectId(_id) },
           { $set: { description: description } },
@@ -40,7 +40,7 @@ export default async function handler(
 
         const response = {
           data: ddd,
-          message: 'Service Updated Successfully',
+          message: 'Blog Updated Successfully',
         }
         res.status(200).json(response)
       } catch (e: MongoInvalidArgumentError | any) {
@@ -54,17 +54,17 @@ export default async function handler(
     case 'POST':
       try {
         const { title, slug, excerpt, description } = req.body
-        const service = {
+        const blog = {
           title: title,
           slug: slug,
           excerpt: excerpt,
           description: description,
         }
-        const services_collection = db.collection('services')
-        await services_collection.insertOne(service)
+        const services_collection = db.collection('blogs')
+        await services_collection.insertOne(blog)
         const response = {
-          data: service,
-          message: 'Service Created Successfully',
+          data: blog,
+          message: 'Blog Created Successfully',
         }
         res.status(200).json(response)
       } catch (e) {
@@ -76,14 +76,14 @@ export default async function handler(
       if (links) {
         try {
           const projection = { slug: 1, title: 1 }
-          const service = await db
-            .collection('services')
+          const blog = await db
+            .collection('blogs')
             .find({})
             .project(projection)
             .toArray()
 
           const response = {
-            data: service,
+            data: blog,
             message: 'Ok',
           }
 
@@ -93,15 +93,15 @@ export default async function handler(
         }
       } else if (slug) {
         try {
-          const service = await db
-            .collection('services')
+          const blog = await db
+            .collection('blogs')
             .find({ slug: slug })
             .sort({ metacritic: -1 })
             .limit(10)
             .toArray()
 
           const response = {
-            data: service,
+            data: blog,
             message: 'Ok',
           }
 
@@ -111,14 +111,14 @@ export default async function handler(
         }
       } else {
         try {
-          const services = await db
-            .collection('services')
+          const blogs = await db
+            .collection('blogs')
             .find({})
             .sort({ metacritic: -1 })
             .limit(10)
             .toArray()
           const response = {
-            data: services,
+            data: blogs,
             message: 'Ok',
           }
 
