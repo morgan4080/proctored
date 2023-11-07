@@ -100,7 +100,7 @@ const Navigation = () => {
         <Link href="/">
           <Logo className="w-52 mx-auto text-white" />
         </Link>
-        <NavigationMenu className="hidden md:block">
+        <NavigationMenu className="hidden md:block mx-auto lg:mx-0">
           <NavigationMenuList className="space-x-4">
             {menu.map((item) =>
               item.items.length > 0 ? (

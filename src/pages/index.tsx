@@ -18,6 +18,7 @@ import mongoClient from '../../libs/mongodb'
 import type { InferGetServerSidePropsType, GetServerSideProps } from 'next'
 import { useToast } from '@/components/ui/use-toast'
 import { ToastAction } from '@/components/ui/toast'
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 
 const { clientPromise } = mongoClient
 
@@ -120,6 +121,40 @@ export default function Home({
         },
       ],
     },
+    {
+      name: 'Dr. Calvin',
+      profile_image: '/person2.png',
+      orders_complete: 700,
+      rating: 4.9,
+      reviewCount: 352,
+      featured_work: [
+        {
+          title: 'Should Juveniles Be Tried As Adults',
+          paper_type: 'Essay (Any Type)',
+          subject: 'Literature',
+          style: 'APA',
+          sources: 1,
+          image: '/img.png',
+        },
+      ],
+    },
+    {
+      name: 'Dr. Calvin',
+      profile_image: '/person2.png',
+      orders_complete: 700,
+      rating: 4.9,
+      reviewCount: 352,
+      featured_work: [
+        {
+          title: 'Should Juveniles Be Tried As Adults',
+          paper_type: 'Essay (Any Type)',
+          subject: 'Literature',
+          style: 'APA',
+          sources: 1,
+          image: '/img.png',
+        },
+      ],
+    },
   ]
 
   const FAQ = [
@@ -179,7 +214,7 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
         <div className="w-full bg-gradient-radial from-plumes to-bermuda -mt-44 md:-mt-44 lg:-mt-28">
           <Container className="xl:px-0 pb-24 pt-56 lg:pt-44 lg:pb-36">
             <div className="lg:grid lg:grid-cols-2">
-              <div className="flex flex-col justify-center">
+              <div className="flex flex-col justify-center items-center lg:items-start">
                 <h1
                   className={classNames(
                     lexend.className,
@@ -188,12 +223,12 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
                 >
                   Professional Essay & Academic Writers
                 </h1>
-                <p className="py-6 max-w-2xl text-lg tracking-tight text-white/80">
+                <p className="py-6 max-w-2xl text-lg tracking-tight text-white/80 text-center lg:text-left">
                   We write your papers - you get top grades!
                 </p>
                 <Link
                   href="/order/create"
-                  className="bg-teal-300 w-44 py-3 px-8 text-xl rounded-full text-black font-semibold hidden lg:inline-block mt-4 transform hover:scale-105 transition ease-in-out duration-100"
+                  className="mb-12 bg-teal-300 text-center w-44 py-3 px-8 text-xl rounded-full text-black font-semibold mt-4 transform hover:scale-105 transition ease-in-out duration-100"
                 >
                   Order Now
                 </Link>
@@ -206,7 +241,7 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
         </div>
 
         <Container className="xl:px-0 pb-28 pt-20 sm:py-32">
-          <div className="max-w-2xl md:mx-auto md:text-center xl:max-w-none">
+          <div className="px-4 max-w-2xl md:mx-auto md:text-center xl:max-w-none">
             <h2
               className={classNames(
                 lexend.className,
@@ -215,153 +250,127 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
             >
               Choose Your Writer
             </h2>
-            <p className="mt-6 text-lg tracking-tight text-slate-600">
+            <p className="mt-6 text-lg tracking-tight text-slate-600 text-center">
               EssayDon expert writers are online and available for hire. Read
               through their profiles, and sample assignments to find your
               perfect match.
             </p>
           </div>
-          <div className="mt-16 flex flex-col lg:flex-row">
-            <div className="flex flex-col items-center justify-center pb-16 lg:pr-4 lg:pb-0">
-              <button type={'button'}>
-                <svg
-                  width="60"
-                  height="60"
-                  viewBox="0 0 60 60"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M30 41.6666L34.0834 37.5833L29.4167 32.9166L41.6667 32.9166L41.6667 27.0833H29.4167L34.0834 22.4166L30 18.3333L18.3334 30L30 41.6666ZM30 59.1666C25.9653 59.1666 22.1737 58.4005 18.625 56.8683C15.0764 55.338 11.9896 53.2604 9.36463 50.6354C6.73963 48.0104 4.66199 44.9236 3.13171 41.375C1.59949 37.8264 0.833374 34.0347 0.833374 30C0.833374 25.9653 1.59949 22.1736 3.13171 18.625C4.66199 15.0764 6.73963 11.9896 9.36463 9.36456C11.9896 6.73956 15.0764 4.66095 18.625 3.12873C22.1737 1.59845 25.9653 0.833313 30 0.833313C34.0348 0.833313 37.8264 1.59845 41.375 3.12873C44.9237 4.66095 48.0105 6.73956 50.6355 9.36456C53.2605 11.9896 55.3381 15.0764 56.8684 18.625C58.4006 22.1736 59.1667 25.9653 59.1667 30C59.1667 34.0347 58.4006 37.8264 56.8684 41.375C55.3381 44.9236 53.2605 48.0104 50.6355 50.6354C48.0105 53.2604 44.9237 55.338 41.375 56.8683C37.8264 58.4005 34.0348 59.1666 30 59.1666Z"
-                    fill="#0f80de"
-                  />
-                </svg>
-              </button>
-            </div>
-            <div className="flex-1 grid lg:gap-16 space-y-16 lg:space-y-0 lg:grid-cols-3 max-w-6xl mx-auto">
-              {writers.map((writer, index) => (
-                <Link
-                  key={index}
-                  href="/"
-                  className="group rounded-lg mx-auto max-w-xs border px-5 py-4 border-gray-300 bg-gray-100 dark:border-neutral-700 dark:bg-neutral-800/30"
-                >
-                  <div className="flex-1 flex relative pb-4 border-b">
-                    <div className="mr-6">
-                      <Image
-                        src={writer.profile_image}
-                        alt="writer 1"
-                        width={77}
-                        height={77}
-                        priority
-                      />
-                    </div>
-                    <div>
-                      <h4
-                        className={classNames(
-                          lexend.className,
-                          'text-lg font-semibold leading-none',
-                        )}
-                      >
-                        {writer.name}
-                      </h4>
-                      <p className="text-sm leading-tight py-2">
-                        Completed order: {writer.orders_complete}
-                      </p>
-                      <div className="flex items-center">
-                        {[0, 1, 2, 3, 4].map((rating) => (
-                          <StarIcon
-                            key={rating}
-                            className={classNames(
-                              writer.rating > rating
-                                ? 'text-yellow-400'
-                                : 'text-gray-200',
-                              'flex-shrink-0 h-5 w-5',
-                            )}
-                            aria-hidden="true"
-                          />
-                        ))}
-                        <span className={classNames(lexend.className)}>
-                          {writer.rating} ({writer.reviewCount})
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  {writer.featured_work.map((work, i) => (
-                    <div key={i} className="flex flex-col">
-                      <h5
-                        className={classNames(
-                          lexend.className,
-                          'font-semibold text-slate-700 text-sm leading-tight text-center pt-3',
-                        )}
-                      >
-                        {work.title}
-                      </h5>
-                      <div className="grid grid-cols-2 pt-5">
-                        <div className="flex flex-col space-y-5">
-                          <div className="">
-                            <p className="text-xs capitalize">paper type:</p>
-                            <p className="text-xs font-semibold text-black capitalize">
-                              {work.paper_type}
-                            </p>
-                          </div>
-                          <div className="">
-                            <p className="text-xs capitalize">subject:</p>
-                            <p className="text-xs font-semibold text-black capitalize">
-                              {work.subject}
-                            </p>
-                          </div>
-                          <div className="grid grid-cols-2">
-                            <div>
-                              <p className="text-xs capitalize">style:</p>
-                              <p className="text-xs font-semibold text-black capitalize">
-                                {work.style}
-                              </p>
-                            </div>
-                            <div>
-                              <p className="text-xs capitalize">sources:</p>
-                              <p className="text-xs font-semibold text-black capitalize">
-                                {work.sources}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                        <div>
+          <div className="mt-16">
+            <div className="flex-1 max-w-7xl mx-auto overflow-x-hidden">
+              <ScrollArea className="sm:mx-auto max-w-sm sm:max-w-xl md:max-w-2xl lg:max-w-5xl xl:max-w-7xl whitespace-nowrap ">
+                <div className="flex space-x-8 p-4">
+                  {writers.map((writer, index) => (
+                    <div
+                      key={index}
+                      className="shrink-0 group rounded-lg max-w-xs border px-5 py-4 border-gray-300 bg-gray-100 dark:border-neutral-700 dark:bg-neutral-800/30"
+                    >
+                      <div className="flex-1 flex relative pb-4 border-b">
+                        <div className="mr-6">
                           <Image
-                            className="ml-auto"
-                            src={work.image}
-                            alt="essay"
-                            width={107}
-                            height={151}
+                            src={writer.profile_image}
+                            alt="writer 1"
+                            width={77}
+                            height={77}
                             priority
                           />
                         </div>
+                        <div>
+                          <h4
+                            className={classNames(
+                              lexend.className,
+                              'text-lg font-semibold leading-none',
+                            )}
+                          >
+                            {writer.name}
+                          </h4>
+                          <p className="text-sm leading-tight py-2">
+                            Completed order: {writer.orders_complete}
+                          </p>
+                          <div className="flex items-center">
+                            {[0, 1, 2, 3, 4].map((rating) => (
+                              <StarIcon
+                                key={rating}
+                                className={classNames(
+                                  writer.rating > rating
+                                    ? 'text-yellow-400'
+                                    : 'text-gray-200',
+                                  'flex-shrink-0 h-5 w-5',
+                                )}
+                                aria-hidden="true"
+                              />
+                            ))}
+                            <span className={classNames(lexend.className)}>
+                              {writer.rating} ({writer.reviewCount})
+                            </span>
+                          </div>
+                        </div>
                       </div>
-                      <button
-                        type="button"
-                        className="bg-bermuda rounded-full text-white text-sm font-semibold py-3 mt-4"
-                      >
-                        <span className="">Hire Writer</span>
-                      </button>
+                      {writer.featured_work.map((work, i) => (
+                        <div key={i} className="flex flex-col">
+                          <h5
+                            className={classNames(
+                              lexend.className,
+                              'font-semibold text-slate-700 text-sm leading-tight text-center pt-3',
+                            )}
+                          >
+                            {work.title}
+                          </h5>
+                          <div className="grid grid-cols-2 pt-5">
+                            <div className="flex flex-col space-y-5">
+                              <div className="">
+                                <p className="text-xs capitalize">
+                                  paper type:
+                                </p>
+                                <p className="text-xs font-semibold text-black capitalize">
+                                  {work.paper_type}
+                                </p>
+                              </div>
+                              <div className="">
+                                <p className="text-xs capitalize">subject:</p>
+                                <p className="text-xs font-semibold text-black capitalize">
+                                  {work.subject}
+                                </p>
+                              </div>
+                              <div className="grid grid-cols-2">
+                                <div>
+                                  <p className="text-xs capitalize">style:</p>
+                                  <p className="text-xs font-semibold text-black capitalize">
+                                    {work.style}
+                                  </p>
+                                </div>
+                                <div>
+                                  <p className="text-xs capitalize">sources:</p>
+                                  <p className="text-xs font-semibold text-black capitalize">
+                                    {work.sources}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <Image
+                                className="ml-auto"
+                                src={work.image}
+                                alt="essay"
+                                width={107}
+                                height={151}
+                                priority
+                              />
+                            </div>
+                          </div>
+                          <Link
+                            href="/"
+                            className="bg-bermuda text-center rounded-full text-white text-sm font-semibold py-3 mt-4"
+                          >
+                            <span className="">Hire Writer</span>
+                          </Link>
+                        </div>
+                      ))}
                     </div>
                   ))}
-                </Link>
-              ))}
-            </div>
-            <div className="flex flex-col items-center justify-center pt-16 lg:pl-4 lg:pt-0">
-              <button type={'button'}>
-                <svg
-                  width="60"
-                  height="60"
-                  viewBox="0 0 60 60"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M30.0001 18.3334L25.9167 22.4167L30.5834 27.0834L18.3334 27.0834L18.3334 32.9167L30.5834 32.9167L25.9167 37.5834L30.0001 41.6667L41.6667 30L30.0001 18.3334ZM30.0001 0.833356C34.0348 0.833357 37.8265 1.59947 41.3751 3.13169C44.9237 4.66197 48.0105 6.7396 50.6355 9.3646C53.2605 11.9896 55.3381 15.0764 56.8684 18.625C58.4006 22.1736 59.1668 25.9653 59.1668 30C59.1668 34.0347 58.4006 37.8264 56.8684 41.375C55.3381 44.9236 53.2605 48.0104 50.6355 50.6354C48.0105 53.2604 44.9237 55.339 41.3751 56.8713C37.8265 58.4015 34.0348 59.1667 30.0001 59.1667C25.9654 59.1667 22.1737 58.4015 18.6251 56.8713C15.0765 55.339 11.9897 53.2604 9.36466 50.6354C6.73966 48.0104 4.66202 44.9236 3.13174 41.375C1.59952 37.8264 0.833411 34.0347 0.833411 30C0.833411 25.9653 1.59952 22.1736 3.13174 18.625C4.66203 15.0764 6.73966 11.9896 9.36466 9.3646C11.9897 6.7396 15.0765 4.66196 18.6251 3.13169C22.1737 1.59946 25.9654 0.833356 30.0001 0.833356Z"
-                    fill="#0f80de"
-                  />
-                </svg>
-              </button>
+                </div>
+                <ScrollBar orientation="horizontal" />
+              </ScrollArea>
             </div>
           </div>
         </Container>
@@ -688,10 +697,14 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
               </p>
             </div>
             <div className="grid space-y-16 lg:space-y-0 lg:grid-cols-3 max-w-6xl mx-auto">
-              <figure className="relative flex flex-col-reverse bg-slate-50 rounded-lg p-6 dark:bg-slate-800 dark:highlight-white/5">
+              <figure className="relative flex flex-col-reverse items-center bg-slate-50 rounded-lg p-6 dark:bg-slate-800 dark:highlight-white/5">
                 <blockquote className="mt-6 text-slate-700 dark:text-slate-300">
-                  <h5 className="font-bold text-2xl">100% money back</h5>
-                  <p>Legitimate claims will be refunded</p>
+                  <h5 className="font-bold text-2xl text-center">
+                    100% money back
+                  </h5>
+                  <p className="text-center">
+                    Legitimate claims will be refunded
+                  </p>
                 </blockquote>
                 <figcaption className="flex items-center space-x-4">
                   <Image
@@ -705,10 +718,14 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
                   />
                 </figcaption>
               </figure>
-              <figure className="relative flex flex-col-reverse bg-slate-50 rounded-lg p-6 dark:bg-slate-800 dark:highlight-white/5">
+              <figure className="relative flex flex-col-reverse items-center bg-slate-50 rounded-lg p-6 dark:bg-slate-800 dark:highlight-white/5">
                 <blockquote className="mt-6 text-slate-700 dark:text-slate-300">
-                  <h5 className="font-bold text-2xl">Free revisions</h5>
-                  <p>Get your worked revised on request</p>
+                  <h5 className="font-bold text-2xl text-center">
+                    Free revisions
+                  </h5>
+                  <p className="text-center">
+                    Get your worked revised on request
+                  </p>
                 </blockquote>
                 <figcaption className="flex items-center space-x-4">
                   <Image
@@ -722,10 +739,12 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
                   />
                 </figcaption>
               </figure>
-              <figure className="relative flex flex-col-reverse bg-slate-50 rounded-lg p-6 dark:bg-slate-800 dark:highlight-white/5">
+              <figure className="relative flex flex-col-reverse items-center bg-slate-50 rounded-lg p-6 dark:bg-slate-800 dark:highlight-white/5">
                 <blockquote className="mt-6 text-slate-700 dark:text-slate-300">
-                  <h5 className="font-bold text-2xl">Safe payments</h5>
-                  <p>authentic payment processors</p>
+                  <h5 className="font-bold text-2xl text-center">
+                    Safe payments
+                  </h5>
+                  <p className="text-center">authentic payment processors</p>
                 </blockquote>
                 <figcaption className="flex items-center space-x-4">
                   <Image
@@ -948,12 +967,12 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
                 covered.
               </p>
             </div>
-            <div className="space-y-6 mx-auto max-w-6xl">
+            <div className="space-y-6 mx-auto max-w-5xl">
               <div className="flex flex-col">
-                <h5 className="font-bold text-2xl text-bermuda">
+                <h5 className="text-center md:text-left font-bold text-2xl text-bermuda">
                   Our Unique Features
                 </h5>
-                <p className="pt-4">
+                <p className="text-center md:text-left pt-4">
                   After years in this business, we know for sure what a student
                   needs from an online essay writing service. We have fine-tuned
                   our services to these needs to stay on top of things. Meet an
@@ -963,10 +982,10 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
                 </p>
               </div>
               <div className="flex flex-col">
-                <h5 className="font-bold text-2xl text-bermuda">
+                <h5 className="text-center md:text-left font-bold text-2xl text-bermuda">
                   A massive team of online essay writers.
                 </h5>
-                <p className="pt-4">
+                <p className="text-center md:text-left pt-4">
                   We do our best to hire as many talents on our as possible. We
                   scan each resume that comes our way to ensure that not one
                   excellent essay writer is left unnoticed. Our team consists of
@@ -976,10 +995,10 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
                 </p>
               </div>
               <div className="flex flex-col">
-                <h5 className="font-bold text-2xl text-bermuda">
+                <h5 className="text-center md:text-left font-bold text-2xl text-bermuda">
                   Reasonable prices.
                 </h5>
-                <p className="pt-4">
+                <p className="text-center md:text-left pt-4">
                   We aim to establish prices that will both motivate the essay
                   writers and not leave our customers wanting. Affordability is
                   at the core of our principles, so be sure you will not have to
@@ -987,10 +1006,10 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
                 </p>
               </div>
               <div className="flex flex-col">
-                <h5 className="font-bold text-2xl text-bermuda">
+                <h5 className="text-center md:text-left font-bold text-2xl text-bermuda">
                   100% originality.
                 </h5>
-                <p className="pt-4">
+                <p className="text-center md:text-left pt-4">
                   Yes, we do have a substantial base of ready-made essays. But
                   rest assured: we craft each new essay from scratch. Knowing
                   how bad plagiarism is to your good name at school, we avoid it
@@ -998,10 +1017,10 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
                 </p>
               </div>
               <div className="flex flex-col">
-                <h5 className="font-bold text-2xl text-bermuda">
+                <h5 className="text-center md:text-left font-bold text-2xl text-bermuda">
                   Excellent quality-price ratio.
                 </h5>
-                <p className="pt-4">
+                <p className="text-center md:text-left pt-4">
                   When you pay us to write your essay, you are practically
                   investing fair money into top college grades. With our help,
                   you get to stretch a buck and meet every single deadline at
@@ -1009,29 +1028,29 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
                 </p>
               </div>
               <div className="flex flex-col">
-                <h5 className="font-bold text-2xl text-bermuda">
+                <h5 className="text-center md:text-left font-bold text-2xl text-bermuda">
                   How It Works
                 </h5>
-                <p className="pt-4">
+                <p className="text-center md:text-left pt-4">
                   By now, you might probably be looking for ways to place your
                   first order. If so, then we’ve got fantastic news for you! It
                   will only take a couple of minutes.
                 </p>
               </div>
               <div className="flex flex-col">
-                <h5 className="font-bold text-2xl text-bermuda">
+                <h5 className="text-center md:text-left font-bold text-2xl text-bermuda">
                   Why Choose us
                 </h5>
-                <p className="pt-4">
+                <p className="text-center md:text-left pt-4">
                   Well, there are multiple reasons for it. The most important
                   among them include but are not limited to:
                 </p>
               </div>
               <div className="flex flex-col">
-                <h5 className="font-bold text-2xl text-bermuda">
+                <h5 className="text-center md:text-left font-bold text-2xl text-bermuda">
                   Plagiarism Free Assignments.
                 </h5>
-                <p className="pt-4">
+                <p className="text-center md:text-left pt-4">
                   All our services are 100% original content, expect no trace of
                   plagiarism in any of your assignments handled by our competent
                   homework writers. The company has clear guidelines and rules
@@ -1047,10 +1066,10 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
                 </p>
               </div>
               <div className="flex flex-col">
-                <h5 className="font-bold text-2xl text-bermuda">
+                <h5 className="text-center md:text-left font-bold text-2xl text-bermuda">
                   Professional writing team.
                 </h5>
-                <p className="pt-4">
+                <p className="text-center md:text-left pt-4">
                   Our team of writers has been hired after a thorough
                   recruitment exercise conducted after every two years. We want
                   to ensure consistency, and for this reason, we like to train
@@ -1060,10 +1079,10 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
                 </p>
               </div>
               <div className="flex flex-col">
-                <h5 className="font-bold text-2xl text-bermuda">
+                <h5 className="text-center md:text-left font-bold text-2xl text-bermuda">
                   Timely delivery.
                 </h5>
-                <p className="pt-4">
+                <p className="text-center md:text-left pt-4">
                   Your assignment will be delivered on time. We know the
                   implications late assignment submission could have on your
                   academic life, for this reason, we will ensure that you get to
@@ -1078,10 +1097,10 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
                 </p>
               </div>
               <div className="flex flex-col">
-                <h5 className="font-bold text-2xl text-bermuda">
+                <h5 className="text-center md:text-left font-bold text-2xl text-bermuda">
                   High quality.
                 </h5>
-                <p className="pt-4">
+                <p className="text-center md:text-left pt-4">
                   Our writers have gained industry experience in their various
                   fields of expertise. Therefore, they not only apply academic
                   knowledge to your homework but also add a professional touch
@@ -1093,10 +1112,10 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
                 </p>
               </div>
               <div className="flex flex-col">
-                <h5 className="font-bold text-2xl text-bermuda">
+                <h5 className="text-center md:text-left font-bold text-2xl text-bermuda">
                   Round-the-clock support.
                 </h5>
-                <p className="pt-4">
+                <p className="text-center md:text-left pt-4">
                   You can always get your homework needs tended to 24/7
                   regardless of your location. Essaydons.com has hired enough
                   writers and support personnel to ensure that you do not have
@@ -1127,8 +1146,8 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
             <p className="text-2xl lg:max-w-lg mx-auto text-center text-bermuda">
               We get you quality grades.
             </p>
-            <div className="max-w-5xl mx-auto md:grid md:grid-cols-2 md:gap-12 pt-12">
-              <p className="text-left text-slate-600 pt-6">
+            <div className="max-w-5xl mx-auto md:grid md:grid-cols-2 md:gap-12 pt-6">
+              <p className="text-center md:text-left text-slate-600 pt-6">
                 Wondering why you should order an essay at our essay writing
                 service? “What’s in it for me?” you might wonder. It’s a fair
                 question! Here are several results of choosing to order a piece
@@ -1136,7 +1155,7 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
                 words:
               </p>
 
-              <div className="flex justify-center items-center">
+              <div className="flex justify-center items-center pt-12 md:pt-0">
                 <Image
                   src="/illustrations1.png"
                   alt="writer 1"
@@ -1149,8 +1168,10 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
           </div>
           <div className="space-y-6 mx-auto max-w-6xl">
             <div className="flex flex-col">
-              <h5 className="font-bold text-2xl text-bermuda">Top Grades.</h5>
-              <p className="pt-4">
+              <h5 className="text-center md:text-left font-bold text-2xl text-bermuda">
+                Top Grades.
+              </h5>
+              <p className="text-center md:text-left pt-4">
                 They are important. After all, we are all striving to achieve
                 the highest grades. They have the potential to directly
                 influence what jobs we get in the future. That is why it is in
@@ -1160,10 +1181,10 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
             </div>
 
             <div className="flex flex-col">
-              <h5 className="font-bold text-2xl text-bermuda">
+              <h5 className="text-center md:text-left font-bold text-2xl text-bermuda">
                 A happy professor.
               </h5>
-              <p className="pt-4">
+              <p className="text-center md:text-left pt-4">
                 Don&apos;t look surprised! Earning a good reputation in the eyes
                 of your college professor is vital, since in many cases your
                 reputation will work for you even when you&apos;re far from
@@ -1172,10 +1193,10 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
             </div>
 
             <div className="flex flex-col">
-              <h5 className="font-bold text-2xl text-bermuda">
+              <h5 className="text-center md:text-left font-bold text-2xl text-bermuda">
                 Top-notch paper.
               </h5>
-              <p className="pt-4">
+              <p className="text-center md:text-left pt-4">
                 A decent paper can help you get into a college of your dream,
                 improve your GPA, or even get you a scholarship. No matter which
                 of these you&apos;re pursuing, it&apos;s always a good idea to
@@ -1184,10 +1205,10 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
             </div>
 
             <div className="flex flex-col">
-              <h5 className="font-bold text-2xl text-bermuda">
+              <h5 className="text-center md:text-left font-bold text-2xl text-bermuda">
                 Good social and academic life balance.
               </h5>
-              <p className="pt-4">
+              <p className="text-center md:text-left pt-4">
                 It is often essential for students to hire essay writing
                 services to craft pieces for them because otherwise, students
                 will have no personal life with all the overwhelming academic
