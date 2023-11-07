@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form'
 import React, { useEffect, useState } from 'react'
 import { Inter, Lexend } from 'next/font/google'
-import classNames from '../../libs/utils/ClassNames'
+import classNames from '../utils/ClassNames'
 type StoreDataType = {
   id: number
   level: string
@@ -103,7 +103,7 @@ const PriceCalc = (): JSX.Element => {
   return (
     <div
       className={classNames(
-        inter.className,
+        lexend.className,
         'flex flex-col py-6 lg:py-0 max-w-xs',
       )}
     >
@@ -174,7 +174,7 @@ const PriceCalc = (): JSX.Element => {
       </div>
       <div
         className={classNames(
-          'bg-transparent font-black text-white text-5xl mt-4 p-3 text-center',
+          'bg-transparent font-bold text-white text-5xl mt-4 p-3 text-center',
         )}
       >
         {totalPrice} $

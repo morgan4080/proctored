@@ -1,7 +1,7 @@
 import { useSession } from 'next-auth/react'
 import Image from 'next/image'
 import Head from 'next/head'
-import classNames from '../../../libs/utils/ClassNames'
+import classNames from '../../utils/ClassNames'
 import Navigation from '@/components/Navigation'
 import { Inter, Lexend } from 'next/font/google'
 import Footer from '@/components/Footer'

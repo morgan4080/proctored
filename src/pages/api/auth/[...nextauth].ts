@@ -1,6 +1,6 @@
 import NextAuth, { NextAuthOptions } from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
-import mongoClient from '../../../../libs/mongodb'
+import mongoClient from '@/lib/mongodb'
 const { clientPromise } = mongoClient
 export const authOptions: NextAuthOptions = {
   providers: [

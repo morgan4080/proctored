@@ -8,17 +8,23 @@ import Navigation from '@/components/Navigation'
 import { Container } from '@/components/Container'
 import HeroArt from '@/components/HeroArt'
 import { StarIcon } from '@heroicons/react/24/solid'
-import classNames from '../../libs/utils/ClassNames'
+import classNames from '../utils/ClassNames'
 import PaymentIcons from '@/components/PaymentIcons'
 import PriceCalc from '@/components/PriceCalc'
-import { Listbox, Transition } from '@headlessui/react'
-import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
-import { Fragment, useEffect, useState } from 'react'
-import mongoClient from '../../libs/mongodb'
+import React, { Fragment, useEffect, useState } from 'react'
+import mongoClient from '@/lib/mongodb'
 import type { InferGetServerSidePropsType, GetServerSideProps } from 'next'
 import { useToast } from '@/components/ui/use-toast'
 import { ToastAction } from '@/components/ui/toast'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion'
+import { Card, CardContent } from '@/components/ui/card'
+import { Service } from '@/lib/service_types'
 
 const { clientPromise } = mongoClient
 
@@ -26,21 +32,35 @@ type ConnectionStatus = {
   isConnected: boolean
 }
 
-export const getServerSideProps: GetServerSideProps<
-  ConnectionStatus
-> = async () => {
+export const getServerSideProps = (async () => {
   try {
-    await clientPromise
+    const client = await clientPromise
+    const db = client.db('proctor')
+    let blogs = await db
+      .collection<Service>('blogs')
+      .find({})
+      .sort({ metacritic: -1 })
+      .limit(3)
+      .toArray()
+    blogs = blogs.map((blog) => {
+      return {
+        ...blog,
+        _id: blog._id.toString(),
+      }
+    })
     return {
-      props: { isConnected: true },
+      props: { blogs: blogs, isConnected: true },
     }
   } catch (e) {
     console.error(e)
     return {
-      props: { isConnected: false },
+      props: { blogs: [], isConnected: false },
     }
   }
-}
+}) satisfies GetServerSideProps<{
+  blogs: Service[]
+  isConnected: boolean
+}>
 
 const inter = Inter({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
@@ -53,6 +73,7 @@ const lexend = Lexend({
 })
 
 export default function Home({
+  blogs,
   isConnected,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const { toast } = useToast()
@@ -587,7 +608,7 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
         <div className="w-full bg-gradient-radial from-plumes to-bermuda">
           <Container className="xl:px-0 py-32">
             <div className="grid space-y-16 lg:space-y-0 lg:grid-cols-2 max-w-6xl mx-auto">
-              <div className="col-span-1">
+              <div className="col-span-1 text-center md:text-left">
                 <h1
                   className={classNames(
                     lexend.className,
@@ -601,7 +622,7 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
                 </p>
                 <ul
                   role="list"
-                  className="pt-4 space-x-2 flex items-center justify-start"
+                  className="pt-4 space-x-2 flex items-center justify-center md:justify-start"
                 >
                   <li>
                     <PaymentIcons name={'visa'} />
@@ -615,7 +636,11 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
                 </ul>
               </div>
               <div className="col-span-1 flex justify-center lg:justify-end">
-                <PriceCalc />
+                <Card className="bg-bermuda border-0">
+                  <CardContent className="py-6">
+                    <PriceCalc />
+                  </CardContent>
+                </Card>
               </div>
             </div>
           </Container>
@@ -646,7 +671,7 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
               </div>
               <div className="pt-6 md:p-8 text-center md:text-left space-y-4">
                 <blockquote>
-                  <span className="flex">
+                  <span className="flex items-center justify-center md:justify-start">
                     {[0, 1, 2, 3, 4].map((rating) => (
                       <StarIcon
                         key={rating}
@@ -861,77 +886,14 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
               What to expect in this virtual service?
             </p>
           </div>
-          <div className="grid space-y-16 md:gap-16 md:space-y-0 md:grid-cols-10 max-w-7xl mx-auto bg-gray-50 px-2 md:px-8 py-8 rounded-2xl">
-            <div className="col-span-12 md:col-span-4">
-              <Listbox value={selected} onChange={setSelected}>
-                <div className="relative mt-1">
-                  <Listbox.Button className="relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
-                    <span className="block truncate font-medium text-lg text-center md:text-left">
-                      {selected.name}
-                    </span>
-                    <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                      <ChevronUpDownIcon
-                        className="h-5 w-5 text-gray-400"
-                        aria-hidden="true"
-                      />
-                    </span>
-                  </Listbox.Button>
-                  <Transition
-                    as={Fragment}
-                    leave="transition ease-in duration-250"
-                    leaveFrom="transform translate-y-2"
-                    leaveTo="transform translate-y-0"
-                    enter="transition ease-in duration-250"
-                    enterFrom="transform translate-y-0"
-                    enterTo="transform translate-y-2"
-                  >
-                    <Listbox.Options className="block overflow-auto mt-4 px-2">
-                      {FAQ.map((faq, faqIdx) => (
-                        <Listbox.Option
-                          key={faqIdx}
-                          className={({ active }) =>
-                            `relative cursor-default select-none py-2 ${
-                              active
-                                ? 'bg-amber-100 text-amber-900'
-                                : 'text-gray-900'
-                            }`
-                          }
-                          value={faq}
-                        >
-                          {() => (
-                            <>
-                              <span
-                                className={`block truncate text-center md:text-left ${
-                                  selected.name == faq.name
-                                    ? 'font-medium'
-                                    : 'font-normal'
-                                }`}
-                              >
-                                {faq.name}
-                              </span>
-                              {selected.name == faq.name ? (
-                                <span className="absolute inset-y-0 right-0 flex items-center pl-3 text-amber-600">
-                                  <CheckIcon
-                                    className="h-5 w-5"
-                                    aria-hidden="true"
-                                  />
-                                </span>
-                              ) : null}
-                            </>
-                          )}
-                        </Listbox.Option>
-                      ))}
-                    </Listbox.Options>
-                  </Transition>
-                </div>
-              </Listbox>
-            </div>
-            <div className="col-span-12 md:col-span-6">
-              <p className="font-normal text-lg text-center md:text-left">
-                {selected.description}
-              </p>
-            </div>
-          </div>
+          <Accordion type="single" collapsible className="max-w-2xl">
+            {FAQ.map((faq, faqIdx) => (
+              <AccordionItem key={faqIdx} value={faqIdx + faq.name}>
+                <AccordionTrigger>{faq.name}</AccordionTrigger>
+                <AccordionContent>{faq.description}</AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
         </Container>
 
         <div className="w-full bg-reef">
@@ -945,10 +907,10 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
               >
                 Do You Need an Essay Writer?
               </h2>
-              <p className="text-2xl lg:max-w-lg mx-auto text-center tracking-tight text-slate-600">
+              <p className="mt-6 text-lg tracking-tight text-slate-600 text-center">
                 What to expect in this virtual service?
               </p>
-              <p className="max-w-5xl mx-auto text-center text-slate-600 pt-6">
+              <p className="prose max-w-5xl mx-auto mt-6 text-center text-slate-600 pt-6">
                 Can’t remember the last time you went out with your friends for
                 a cup of tea? Do you feel like your tutors are completely
                 oblivious of the fact that you have a life outside of college?
@@ -967,7 +929,7 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
                 covered.
               </p>
             </div>
-            <div className="space-y-6 mx-auto max-w-5xl">
+            <div className="space-y-6 mx-auto max-w-5xl prose">
               <div className="flex flex-col">
                 <h5 className="text-center md:text-left font-bold text-2xl text-bermuda">
                   Our Unique Features
@@ -1166,7 +1128,7 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
               </div>
             </div>
           </div>
-          <div className="space-y-6 mx-auto max-w-6xl">
+          <div className="space-y-6 mx-auto max-w-5xl">
             <div className="flex flex-col">
               <h5 className="text-center md:text-left font-bold text-2xl text-bermuda">
                 Top Grades.
@@ -1223,90 +1185,55 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
           </div>
         </Container>
 
-        <div className="w-full bg-gradient-radial from-plumes to-bermuda">
+        <div className="w-full bg-gradient-to-r from-gray-50 to-zinc-100">
           <Container className="xl:px-0 pb-20">
             <div className="space-y-2 pt-20 pb-16">
               <h2
                 className={classNames(
                   lexend.className,
-                  'text-white font-bold text-[52px] tracking-tight leading-[63px] capitalize text-center',
+                  'text-bermuda font-bold text-[52px] tracking-tight leading-[63px] capitalize text-center',
                 )}
               >
                 Blog
               </h2>
-              <p className="text-2xl lg:max-w-lg mx-auto text-center text-white">
+              <p className="text-2xl lg:max-w-lg mx-auto text-center text-zinc-800">
                 Read about matters writing.
               </p>
             </div>
-            <div className="grid space-y-16 md:gap-16 md:space-y-0 md:grid-cols-2 max-w-4xl mx-auto">
-              <div className="flex items-center justify-between">
-                <div className="flex flex-col">
-                  <Image
-                    className="ml-auto"
-                    src="/image15.png"
-                    alt="essay"
-                    width={107}
-                    height={151}
-                    priority
-                  />
-                </div>
-                <div className="flex flex-col max-w-xs">
-                  <h6 className="text-center text-white font-semibold text-xl pb-1.5 capitalize">
-                    Steps Towards Mastering Proposal Essay Writing
-                  </h6>
-                </div>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="flex flex-col">
-                  <Image
-                    className="ml-auto"
-                    src="/image15.png"
-                    alt="essay"
-                    width={107}
-                    height={151}
-                    priority
-                  />
-                </div>
-                <div className="flex flex-col max-w-xs">
-                  <h6 className="text-center text-white font-semibold text-xl pb-1.5 capitalize">
-                    How to write a character analysis essay?
-                  </h6>
-                </div>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="flex flex-col">
-                  <Image
-                    className="ml-auto"
-                    src="/image15.png"
-                    alt="essay"
-                    width={107}
-                    height={151}
-                    priority
-                  />
-                </div>
-                <div className="flex flex-col max-w-xs">
-                  <h6 className="text-center text-white font-semibold text-xl pb-1.5 capitalize">
-                    How To Write A Character Analysis Essay?
-                  </h6>
-                </div>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="flex flex-col">
-                  <Image
-                    className="ml-auto"
-                    src="/image15.png"
-                    alt="essay"
-                    width={107}
-                    height={151}
-                    priority
-                  />
-                </div>
-                <div className="flex flex-col max-w-sm">
-                  <h6 className="text-center text-white font-semibold text-xl pb-1.5 capitalize">
-                    We understand your style
-                  </h6>
-                </div>
-              </div>
+
+            <div className="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 lg:mx-0 lg:max-w-none lg:grid-cols-3">
+              {blogs.map((blog) => (
+                <Card key={blog._id}>
+                  <CardContent>
+                    <article className="flex max-w-xl flex-col items-start justify-between pt-6">
+                      <div className="flex items-center gap-x-4 text-xs">
+                        <time dateTime="2020-03-16" className="text-gray-500">
+                          Mar 16, 2020
+                        </time>
+                      </div>
+                      <div className="group relative">
+                        <h3 className="mt-3 text-lg font-semibold leading-6 text-gray-900 group-hover:text-gray-600">
+                          <a href="#">
+                            <span className="absolute inset-0"></span>
+                            {blog.title}
+                          </a>
+                        </h3>
+                        <p className="mt-5 line-clamp-3 text-sm leading-6 text-gray-600">
+                          {blog.excerpt}
+                        </p>
+                      </div>
+                      <div className="relative mt-8 flex items-center gap-x-4">
+                        <Link
+                          href={'/blogs/' + blog.slug}
+                          className="text-sm font-semibold leading-6 text-slate-800"
+                        >
+                          Read more <span aria-hidden="true">→</span>
+                        </Link>
+                      </div>
+                    </article>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
 
             <div className="flex justify-center align-center pt-16">

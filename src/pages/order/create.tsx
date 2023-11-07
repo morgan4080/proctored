@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import Head from 'next/head'
-import classNames from '../../../libs/utils/ClassNames'
+import classNames from '../../utils/ClassNames'
 import { Separator } from '@/components/ui/separator'
 import { Container } from '@/components/Container'
 import Navigation from '@/components/Navigation'

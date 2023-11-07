@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import ErrorPage from 'next/error'
-import useSWR from 'swr'
+import type { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import Navigation from '@/components/Navigation'
 import Head from 'next/head'
 import classNames from '../../utils/ClassNames'
@@ -8,7 +8,7 @@ import { Inter, Lexend } from 'next/font/google'
 import { Container } from '@/components/Container'
 import Footer from '@/components/Footer'
 import { Toaster } from '@/components/ui/toaster'
-import { EditorProvider, useCurrentEditor, FloatingMenu } from '@tiptap/react'
+import { EditorProvider, useCurrentEditor } from '@tiptap/react'
 import { Color } from '@tiptap/extension-color'
 import ListItem from '@tiptap/extension-list-item'
 import TextStyle from '@tiptap/extension-text-style'
@@ -20,10 +20,10 @@ import { Button } from '@/components/ui/button'
 import { ToastAction } from '@/components/ui/toast'
 import { useSession } from 'next-auth/react'
 import { Loader2 } from 'lucide-react'
-import { useRouter } from 'next/router'
-import { fetcher, updateRecord } from '@/lib/utils'
 import { Service } from '@/lib/service_types'
-import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+import mongoClient from '@/lib/mongodb'
+import useSWR from 'swr'
+import { fetcher, updateRecord } from '@/lib/utils'
 
 const inter = Inter({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
@@ -35,18 +35,20 @@ const lexend = Lexend({
   subsets: ['latin'],
 })
 
-const Service = ({
-  sv,
+const Paper = ({
+  papr,
+  isConnected,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  const router = useRouter()
+  const [editing, setEditing] = useState(false)
+  const [loading, setLoading] = useState(false)
   const { data: session, status } = useSession()
-  const [service, setService] = useState(sv)
-  const url = sv == null ? '' : sv.slug
+  const [paper, setService] = useState(papr)
+  const url = papr == null ? '' : papr.slug
   const { data: updatedData, mutate } = useSWR(
-    '/api/services?slug=' + url,
+    '/api/papers?slug=' + url,
     fetcher,
     {
-      initialData: service,
+      initialData: paper,
     } as any,
   )
 
@@ -61,39 +63,35 @@ const Service = ({
     }
   }, [updatedData])
 
-  const [editing, setEditing] = useState(false)
-  const [loading, setLoading] = useState(false)
-
   const saveArticle = (htm: string) => {
     setLoading(true)
-    if (service !== null) {
+    if (paper !== null) {
       updateRecord(
         {
-          _id: service._id,
-          title: service.title,
-          slug: service.slug,
-          excerpt: service.excerpt,
+          _id: paper._id,
+          title: paper.title,
+          slug: paper.slug,
+          excerpt: paper.excerpt,
           description: htm,
         },
-        '/api/services',
+        '/api/papers',
       )
         .then(() => mutate())
         .then((result: any) => {
           setLoading(false)
           setEditing(false)
         })
-        .catch((error) => {})
     }
   }
 
-  if ((!router.isFallback && !service?.slug) || service == null) {
+  if (paper == null) {
     return <ErrorPage statusCode={404} />
   } else {
     return (
       <div className="relative">
         <Head>
-          <title>{service.title}</title>
-          <meta name="description" content={service.description} />
+          <title>{paper.title}</title>
+          <meta name="description" content={paper.description} />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
           <link rel="icon" href="/favicon.ico" />
         </Head>
@@ -121,7 +119,7 @@ const Service = ({
                   'text-3xl font-bold tracking-tight text-gray-900 capitalise inline-flex relative w-auto',
                 )}
               >
-                {service.title}
+                {paper.title}
                 {session &&
                 session.user &&
                 (session.user as any).userRole == 'admin' ? (
@@ -145,7 +143,7 @@ const Service = ({
                 ) : null}
               </h2>
               <p className="mt-2 text-sm text-slate-500 hover:text-slate-600 max-w-lg">
-                {service.excerpt}
+                {paper.excerpt}
               </p>
             </div>
           </Container>
@@ -158,13 +156,13 @@ const Service = ({
                 <EditorProvider
                   slotBefore={
                     <MenuBar
-                      form={service}
+                      form={paper}
                       loading={loading}
                       saveArticle={saveArticle}
                     />
                   }
                   extensions={extensions}
-                  content={service.description}
+                  content={paper.description}
                   editable={true}
                 >
                   {''}
@@ -174,7 +172,7 @@ const Service = ({
                 <div
                   className="prose"
                   dangerouslySetInnerHTML={{
-                    __html: service.description,
+                    __html: paper.description,
                   }}
                   style={{ minWidth: '100%' }}
                 />
@@ -451,17 +449,36 @@ const MenuBar = ({
   )
 }
 
-export const getServerSideProps = (async (context) => {
-  const url = context.params
-    ? '/api/services?slug=' + context.params.slug
-    : '/api/services'
-  const { data, message } = await fetcher(process.env.NEXTAUTH_URL + url)
-  const services: Service[] = data
-  return {
-    props: { sv: services.length > 0 ? services[0] : null, revalidate: 60 },
+export const getServerSideProps = (async ({ params }) => {
+  try {
+    const { slug } = params as { slug: string }
+    const { clientPromise } = mongoClient
+    const client = await clientPromise
+    const db = client.db('proctor')
+    const paper = await db.collection<Service>('papers').findOne({ slug: slug })
+    return {
+      props: {
+        papr: paper
+          ? {
+              ...paper,
+              _id: paper._id.toString(),
+            }
+          : null,
+        isConnected: true,
+      },
+    }
+  } catch (e) {
+    console.error(e)
+    return {
+      props: {
+        papr: null,
+        isConnected: false,
+      },
+    }
   }
 }) satisfies GetServerSideProps<{
-  sv: Service | null
+  papr: Service | null
+  isConnected: boolean
 }>
 
-export default Service
+export default Paper

@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import classNames from '../../../libs/utils/ClassNames'
+import classNames from '../../utils/ClassNames'
 import Navigation from '@/components/Navigation'
 import { Inter, Lexend } from 'next/font/google'
 import { Container } from '@/components/Container'

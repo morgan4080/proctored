@@ -1,6 +1,6 @@
 import { Container } from '@/components/Container'
 import { Inter } from 'next/font/google'
-import classNames from '../../libs/utils/ClassNames'
+import classNames from '../utils/ClassNames'
 import Link from 'next/link'
 import Logo from '@/components/Logo'
 import PaymentIcons from '@/components/PaymentIcons'
@@ -23,7 +23,7 @@ const Footer = () => {
           <div className="md:grid md:grid-cols-2 md:gap-8">
             <div className="hidden lg:block">
               <ul role="list" className={classNames(inter.className, 'mt-6')}>
-                <Logo className="w-52 md:mx-auto dark:text-white" />
+                <Logo className="w-52 md:mx-auto text-bermuda" />
               </ul>
             </div>
             <div className="mt-10 md:mt-0">
@@ -32,7 +32,7 @@ const Footer = () => {
                 className={classNames(inter.className, 'mt-6 space-y-4')}
               >
                 <li>
-                  <Link href="/" className="dark:text-white">
+                  <Link href="/papers" className="dark:text-white">
                     Samples
                   </Link>
                 </li>

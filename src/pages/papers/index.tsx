@@ -30,33 +30,33 @@ export const getServerSideProps = (async () => {
   try {
     const client = await clientPromise
     const db = client.db('proctor')
-    let blogs = await db
-      .collection<Service>('blogs')
+    let papers = await db
+      .collection<Service>('papers')
       .find({})
       .sort({ metacritic: -1 })
       .limit(10)
       .toArray()
-    blogs = blogs.map((blog) => {
+    papers = papers.map((paper) => {
       return {
-        ...blog,
-        _id: blog._id.toString(),
+        ...paper,
+        _id: paper._id.toString(),
       }
     })
     return {
-      props: { blogs: blogs, isConnected: true },
+      props: { papers: papers, isConnected: true },
     }
   } catch (e) {
     console.error(e)
     return {
-      props: { blogs: [], isConnected: false },
+      props: { papers: [], isConnected: false },
     }
   }
 }) satisfies GetServerSideProps<{
-  blogs: Service[]
+  papers: Service[]
   isConnected: boolean
 }>
-const Blogs = ({
-  blogs,
+const Papers = ({
+  papers,
   isConnected,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const { toast } = useToast()
@@ -76,8 +76,8 @@ const Blogs = ({
   return (
     <div className="relative">
       <Head>
-        <title>Blog Listing</title>
-        <meta name="description" content="View All Blogs" />
+        <title>Paper Listing</title>
+        <meta name="description" content="View All Papers" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -103,15 +103,15 @@ const Blogs = ({
                   'text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl',
                 )}
               >
-                From the blog
+                From the papers
               </h2>
               <p className="mt-2 text-lg leading-8 text-gray-600">
-                Learn about writing to grow your academic performance.
+                Have a look at some of the works we have done.
               </p>
             </div>
             <div className="mx-auto mt-10 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 border-t border-gray-200 pt-10 sm:mt-16 sm:pt-16 lg:mx-0 lg:max-w-none lg:grid-cols-3">
-              {blogs.map((blog) => (
-                <Card key={blog._id}>
+              {papers.map((paper) => (
+                <Card key={paper._id}>
                   <CardContent>
                     <article className="flex max-w-xl flex-col items-start justify-between pt-6">
                       <div className="flex items-center gap-x-4 text-xs">
@@ -123,16 +123,16 @@ const Blogs = ({
                         <h3 className="mt-3 text-lg font-semibold leading-6 text-gray-900 group-hover:text-gray-600">
                           <a href="#">
                             <span className="absolute inset-0"></span>
-                            {blog.title}
+                            {paper.title}
                           </a>
                         </h3>
                         <p className="mt-5 line-clamp-3 text-sm leading-6 text-gray-600">
-                          {blog.excerpt}
+                          {paper.excerpt}
                         </p>
                       </div>
                       <div className="relative mt-8 flex items-center gap-x-4">
                         <Link
-                          href={'/blogs/' + blog.slug}
+                          href={'/papers/' + paper.slug}
                           className="text-sm font-semibold leading-6 text-slate-800"
                         >
                           Read more <span aria-hidden="true">→</span>
@@ -152,4 +152,4 @@ const Blogs = ({
   )
 }
 
-export default Blogs
+export default Papers

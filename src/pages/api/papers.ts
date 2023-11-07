@@ -1,9 +1,15 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { MongoInvalidArgumentError, ObjectId } from 'mongodb'
 import mongoClient from '@/lib/mongodb'
+import { MongoInvalidArgumentError, ObjectId } from 'mongodb'
 
 const { clientPromise } = mongoClient
+
+type Page = {
+  title: string
+  slug: string
+  description: string
+}
 
 type ResponseData = {
   data: Record<any, any>
@@ -21,22 +27,22 @@ export default async function handler(
     case 'PUT':
       try {
         const { _id, title, slug, excerpt, description } = req.body
-        const service = {
+        const paper = {
           _id: _id,
           title: title,
           slug: slug,
           excerpt: excerpt,
           description: description,
         }
-        const services_collection = db.collection('services')
-        const ddd = await services_collection.updateOne(
+        const papers_collection = db.collection('papers')
+        const ddd = await papers_collection.updateOne(
           { _id: new ObjectId(_id) },
           { $set: { description: description } },
         )
 
         const response = {
           data: ddd,
-          message: 'Service Updated Successfully',
+          message: 'Paper Updated Successfully',
         }
         res.status(200).json(response)
       } catch (e: MongoInvalidArgumentError | any) {
@@ -50,17 +56,17 @@ export default async function handler(
     case 'POST':
       try {
         const { title, slug, excerpt, description } = req.body
-        const service = {
+        const paper = {
           title: title,
           slug: slug,
           excerpt: excerpt,
           description: description,
         }
-        const services_collection = db.collection('services')
-        await services_collection.insertOne(service)
+        const papers_collection = db.collection('papers')
+        await papers_collection.insertOne(paper)
         const response = {
-          data: service,
-          message: 'Service Created Successfully',
+          data: paper,
+          message: 'Paper Created Successfully',
         }
         res.status(200).json(response)
       } catch (e) {
@@ -72,14 +78,14 @@ export default async function handler(
       if (links) {
         try {
           const projection = { slug: 1, title: 1 }
-          const service = await db
-            .collection('services')
+          const paper = await db
+            .collection('papers')
             .find({})
             .project(projection)
             .toArray()
 
           const response = {
-            data: service,
+            data: paper,
             message: 'Ok',
           }
 
@@ -89,15 +95,15 @@ export default async function handler(
         }
       } else if (slug) {
         try {
-          const service = await db
-            .collection('services')
+          const paper = await db
+            .collection('papers')
             .find({ slug: slug })
             .sort({ metacritic: -1 })
             .limit(10)
             .toArray()
 
           const response = {
-            data: service,
+            data: paper,
             message: 'Ok',
           }
 
@@ -107,14 +113,14 @@ export default async function handler(
         }
       } else {
         try {
-          const services = await db
-            .collection('services')
+          const papers = await db
+            .collection('papers')
             .find({})
             .sort({ metacritic: -1 })
             .limit(10)
             .toArray()
           const response = {
-            data: services,
+            data: papers,
             message: 'Ok',
           }
 

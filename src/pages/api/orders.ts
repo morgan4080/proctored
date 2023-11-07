@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import mongoClient from '../../../libs/mongodb'
+import mongoClient from '@/lib/mongodb'
 import { MongoInvalidArgumentError, ObjectId } from 'mongodb'
 
 const { clientPromise } = mongoClient

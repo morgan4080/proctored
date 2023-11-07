@@ -1,9 +1,9 @@
-import classNames from '../../libs/utils/ClassNames'
+import classNames from '../utils/ClassNames'
 import { signIn, signOut, useSession } from 'next-auth/react'
 import Link from 'next/link'
 import React, { useEffect, useRef, useState } from 'react'
 import { Inter } from 'next/font/google'
-import { useOnClickOutside } from '../../libs/utils/hooks'
+import { useOnClickOutside } from '../utils/hooks'
 import {
   LogOut,
   User,

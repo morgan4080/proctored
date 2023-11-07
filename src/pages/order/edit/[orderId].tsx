@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import Head from 'next/head'
-import classNames from '../../../../libs/utils/ClassNames'
+import classNames from '../../../utils/ClassNames'
 import { Separator } from '@/components/ui/separator'
 import { Container } from '@/components/Container'
 import Navigation from '@/components/Navigation'
@@ -32,7 +32,7 @@ import {
 } from '@/components/ui/dialog'
 import { Loader2 } from 'lucide-react'
 import ErrorPage from 'next/error'
-import mongoClient from '../../../../libs/mongodb'
+import mongoClient from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
 const inter = Inter({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
