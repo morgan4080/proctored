@@ -23,7 +23,7 @@ import { Loader2 } from 'lucide-react'
 import { Service } from '@/lib/service_types'
 import mongoClient from '../../../libs/mongodb'
 import useSWR from 'swr'
-import { fetcher, updateService } from '@/lib/utils'
+import { fetcher, updateRecord } from '@/lib/utils'
 
 const inter = Inter({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
@@ -66,7 +66,7 @@ const Blog = ({
   const saveArticle = (htm: string) => {
     setLoading(true)
     if (blog !== null) {
-      updateService(
+      updateRecord(
         {
           _id: blog._id,
           title: blog.title,

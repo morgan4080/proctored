@@ -19,7 +19,7 @@ export function getInitials(name: string) {
 
 export const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
-export const updateService = async (data: any, url: string) => {
+export const updateRecord = async (data: any, url: string): Promise<any> => {
   const myHeaders = new Headers()
   myHeaders.append('Content-Type', 'application/json')
 
@@ -40,7 +40,7 @@ export const updateService = async (data: any, url: string) => {
   })
 }
 
-export const createService = async (data: any, url: string) => {
+export const createRecord = async (data: any, url: string): Promise<any> => {
   const myHeaders = new Headers()
   myHeaders.append('Content-Type', 'application/json')
 
@@ -70,4 +70,13 @@ export function slugify(str: string) {
     .replace(/[^a-z0-9 -]/g, '') // remove non-alphanumeric characters
     .replace(/\s+/g, '-') // replace spaces with hyphens
     .replace(/-+/g, '-') // remove consecutive hyphens
+}
+
+export function formatMoney(money: string | number | null | undefined): string {
+  if (!money) return '0'
+  return `${parseFloat(`${money}`)
+    .toFixed(0)
+    .replace(/\B(?=(\d{3})+(?!\d))/g, ', ')}.${
+    parseFloat(`${money}`).toFixed(2).split('.')[1]
+  }`
 }

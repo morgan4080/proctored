@@ -21,7 +21,7 @@ import { ToastAction } from '@/components/ui/toast'
 import { useSession } from 'next-auth/react'
 import { Loader2 } from 'lucide-react'
 import { useRouter } from 'next/router'
-import { fetcher, updateService } from '@/lib/utils'
+import { fetcher, updateRecord } from '@/lib/utils'
 import { Service } from '@/lib/service_types'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 
@@ -67,7 +67,7 @@ const Service = ({
   const saveArticle = (htm: string) => {
     setLoading(true)
     if (service !== null) {
-      updateService(
+      updateRecord(
         {
           _id: service._id,
           title: service.title,

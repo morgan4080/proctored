@@ -3,6 +3,7 @@
     "id": 1,
     "level": "High School",
     "deadline": {
+      "2 Hours": 50,
       "12 Hours": 20,
       "24 Hours": 18,
       "48 Hours": 15,
@@ -22,7 +23,6 @@
     "subjects0": [
       "Art",
       "Art History",
-      "Art",
       "Theatre and Film",
       "Arts (Fine arts, Performing arts)",
       "Music",
@@ -122,11 +122,13 @@
       "Argumentative Essay",
       "Application/Admission Essay",
       "Annotated Bibliography",
+      "All Application Job Package",
       "Article",
       "Assignment",
       "Book Review",
       "Case Study",
       "Course Work",
+      "Cover Letter Writing",
       "Dissertation",
       "Dissertation Chapter: Abstract",
       "Dissertation Chapter: Introduction Chapter",
@@ -137,8 +139,8 @@
       "Dissertation Chapter: Hypothesis",
       "Dissertation Chapter: Conclusion Chapter",
       "Editing",
-      "Formatting",
       "Essay",
+      "Formatting",
       "Lab Report",
       "Math Problem",
       "Multiple Choice Questions",
@@ -147,24 +149,24 @@
       "Powerpoint Presentation Plain",
       "Power Point Presentation with Speaker Notes",
       "Proof Reading",
+      "Proctored Exam",
       "Paraphrasing",
       "Research Paper",
       "Research Proposal",
+      "Resume Writing",
       "Scholarship Essay",
       "Speech",
       "Statistics Project",
       "Term Paper",
       "Thesis",
-      "Thesis Proposal",
-      "All Application Job Package",
-      "Resume Writing",
-      "Cover Letter Writing"
+      "Thesis Proposal"
     ]
   },
   {
     "id": 2,
     "level": "College",
     "deadline": {
+      "2 Hours": 60,
       "12 Hours": 22,
       "24 Hours": 20,
       "48 Hours": 17,
@@ -184,7 +186,6 @@
     "subjects0": [
       "Art",
       "Art History",
-      "Art",
       "Theatre and Film",
       "Arts (Fine arts, Performing arts)",
       "Music",
@@ -327,6 +328,7 @@
     "id": 3,
     "level": "Undergraduate",
     "deadline": {
+      "2 Hours": 70,
       "12 Hours": 24,
       "24 Hours": 21,
       "48 Hours": 18,
@@ -346,7 +348,6 @@
     "subjects0": [
       "Art",
       "Art History",
-      "Art",
       "Theatre and Film",
       "Arts (Fine arts, Performing arts)",
       "Music",
@@ -489,6 +490,7 @@
     "id": 4,
     "level": "Master's",
     "deadline": {
+      "2 Hours": 80,
       "12 Hours": 30,
       "24 Hours": 28,
       "48 Hours": 25,
@@ -508,7 +510,6 @@
     "subjects0": [
       "Art",
       "Art History",
-      "Art",
       "Theatre and Film",
       "Arts (Fine arts, Performing arts)",
       "Music",
@@ -651,6 +652,7 @@
     "id": 5,
     "level": "PhD",
     "deadline": {
+      "2 Hours": 90,
       "12 Hours": 34,
       "24 Hours": 32,
       "48 Hours": 30,
@@ -670,7 +672,6 @@
     "subjects0": [
       "Art",
       "Art History",
-      "Art",
       "Theatre and Film",
       "Arts (Fine arts, Performing arts)",
       "Music",

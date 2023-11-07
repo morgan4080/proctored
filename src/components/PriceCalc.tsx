@@ -79,10 +79,6 @@ const PriceCalc = (): JSX.Element => {
       .catch((error) => console.warn(error))
   }, [])
 
-  /*useEffect(() => {
-    setTotalPrice(duration.price * pages)
-  }, [duration, pages])*/
-
   useEffect(() => {
     const subscription = watch((value, { name, type }) => {
       // console.log('watching', value, name)

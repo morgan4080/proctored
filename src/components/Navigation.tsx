@@ -4,16 +4,15 @@ import Link from 'next/link'
 import React, { useEffect, useRef, useState } from 'react'
 import { Inter } from 'next/font/google'
 import { useOnClickOutside } from '../../libs/utils/hooks'
-import { LogOut, User, ListOrderedIcon } from 'lucide-react'
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+  LogOut,
+  User,
+  Boxes,
+  ListOrderedIcon,
+  PackageIcon,
+  LucideNewspaper,
+  LucideArchive,
+} from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { cn, getInitials } from '@/lib/utils'
 import {
@@ -25,7 +24,6 @@ import {
   NavigationMenuTrigger,
 } from '@/components/ui/navigation-menu'
 import Logo from '@/components/Logo'
-import { GetStaticProps, InferGetStaticPropsType } from 'next'
 
 const inter = Inter({
   weight: ['100', '300', '400', '500', '700', '900'],
@@ -117,6 +115,7 @@ const Navigation = () => {
                           key={component.title}
                           title={component.title}
                           href={'/services/' + component.slug}
+                          icon={<></>}
                         />
                       ))}
                     </ul>
@@ -132,84 +131,59 @@ const Navigation = () => {
                     </button>
                   </NavigationMenuItem>
                 ) : (
-                  <NavigationMenuItem key={item.name}>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        {session.user && session.user.name ? (
-                          <div className="flex items-center space-x-2 bg-black rounded-full">
-                            <p className="text-xs pl-2 text-white">
-                              {session.user.email}
-                            </p>
-                            <Avatar className="w-8 h-8 cursor-pointer">
-                              <AvatarImage src={`${session.user.image}`} />
-                              <AvatarFallback className="text-xs text-black">
-                                {getInitials(session.user.name)}
-                              </AvatarFallback>
-                            </Avatar>
-                          </div>
-                        ) : null}
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent className="w-32">
-                        <DropdownMenuLabel>
-                          {session.user?.name
-                            ? session.user?.name
-                            : 'My Account'}
-                        </DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuGroup>
-                          <DropdownMenuItem>
-                            <Link href="/me" className="flex">
-                              <User className="mr-2 h-4 w-4" />
-                              <span>Profile</span>
-                            </Link>
-                          </DropdownMenuItem>
-                          {/*ONLY ADMIN*/}
-                          <DropdownMenuItem>
-                            <Link href="/all-services" className="flex">
-                              <ListOrderedIcon className="mr-2 h-4 w-4" />
-                              <span>All Services</span>
-                            </Link>
-                          </DropdownMenuItem>
-                          {/*ONLY ADMIN*/}
-                          <DropdownMenuItem>
-                            <Link href="/all-blogs" className="flex">
-                              <ListOrderedIcon className="mr-2 h-4 w-4" />
-                              <span>All Blogs</span>
-                            </Link>
-                          </DropdownMenuItem>
-                          {/*ONLY ADMIN*/}
-                          <DropdownMenuItem>
-                            <Link href="/all-papers" className="flex">
-                              <ListOrderedIcon className="mr-2 h-4 w-4" />
-                              <span>All Papers</span>
-                            </Link>
-                          </DropdownMenuItem>
-                          {/*ONLY ADMIN*/}
-                          <DropdownMenuItem>
-                            <Link href="/all-orders" className="flex">
-                              <ListOrderedIcon className="mr-2 h-4 w-4" />
-                              <span>All Orders</span>
-                            </Link>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <Link href="/orders" className="flex">
-                              <ListOrderedIcon className="mr-2 h-4 w-4" />
-                              <span>My Orders</span>
-                            </Link>
-                          </DropdownMenuItem>
-                        </DropdownMenuGroup>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem
+                  <NavigationMenuItem>
+                    <NavigationMenuTrigger className="bg-transparent hover:bg-transparent">
+                      {session.user && session.user.name ? (
+                        <div className="flex items-center space-x-2 bg-black rounded-full">
+                          <p className="text-xs pl-2 text-white">
+                            {session.user.email}
+                          </p>
+                          <Avatar className="w-8 h-8 cursor-pointer">
+                            <AvatarImage src={`${session.user.image}`} />
+                            <AvatarFallback className="text-xs text-black">
+                              {getInitials(session.user.name)}
+                            </AvatarFallback>
+                          </Avatar>
+                        </div>
+                      ) : null}
+                    </NavigationMenuTrigger>
+                    <NavigationMenuContent>
+                      <ul className="grid gap-2 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-2">
+                        <ListItem
+                          href="/me"
+                          title="My Profile"
+                          icon={<User className="mr-2 h-4 w-4" />}
+                        ></ListItem>
+                        <ListItem
+                          href="/all-services"
+                          title="Create Services"
+                          icon={<ListOrderedIcon className="mr-2 h-4 w-4" />}
+                        ></ListItem>
+                        <ListItem
+                          href="/all-orders"
+                          title="All Orders"
+                          icon={<PackageIcon className="mr-2 h-4 w-4" />}
+                        ></ListItem>
+                        <ListItem
+                          href="/all-blogs"
+                          title="Create Blogs"
+                          icon={<LucideNewspaper className="mr-2 h-4 w-4" />}
+                        ></ListItem>
+                        <ListItem
+                          href="/all-papers"
+                          title="Create Papers"
+                          icon={<LucideArchive className="mr-2 h-4 w-4" />}
+                        ></ListItem>
+                        <ListItem
                           onClick={(e) => {
                             e.preventDefault()
                             signOut().catch((e) => console.log(e))
                           }}
-                        >
-                          <LogOut className="mr-2 h-4 w-4" />
-                          <span>Log out</span>
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                          title="Logout"
+                          icon={<LogOut className="mr-2 h-4 w-4" />}
+                        ></ListItem>
+                      </ul>
+                    </NavigationMenuContent>
                   </NavigationMenuItem>
                 )
               ) : (
@@ -237,21 +211,24 @@ export default Navigation
 
 const ListItem = React.forwardRef<
   React.ElementRef<'a'>,
-  React.ComponentPropsWithoutRef<'a'>
->(({ className, title, children, ...props }, ref) => {
+  React.ComponentPropsWithoutRef<'a'> & { icon: React.ReactNode }
+>(({ className, title, children, icon, ...props }, ref) => {
   return (
     <li>
       <NavigationMenuLink asChild>
         <Link
           ref={ref}
           className={cn(
-            'block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground',
+            'flex-1 block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground',
             className,
           )}
           href={props.href ? props.href : ''}
           {...props}
         >
-          <div className="text-sm font-medium leading-none">{title}</div>
+          <div className="flex items-center">
+            {icon}
+            <div className="text-sm font-medium leading-none">{title}</div>
+          </div>
           <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
             {children}
           </p>

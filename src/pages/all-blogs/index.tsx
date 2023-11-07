@@ -21,7 +21,7 @@ import {
   InferGetStaticPropsType,
 } from 'next'
 import { Button } from '@/components/ui/button'
-import { createService, fetcher, updateService } from '@/lib/utils'
+import { createRecord, fetcher, updateRecord } from '@/lib/utils'
 import { Service } from '@/lib/service_types'
 import ServiceDialogue from '@/components/ServiceDialogue'
 import { toast } from '@/components/ui/use-toast'
@@ -240,7 +240,7 @@ const AllBlogs = ({
                 if (context == 'Create') {
                   // POST
                   setLoading(true)
-                  createService(
+                  createRecord(
                     {
                       ...values,
                     },
@@ -262,7 +262,7 @@ const AllBlogs = ({
                 } else {
                   // PUT
                   setLoading(true)
-                  updateService(
+                  updateRecord(
                     {
                       _id: defaultID,
                       ...values,

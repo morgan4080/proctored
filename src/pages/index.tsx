@@ -191,12 +191,12 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
                 <p className="py-6 max-w-2xl text-lg tracking-tight text-white/80">
                   We write your papers - you get top grades!
                 </p>
-                <button
-                  type="button"
+                <Link
+                  href="/order/create"
                   className="bg-teal-300 w-44 py-3 px-8 text-xl rounded-full text-black font-semibold hidden lg:inline-block mt-4 transform hover:scale-105 transition ease-in-out duration-100"
                 >
                   Order Now
-                </button>
+                </Link>
               </div>
               <div className="flex justify-center lg:justify-end">
                 <HeroArt className="h-1/2 lg:w-full lg:h-full" />
@@ -818,12 +818,12 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
                   </p>
                 </div>
               </div>
-              <button
-                type="button"
+              <Link
+                href="/order/create"
                 className="bg-teal-300 rounded-md text-white py-3 px-12"
               >
                 <span className="font-bold text-black">Order Now</span>
-              </button>
+              </Link>
             </div>
           </Container>
         </div>
@@ -1289,12 +1289,12 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
             </div>
 
             <div className="flex justify-center align-center pt-16">
-              <button
-                type="button"
+              <Link
+                href="/order/create"
                 className="bg-teal-300 w-44 py-3 px-8 text-xl rounded-2xl text-black font-semibold hidden lg:inline-block mt-4 transform hover:scale-105 transition ease-in-out duration-100"
               >
                 Order Now
-              </button>
+              </Link>
             </div>
           </Container>
         </div>

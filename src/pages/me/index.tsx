@@ -19,7 +19,7 @@ const lexend = Lexend({
   subsets: ['latin'],
 })
 
-export default function MePage() {
+function Me() {
   const { data: session, status } = useSession()
 
   return (
@@ -40,10 +40,7 @@ export default function MePage() {
           <Navigation />
         </div>
 
-        <Container
-          className="xl:px-0"
-          parentClassName="pt-10 md:pt-20 bg-white w-full"
-        >
+        <Container className="xl:px-0" parentClassName="pt-10 bg-white w-full">
           <div className="lg:flex lg:items-center lg:justify-between">
             <div className="min-w-0 flex-1">
               <h2
@@ -54,7 +51,7 @@ export default function MePage() {
               >
                 {session ? session.user?.name : ''}
               </h2>
-              <p className="mt-1 flex flex-col sm:mt-0 sm:flex-row sm:flex-wrap sm:space-x-6">
+              <div className="mt-1 flex flex-col sm:mt-0 sm:flex-row sm:flex-wrap sm:space-x-6">
                 <div className="mt-2 flex items-center text-sm text-gray-500">
                   <svg
                     className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400"
@@ -84,9 +81,9 @@ export default function MePage() {
                       clipRule="evenodd"
                     ></path>
                   </svg>
-                  Last order date (0)
+                  <p>Last order date (0)</p>
                 </div>
-              </p>
+              </div>
             </div>
             <div className="mt-5 flex lg:ml-4 lg:mt-0">
               <span className="block">
@@ -95,7 +92,7 @@ export default function MePage() {
                   className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
                 >
                   <svg
-                    className="-ml-0.5 mr-1.5 h-5 w-5 text-gray-400"
+                    className="-ml-0.5 mr-1.5 h-4 w-4 text-gray-400"
                     viewBox="0 0 20 20"
                     fill="currentColor"
                     aria-hidden="true"
@@ -108,38 +105,24 @@ export default function MePage() {
               <span className="ml-3 block">
                 <button
                   type="button"
-                  className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                  className="inline-flex items-center rounded-md bg-yellow-50 text-yellow-700 ring-1 ring-inset ring-yellow-600/20 px-3 py-2 text-sm font-semibold shadow-sm hover:bg-black hover:text-white"
                 >
                   <svg
-                    className="-ml-0.5 mr-1.5 h-5 w-5 text-gray-400"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
+                    className="-ml-0.5 mr-1.5 h-4 w-4"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
                     aria-hidden="true"
                   >
                     <path
-                      fillRule="evenodd"
-                      d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
-                      clipRule="evenodd"
-                    />
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M12 10.5v6m3-3H9m4.06-7.19l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z"
+                    ></path>
                   </svg>
                   Order
-                </button>
-              </span>
-              <span className="ml-3 block">
-                <button
-                  type="button"
-                  className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-                >
-                  <svg
-                    className="-ml-0.5 mr-1.5 h-5 w-5 text-gray-400"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                    aria-hidden="true"
-                  >
-                    <path d="M12.232 4.232a2.5 2.5 0 013.536 3.536l-1.225 1.224a.75.75 0 001.061 1.06l1.224-1.224a4 4 0 00-5.656-5.656l-3 3a4 4 0 00.225 5.865.75.75 0 00.977-1.138 2.5 2.5 0 01-.142-3.667l3-3z" />
-                    <path d="M11.603 7.963a.75.75 0 00-.977 1.138 2.5 2.5 0 01.142 3.667l-3 3a2.5 2.5 0 01-3.536-3.536l1.225-1.224a.75.75 0 00-1.061-1.06l-1.224 1.224a4 4 0 105.656 5.656l3-3a4 4 0 00-.225-5.865z" />
-                  </svg>
-                  View
                 </button>
               </span>
             </div>
@@ -156,3 +139,5 @@ export default function MePage() {
     </>
   )
 }
+
+export default Me
