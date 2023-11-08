@@ -889,8 +889,16 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
           <Accordion type="single" collapsible className="max-w-2xl">
             {FAQ.map((faq, faqIdx) => (
               <AccordionItem key={faqIdx} value={faqIdx + faq.name}>
-                <AccordionTrigger>{faq.name}</AccordionTrigger>
-                <AccordionContent>{faq.description}</AccordionContent>
+                <AccordionTrigger>
+                  <div className="prose">
+                    <h3>{faq.name}</h3>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent>
+                  <div className="prose">
+                    <p>{faq.description}</p>
+                  </div>
+                </AccordionContent>
               </AccordionItem>
             ))}
           </Accordion>

@@ -1,6 +1,7 @@
 import { withAuth } from 'next-auth/middleware'
+
 // More on how NextAuth.js middleware works: https://next-auth.js.org/configuration/nextjs#middleware
-export default withAuth({
+/*export default withAuth({
   callbacks: {
     authorized(data) {
       // `/admin` requires admin role
@@ -18,7 +19,10 @@ export default withAuth({
       return !!token
     },
   },
-})
+})*/
+
+export { default } from 'next-auth/middleware'
+
 export const config = {
   matcher: [
     '/admin',

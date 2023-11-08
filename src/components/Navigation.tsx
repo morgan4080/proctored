@@ -102,9 +102,9 @@ const Navigation = () => {
         </Link>
         <NavigationMenu className="hidden md:block mx-auto lg:mx-0">
           <NavigationMenuList className="space-x-4">
-            {menu.map((item) =>
+            {menu.map((item, index) =>
               item.items.length > 0 ? (
-                <NavigationMenuItem key={item.name}>
+                <NavigationMenuItem key={index}>
                   <NavigationMenuTrigger className="NavigationMenuTrigger">
                     {item.name}
                   </NavigationMenuTrigger>
@@ -123,7 +123,7 @@ const Navigation = () => {
                 </NavigationMenuItem>
               ) : item.name == 'Sign In' ? (
                 !session ? (
-                  <NavigationMenuItem key={item.name}>
+                  <NavigationMenuItem key={index}>
                     <button type={'button'} onClick={() => signIn()}>
                       <NavigationMenuLink className="NavigationMenuLink">
                         {item.name}
@@ -131,7 +131,7 @@ const Navigation = () => {
                     </button>
                   </NavigationMenuItem>
                 ) : (
-                  <NavigationMenuItem>
+                  <NavigationMenuItem key={index}>
                     <NavigationMenuTrigger className="bg-transparent hover:bg-transparent">
                       {session.user && session.user.name ? (
                         <div className="flex items-center space-x-2 bg-black rounded-full">
@@ -187,7 +187,7 @@ const Navigation = () => {
                   </NavigationMenuItem>
                 )
               ) : (
-                <NavigationMenuItem key={item.name}>
+                <NavigationMenuItem key={index}>
                   <Link
                     href={item.href ? item.href : ''}
                     legacyBehavior

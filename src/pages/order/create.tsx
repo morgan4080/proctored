@@ -31,6 +31,7 @@ import {
   DialogPortal,
 } from '@/components/ui/dialog'
 import { Loader2 } from 'lucide-react'
+import { useSession } from 'next-auth/react'
 const inter = Inter({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
   subsets: ['latin'],
@@ -88,6 +89,7 @@ const CreateOrder = ({
 
   const [currentTab, setCurrentTab] = useState(0)
   const [loading, setLoading] = useState(false)
+  const { data: session, status } = useSession()
 
   useEffect(() => {
     // determine range prices
@@ -123,6 +125,7 @@ const CreateOrder = ({
         let data = {
           ...orderOptions,
           ...orderDetails,
+          // userId: session && session.user ? session.user.userId : null,
         }
         if (orderId) {
           updateRecord(

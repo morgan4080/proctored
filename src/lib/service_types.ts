@@ -37,3 +37,33 @@ export interface Duration {
   from: string
   to: string
 }
+
+export type Writer = {
+  photo: File
+  writer_name: string
+  rating: number
+  jobs_completed: number
+  latest_job: string
+}
+export type Job = {
+  id: string
+  order_id: string
+  amount_quoted: number
+  payment_status: 'Paid' | 'Unpaid'
+  job_status: 'Pending' | 'Declined' | 'Accepted' | 'Completed'
+  rating: number
+  completion_date: Date
+  submission_documents: FileList[]
+  date_assigned: Date
+}
+
+export type User = {
+  _id: string
+  email: string
+  name: string
+  userRole: string
+  is_writer: boolean
+  orders: number
+  writer_profile: Writer | null
+  jobs: Job[]
+}

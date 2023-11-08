@@ -44,7 +44,7 @@
     "lucide-react": "^0.274.0",
     "mongodb": "^4.8.1",
     "next": "13.3.0",
-    "next-auth": "^4.22.4",
+    "next-auth": "^4.24.4",
     "nodemailer": "^6.9.4",
     "react": "18.2.0",
     "react-day-picker": "^8.9.1",

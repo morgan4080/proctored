@@ -5,12 +5,6 @@ import { MongoInvalidArgumentError, ObjectId } from 'mongodb'
 
 const { clientPromise } = mongoClient
 
-type Page = {
-  title: string
-  slug: string
-  description: string
-}
-
 type ResponseData = {
   data: Record<any, any>
   message: string

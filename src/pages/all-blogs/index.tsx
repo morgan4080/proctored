@@ -14,12 +14,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import React, { useEffect, useState } from 'react'
-import {
-  GetServerSideProps,
-  GetStaticProps,
-  InferGetServerSidePropsType,
-  InferGetStaticPropsType,
-} from 'next'
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { Button } from '@/components/ui/button'
 import { createRecord, fetcher, updateRecord } from '@/lib/utils'
 import { Service } from '@/lib/service_types'
