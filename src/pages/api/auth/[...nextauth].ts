@@ -1,6 +1,32 @@
-import NextAuth, { NextAuthOptions } from 'next-auth'
+import NextAuth, { DefaultSession, NextAuthOptions } from 'next-auth'
+// import Apple from "next-auth/providers/apple"
+// import Atlassian from "next-auth/providers/atlassian"
+// import Auth0 from "next-auth/providers/auth0"
+// import Authentik from "next-auth/providers/authentik"
+// import AzureAD from "next-auth/providers/azure-ad"
+// import AzureB2C from "next-auth/providers/azure-ad-b2c"
+// import Battlenet from "next-auth/providers/battlenet"
+// import Box from "next-auth/providers/box"
+// import BoxyHQSAML from "next-auth/providers/boxyhq-saml"
+// import Bungie from "next-auth/providers/bungie"
+// import Cognito from "next-auth/providers/cognito"
+// import Coinbase from "next-auth/providers/coinbase"
+// import Discord from "next-auth/providers/discord"
+// import Dropbox from "next-auth/providers/dropbox"
+// import DuendeIDS6 from "next-auth/providers/duende-identity-server6"
+// import Eveonline from "next-auth/providers/eveonline"
+// import Facebook from "next-auth/providers/facebook"
+// import Faceit from "next-auth/providers/faceit"
+// import FortyTwoSchool from "next-auth/providers/42-school"
+// import Foursquare from "next-auth/providers/foursquare"
+// import Freshbooks from "next-auth/providers/freshbooks"
+// import Fusionauth from "next-auth/providers/fusionauth"
+// import GitHub from "next-auth/providers/github"
+// import Gitlab from "next-auth/providers/gitlab"
 import GoogleProvider from 'next-auth/providers/google'
 import mongoClient from '@/lib/mongodb'
+import { User } from '@/lib/service_types'
+
 const { clientPromise } = mongoClient
 
 export const authOptions: NextAuthOptions = {
@@ -18,7 +44,7 @@ export const authOptions: NextAuthOptions = {
       // Persist the OAuth access_token and or the user id to the token right after signin
       if (account) {
         token.accessToken = account.access_token
-        if (profile) {
+        if (profile && profile.email && profile.name) {
           // create user in db make sure email is unique, db to determine user role
           const client = await clientPromise
           const db = client.db('proctor')
@@ -26,7 +52,7 @@ export const authOptions: NextAuthOptions = {
 
           // check if user exists in collection using primary constraint email
 
-          const userFromDB = await users_collection.findOne({
+          const userFromDB = await users_collection.findOne<User>({
             email: profile.email,
           })
 
@@ -38,23 +64,27 @@ export const authOptions: NextAuthOptions = {
             token.user_id = userFromDB._id.toString()
             token.userRole = userFromDB.userRole
           } else {
+            let defaultUser = {
+              email: profile.email,
+              name: profile.name,
+              userRole: 'user',
+              is_writer: false,
+              orders: 0,
+              writer_profile: null,
+              jobs: [],
+            }
             // create user, they didn't exist
             const { acknowledged, insertedId } =
-              await users_collection.insertOne({
-                email: profile.email,
-                name: profile.name,
-                userRole: 'user',
-                is_writer: false,
-                orders: 0,
-                writer_profile: null,
-                jobs: [],
-              })
-
-            token.userRole = 'user'
+              await users_collection.insertOne(defaultUser)
 
             if (acknowledged) {
               // insert user id to token but since it ObjectId you have to convert to string
+              token.user = {
+                ...defaultUser,
+                _id: insertedId.toString(),
+              } as User
               token.user_id = insertedId.toString()
+              token.userRole = 'user'
             }
           }
         }
@@ -63,14 +93,10 @@ export const authOptions: NextAuthOptions = {
       return token
     },
     async session({ session, token, user }) {
-      return {
-        ...session,
-        user: {
-          ...session.user,
-          userRole: token.userRole,
-          userId: token.user_id,
-        },
+      if (token.user) {
+        session.user = { ...token.user, image: session.user?.image }
       }
+      return session
     },
   },
 }
@@ -137,32 +163,6 @@ export default async function handler(
 
 
 */
-
-// import Apple from "next-auth/providers/apple"
-// import Atlassian from "next-auth/providers/atlassian"
-// import Auth0 from "next-auth/providers/auth0"
-// import Authentik from "next-auth/providers/authentik"
-// import AzureAD from "next-auth/providers/azure-ad"
-// import AzureB2C from "next-auth/providers/azure-ad-b2c"
-// import Battlenet from "next-auth/providers/battlenet"
-// import Box from "next-auth/providers/box"
-// import BoxyHQSAML from "next-auth/providers/boxyhq-saml"
-// import Bungie from "next-auth/providers/bungie"
-// import Cognito from "next-auth/providers/cognito"
-// import Coinbase from "next-auth/providers/coinbase"
-// import Discord from "next-auth/providers/discord"
-// import Dropbox from "next-auth/providers/dropbox"
-// import DuendeIDS6 from "next-auth/providers/duende-identity-server6"
-// import Eveonline from "next-auth/providers/eveonline"
-// import Facebook from "next-auth/providers/facebook"
-// import Faceit from "next-auth/providers/faceit"
-// import FortyTwoSchool from "next-auth/providers/42-school"
-// import Foursquare from "next-auth/providers/foursquare"
-// import Freshbooks from "next-auth/providers/freshbooks"
-// import Fusionauth from "next-auth/providers/fusionauth"
-// import GitHub from "next-auth/providers/github"
-// import Gitlab from "next-auth/providers/gitlab"
-import Google from 'next-auth/providers/google'
 // import Hubspot from "next-auth/providers/hubspot"
 // import Instagram from "next-auth/providers/instagram"
 // import Kakao from "next-auth/providers/kakao"

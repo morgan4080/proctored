@@ -3,7 +3,7 @@ import { signIn, signOut, useSession } from 'next-auth/react'
 import Link from 'next/link'
 import React, { useEffect, useRef, useState } from 'react'
 import { Inter } from 'next/font/google'
-import { useOnClickOutside } from '../utils/hooks'
+import { useOnClickOutside } from '@/utils/hooks'
 import {
   LogOut,
   User,
@@ -18,10 +18,12 @@ import { cn, getInitials } from '@/lib/utils'
 import {
   NavigationMenu,
   NavigationMenuContent,
+  NavigationMenuIndicator,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
+  NavigationMenuViewport,
 } from '@/components/ui/navigation-menu'
 import Logo from '@/components/Logo'
 
@@ -100,108 +102,104 @@ const Navigation = () => {
         <Link href="/">
           <Logo className="w-52 mx-auto text-white" />
         </Link>
-        <NavigationMenu className="hidden md:block mx-auto lg:mx-0">
-          <NavigationMenuList className="space-x-4">
-            {menu.map((item, index) =>
-              item.items.length > 0 ? (
-                <NavigationMenuItem key={index}>
-                  <NavigationMenuTrigger className="NavigationMenuTrigger">
-                    {item.name}
-                  </NavigationMenuTrigger>
-                  <NavigationMenuContent className="NavigationMenuContent">
-                    <ul className="grid gap-1 p-6 md:w-[180px] lg:w-[200px] lg:grid-cols-1">
-                      {item.items.map((component) => (
-                        <ListItem
-                          key={component.title}
-                          title={component.title}
-                          href={'/services/' + component.slug}
-                          icon={<></>}
-                        />
-                      ))}
-                    </ul>
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
-              ) : item.name == 'Sign In' ? (
-                !session ? (
+        <div className="hidden md:flex mx-auto lg:mx-0">
+          <NavigationMenu>
+            <NavigationMenuList className="space-x-4">
+              {menu.map((item, index) =>
+                item.items.length > 0 ? (
                   <NavigationMenuItem key={index}>
-                    <button type={'button'} onClick={() => signIn()}>
-                      <NavigationMenuLink className="NavigationMenuLink">
-                        {item.name}
-                      </NavigationMenuLink>
-                    </button>
-                  </NavigationMenuItem>
-                ) : (
-                  <NavigationMenuItem key={index}>
-                    <NavigationMenuTrigger className="bg-transparent hover:bg-transparent">
-                      {session.user && session.user.name ? (
-                        <div className="flex items-center space-x-2 bg-black rounded-full">
-                          <p className="text-xs pl-2 text-white">
-                            {session.user.email}
-                          </p>
-                          <Avatar className="w-8 h-8 cursor-pointer">
-                            <AvatarImage src={`${session.user.image}`} />
-                            <AvatarFallback className="text-xs text-black">
-                              {getInitials(session.user.name)}
-                            </AvatarFallback>
-                          </Avatar>
-                        </div>
-                      ) : null}
+                    <NavigationMenuTrigger className="NavigationMenuTrigger">
+                      {item.name}
                     </NavigationMenuTrigger>
-                    <NavigationMenuContent>
-                      <ul className="grid gap-2 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-2">
-                        <ListItem
-                          href="/me"
-                          title="My Profile"
-                          icon={<User className="mr-2 h-4 w-4" />}
-                        ></ListItem>
-                        <ListItem
-                          href="/all-services"
-                          title="Create Services"
-                          icon={<ListOrderedIcon className="mr-2 h-4 w-4" />}
-                        ></ListItem>
-                        <ListItem
-                          href="/all-orders"
-                          title="All Orders"
-                          icon={<PackageIcon className="mr-2 h-4 w-4" />}
-                        ></ListItem>
-                        <ListItem
-                          href="/all-blogs"
-                          title="Create Blogs"
-                          icon={<LucideNewspaper className="mr-2 h-4 w-4" />}
-                        ></ListItem>
-                        <ListItem
-                          href="/all-papers"
-                          title="Create Papers"
-                          icon={<LucideArchive className="mr-2 h-4 w-4" />}
-                        ></ListItem>
-                        <ListItem
-                          onClick={(e) => {
-                            e.preventDefault()
-                            signOut().catch((e) => console.log(e))
-                          }}
-                          title="Logout"
-                          icon={<LogOut className="mr-2 h-4 w-4" />}
-                        ></ListItem>
+                    <NavigationMenuContent className="NavigationMenuContent">
+                      <ul className="grid gap-1 p-6 md:w-[180px] lg:w-[200px] lg:grid-cols-1">
+                        {item.items.map((component) => (
+                          <ListItem
+                            key={component.title}
+                            title={component.title}
+                            href={'/services/' + component.slug}
+                            icon={<></>}
+                          />
+                        ))}
                       </ul>
                     </NavigationMenuContent>
                   </NavigationMenuItem>
-                )
-              ) : (
-                <NavigationMenuItem key={index}>
-                  <Link
-                    href={item.href ? item.href : ''}
-                    legacyBehavior
-                    passHref
+                ) : item.name == 'Sign In' ? (
+                  !session && (
+                    <NavigationMenuItem key={index}>
+                      <button type={'button'} onClick={() => signIn()}>
+                        <NavigationMenuLink className="NavigationMenuLink">
+                          {item.name}
+                        </NavigationMenuLink>
+                      </button>
+                    </NavigationMenuItem>
+                  )
+                ) : (
+                  <NavigationMenuItem key={index}>
+                    <Link
+                      href={item.href ? item.href : ''}
+                      legacyBehavior
+                      passHref
+                    >
+                      <NavigationMenuLink className="NavigationMenuLink">
+                        {item.name}
+                      </NavigationMenuLink>
+                    </Link>
+                  </NavigationMenuItem>
+                ),
+              )}
+            </NavigationMenuList>
+          </NavigationMenu>
+          {session && (
+            <NavigationMenu originalViewport={false} className="pl-4">
+              <NavigationMenuList className="space-x-4 pl-4 border-l">
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger
+                    chevron={false}
+                    className="bg-black hover:bg-black p-0 h-6 rounded-full"
                   >
-                    <NavigationMenuLink className="NavigationMenuLink">
-                      {item.name}
-                    </NavigationMenuLink>
-                  </Link>
+                    {session.user && session.user.name ? (
+                      <div className="flex items-center space-x-2 bg-black rounded-full">
+                        <p className="text-xs pl-2 text-white">
+                          {session.user.email}
+                        </p>
+                        <Avatar className="w-8 h-8 cursor-pointer">
+                          <AvatarImage src={`${session.user.image}`} />
+                          <AvatarFallback className="text-xs text-black">
+                            {getInitials(session.user.name)}
+                          </AvatarFallback>
+                        </Avatar>
+                      </div>
+                    ) : null}
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <ul className="flex flex-col gap-2 p-4 w-[180px]">
+                      <ListItem
+                        href="/me/orders"
+                        title="Profile"
+                        icon={<></>}
+                      ></ListItem>
+                      <ListItem
+                        href="/admin/users"
+                        title="Admin"
+                        icon={<></>}
+                      ></ListItem>
+                      <ListItem
+                        onClick={(e) => {
+                          e.preventDefault()
+                          signOut().catch((e) => console.log(e))
+                        }}
+                        title="Logout"
+                        icon={<></>}
+                      ></ListItem>
+                    </ul>
+                  </NavigationMenuContent>
                 </NavigationMenuItem>
-              ),
-            )}
-          </NavigationMenuList>
-        </NavigationMenu>
+              </NavigationMenuList>
+              <NavigationMenuViewport viewportClassName="absolute right-0 top-full flex justify-end" />
+            </NavigationMenu>
+          )}
+        </div>
       </div>
     </div>
   )

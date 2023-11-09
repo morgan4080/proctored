@@ -32,10 +32,11 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { User } from '@/lib/service_types'
+import { Duration, Order, OrderWithOwner, User } from '@/lib/service_types'
 import Link from 'next/link'
+import { format } from 'date-fns'
 
-const UsersTable = ({ users }: { users: User[] }) => {
+const OrdersTable = ({ orders }: { orders: OrderWithOwner[] }) => {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
@@ -43,11 +44,9 @@ const UsersTable = ({ users }: { users: User[] }) => {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
+  const assignWriter = () => {}
 
-  const makeWriter = () => {}
-  const showPermissions = () => {}
-
-  const columns: ColumnDef<User>[] = [
+  const columns: ColumnDef<Order>[] = [
     {
       accessorKey: '_id',
       id: '_id',
@@ -69,96 +68,87 @@ const UsersTable = ({ users }: { users: User[] }) => {
       enableHiding: false,
     },
     {
-      accessorKey: 'userRole',
-      header: 'Role',
-      cell: ({ row }) => (
-        <div className="capitalize">
-          {row.getValue('userRole') == 'superuser' && (
-            <span className="inline-flex items-center rounded-full bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">
-              {row.getValue('userRole')}
-            </span>
-          )}
-          {row.getValue('userRole') == 'admin' && (
-            <span className="inline-flex items-center rounded-full bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20">
-              {row.getValue('userRole')}
-            </span>
-          )}
-          {row.getValue('userRole') == 'user' && (
-            <span className="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
-              {row.getValue('userRole')}
-            </span>
-          )}
-        </div>
-      ),
-    },
-    {
-      accessorKey: 'email',
+      id: 'created',
       header: ({ column }) => {
         return (
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
-            Email
+            Date
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         )
       },
+      cell: ({ row }) => {
+        const order = row.original
+        return (
+          <div className="capitalize">
+            {format(new Date(order.duration.from), 'MMMM dd, yyyy h:mm:ss aa')}
+          </div>
+        )
+      },
+    },
+    {
+      accessorKey: 'topic',
+      header: 'Topic',
       cell: ({ row }) => (
-        <div className="lowercase">{row.getValue('email')}</div>
+        <div className="capitalize">{row.getValue('topic')}</div>
       ),
     },
     {
-      accessorKey: 'name',
+      accessorKey: 'academic_level',
+      header: 'Level',
+      cell: ({ row }) => (
+        <div className="capitalize">{row.getValue('academic_level')}</div>
+      ),
+    },
+    {
+      accessorKey: 'subject_discipline',
+      header: 'Subject/Discipline',
+      cell: ({ row }) => (
+        <div className="capitalize">{row.getValue('subject_discipline')}</div>
+      ),
+    },
+    {
+      id: 'deadline',
       header: ({ column }) => {
         return (
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
-            Name
+            Deadline
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         )
       },
-      cell: ({ row }) => (
-        <div className="capitalize">{row.getValue('name')}</div>
-      ),
+      cell: ({ row }) => {
+        const order = row.original
+        return (
+          <div className="capitalize">
+            {format(new Date(order.duration.to), 'MMMM dd, yyyy h:mm:ss aa')}
+          </div>
+        )
+      },
     },
     {
-      accessorKey: 'is_writer',
-      header: 'Writer',
-      cell: ({ row }) => (
-        <div className="capitalize">
-          {row.getValue('is_writer') === false && (
-            <span className="inline-flex items-center rounded-full bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20">
-              {`${row.getValue('is_writer')}`}
-            </span>
-          )}
-          {row.getValue('is_writer') === true && (
-            <span className="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
-              {`${row.getValue('is_writer')}`}{' '}
-            </span>
-          )}
-        </div>
-      ),
-    },
-    {
-      accessorKey: 'orders',
-      header: 'Orders',
-      cell: ({ row }) => (
-        <div>
-          <Link href={'/user/' + row.getValue('_id')}>
-            <span className="text-xs">{row.getValue('orders')}</span>
+      accessorKey: 'owner',
+      header: 'Owner',
+      cell: ({ row }) => {
+        const order = row.original
+        return (
+          <Link href={'/user/' + order.userId} className="underline">
+            {(row.getValue('owner') as User).name}
           </Link>
-        </div>
-      ),
+        )
+      },
     },
     {
       id: 'actions',
       enableHiding: false,
       cell: ({ row }) => {
-        const user = row.original
+        const order = row.original
         return (
           <div>
             <DropdownMenu>
@@ -171,43 +161,24 @@ const UsersTable = ({ users }: { users: User[] }) => {
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
                 <DropdownMenuItem
-                  onClick={() => navigator.clipboard.writeText(user._id)}
+                  onClick={() => navigator.clipboard.writeText(order._id)}
+                  className="cursor-pointer"
                 >
-                  Copy User ID
+                  Copy Order ID
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <Link href={'/user/' + user._id} className="w-full">
-                    Orders
+                <DropdownMenuItem className="cursor-pointer">
+                  <Link href={'/order/' + order._id} className="w-full">
+                    View order
                   </Link>
                 </DropdownMenuItem>
-                {user.is_writer ? (
-                  <DropdownMenuItem>
-                    <Link href={'/writer/' + user._id} className="w-full">
-                      Jobs
-                    </Link>
-                  </DropdownMenuItem>
-                ) : (
-                  <DropdownMenuItem>
-                    <button
-                      onClick={() => {
-                        makeWriter()
-                      }}
-                      className="cursor-pointer w-full text-left"
-                    >
-                      Make Writer
-                    </button>
-                  </DropdownMenuItem>
-                )}
-                <DropdownMenuItem className="cursor-pointer">
-                  <button
-                    onClick={() => {
-                      showPermissions()
-                    }}
-                    className="cursor-pointer w-full"
-                  >
-                    Change permissions
-                  </button>
+                <DropdownMenuItem
+                  onClick={() => {
+                    assignWriter()
+                  }}
+                  className="cursor-pointer"
+                >
+                  Assign writer
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -218,7 +189,7 @@ const UsersTable = ({ users }: { users: User[] }) => {
   ]
 
   const table = useReactTable({
-    data: users,
+    data: orders,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -240,10 +211,10 @@ const UsersTable = ({ users }: { users: User[] }) => {
     <div className="w-full">
       <div className="flex items-center py-4">
         <Input
-          placeholder="Filter users by email..."
-          value={(table.getColumn('email')?.getFilterValue() as string) ?? ''}
+          placeholder="Filter orders by topic..."
+          value={(table.getColumn('topic')?.getFilterValue() as string) ?? ''}
           onChange={(event) =>
-            table.getColumn('email')?.setFilterValue(event.target.value)
+            table.getColumn('topic')?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
@@ -350,4 +321,4 @@ const UsersTable = ({ users }: { users: User[] }) => {
   )
 }
 
-export default UsersTable
+export default OrdersTable

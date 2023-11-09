@@ -12,27 +12,6 @@ export interface OrderResponse {
   status: number
 }
 
-export interface Order {
-  _id: string
-  pages: number
-  slides: number
-  charts: number
-  sources: number
-  spacing: string
-  digital_copies: boolean
-  initial_draft: boolean
-  one_page_summary: boolean
-  plagiarism_report: boolean
-  topic: string
-  duration: Duration
-  service: string
-  academic_level: string
-  subject_discipline: string
-  paper_format: string
-  attachments: any[]
-  paper_details: string
-}
-
 export interface Duration {
   from: string
   to: string
@@ -61,9 +40,60 @@ export type User = {
   _id: string
   email: string
   name: string
-  userRole: string
+  userRole: 'user' | 'admin' | 'superuser'
   is_writer: boolean
   orders: number
   writer_profile: Writer | null
   jobs: Job[]
+}
+
+export interface Order {
+  _id: string
+  pages: number
+  slides: number
+  charts: number
+  sources: number
+  spacing: string
+  digital_copies: boolean
+  initial_draft: boolean
+  one_page_summary: boolean
+  plagiarism_report: boolean
+  topic: string
+  duration: Duration
+  service: string
+  academic_level: string
+  subject_discipline: string
+  paper_format: string
+  attachments: any[]
+  paper_details: string
+  userId: string
+}
+
+export interface Transaction {
+  userId: string
+  OrderId: string
+  amount: number
+  status: string
+  transactionCode: string
+  currency: string
+  date: string
+  breakdown: Record<any, any>
+}
+export interface Paper {
+  _id: string
+  title: string
+  slug: string
+  excerpt: string
+  description: string
+}
+export interface Blog {
+  _id: string
+  title: string
+  slug: string
+  excerpt: string
+  description: string
+}
+
+export interface OrderWithOwner extends Order {
+  owner: User
 }

@@ -124,7 +124,8 @@ const Service = ({
                 {service.title}
                 {session &&
                 session.user &&
-                (session.user as any).userRole == 'admin' ? (
+                (session.user.userRole == 'admin' ||
+                  session.user.userRole == 'superuser') ? (
                   editing ? (
                     <></>
                   ) : (

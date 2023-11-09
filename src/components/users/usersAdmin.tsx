@@ -12,17 +12,15 @@ const UsersAdmin = ({
   users: User[]
 }) => {
   return (
-    <div className="flex-1 lg:max-w-5xl">
-      <div className={cn('space-y-6 hidden', current && 'block')}>
-        <div>
-          <h3 className="text-lg text-slate-800 font-medium">All users</h3>
-          <p className="text-sm text-muted-foreground">
-            View users and assign permissions and add writers.
-          </p>
-        </div>
-        <Separator />
-        <UsersTable users={users} />
+    <div className={cn('space-y-6 hidden', current && 'block')}>
+      <div>
+        <h3 className="text-lg text-slate-800 font-medium">All users</h3>
+        <p className="text-sm text-muted-foreground">
+          View users and assign permissions and add writers.
+        </p>
       </div>
+      <Separator />
+      <UsersTable users={users} />
     </div>
   )
 }

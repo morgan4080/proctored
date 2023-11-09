@@ -22,66 +22,9 @@ export default async function handler(
 
   if (session && session.user) {
     switch (req.method) {
-      case 'PUT':
-        try {
-          const orders_collection = db.collection('orders')
-          const { _id, ...orderObject } = req.body
-          const ddd = await orders_collection.updateOne(
-            { _id: new ObjectId(req.body._id) },
-            { $set: orderObject },
-          )
-          const response = {
-            data: ddd,
-            message: 'Order updated Successfully',
-            status: 200,
-          }
-          res.status(200).json(response)
-        } catch (e: MongoInvalidArgumentError | any) {
-          console.error(e)
-          res.status(400).json({
-            data: {},
-            message: e.message,
-            status: 400,
-          })
-        }
-        break
-      case 'POST':
-        try {
-          const services_collection = db.collection('orders')
-          const { acknowledged, insertedId } =
-            await services_collection.insertOne({
-              ...req.body,
-              userId: new ObjectId(session.user._id),
-            })
-          if (acknowledged) {
-            const response = {
-              data: {
-                _id: insertedId.toString(),
-                userId: session.user._id,
-                ...req.body,
-              },
-              message: 'Order created Successfully',
-              status: 200,
-            }
-            res.status(200).json(response)
-          } else {
-            res.status(500).json({
-              data: {},
-              message: 'Failed to create order',
-              status: 500,
-            })
-          }
-        } catch (e: any) {
-          res.status(500).json({
-            data: {},
-            message: e.message,
-            status: 500,
-          })
-        }
-        break
       case 'GET':
-        const ordersData = await db
-          .collection('orders')
+        const transactionsData = await db
+          .collection('transactions')
           .aggregate<OrderWithOwner>([
             {
               $match: {
@@ -105,12 +48,12 @@ export default async function handler(
           .sort({ metacritic: -1 })
           .limit(10)
           .toArray()
-        const orders = ordersData.map((o) => {
+        const transactions = transactionsData.map((o) => {
           const {
             _id,
             userId,
             owner: { _id: ownerId, ...ownerData },
-            ...order
+            ...transaction
           } = o
           return {
             _id: _id.toString(),
@@ -119,11 +62,25 @@ export default async function handler(
               _id: ownerId.toString(),
               ...ownerData,
             },
-            ...order,
+            ...transaction,
           }
         })
         res.status(200).json({
-          data: orders,
+          data: transactions,
+          message: 'Ok',
+          status: 200,
+        })
+        break
+      case 'PUT':
+        res.status(200).json({
+          data: {},
+          message: 'Ok',
+          status: 200,
+        })
+        break
+      case 'POST':
+        res.status(200).json({
+          data: {},
           message: 'Ok',
           status: 200,
         })
