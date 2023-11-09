@@ -1,21 +1,21 @@
 import React, { useEffect } from 'react'
 import { cn, createRecord, fetcher, updateRecord } from '@/lib/utils'
 import { Separator } from '@/components/ui/separator'
-import { Service } from '@/lib/service_types'
-import ServicesTable from '@/components/services/ServicesTable'
+import { Blog } from '@/lib/service_types'
 import ServiceDialogue from '@/components/services/ServiceDialogue'
 import { toast } from '@/components/ui/use-toast'
 import useSWR from 'swr'
 import { Toaster } from '@/components/ui/toaster'
 import { Dialog, DialogOverlay, DialogPortal } from '@/components/ui/dialog'
 import { Loader2 } from 'lucide-react'
+import BlogsTable from '@/components/blogs/BlogsTable'
 
-const ServicesAdmin = ({
+const BlogsAdmin = ({
   current,
-  services,
+  blogs,
 }: {
   current: boolean
-  services: Service[]
+  blogs: Blog[]
 }) => {
   const [context, setContext] = React.useState('Create')
   const [defaultID, setDefaultID] = React.useState('')
@@ -26,16 +26,16 @@ const ServicesAdmin = ({
   const [loading, setLoading] = React.useState(false)
   const [showDialogue, setShowDialogue] = React.useState(false)
 
-  const { data: updatedData, mutate } = useSWR('/api/services', fetcher, {
-    initialData: services,
+  const { data: updatedData, mutate } = useSWR('/api/blogs', fetcher, {
+    initialData: blogs,
   } as any)
 
-  const [updatedServices, setUpdatedServices] = React.useState(services)
+  const [updatedBlogs, setUpdatedBlogs] = React.useState(blogs)
 
   useEffect(() => {
     if (updatedData !== undefined) {
       const { data, message } = updatedData
-      if (data.length > 0) setUpdatedServices(data)
+      if (data.length > 0) setUpdatedBlogs(data)
     }
     return () => {
       setLoading(false)
@@ -47,9 +47,9 @@ const ServicesAdmin = ({
       <div className={cn('space-y-6 hidden', current && 'block')}>
         <div className="lg:flex lg:items-center lg:justify-between">
           <div className="min-w-0 flex-1">
-            <h3 className="text-lg text-slate-800 font-medium">All Services</h3>
+            <h3 className="text-lg text-slate-800 font-medium">All Blogs</h3>
             <p className="text-sm text-muted-foreground">
-              View, edit and delete services.
+              View, add, edit and delete blogs.
             </p>
           </div>
           <div>
@@ -91,8 +91,8 @@ const ServicesAdmin = ({
           </div>
         </div>
         <Separator />
-        <ServicesTable
-          services={updatedServices}
+        <BlogsTable
+          blogs={updatedBlogs}
           setContext={setContext}
           setDefaultDescription={setDefaultDescription}
           setDefaultExcerpt={setDefaultExcerpt}
@@ -123,11 +123,11 @@ const ServicesAdmin = ({
                       ...values,
                       updated: new Date(),
                     },
-                    '/api/services',
+                    '/api/blogs',
                   )
                     .then((response) => {
                       toast({
-                        description: 'The service was created successfully.',
+                        description: 'The blog was created successfully.',
                       })
                       return mutate()
                     })
@@ -149,11 +149,11 @@ const ServicesAdmin = ({
                       ...values,
                       updated: new Date(),
                     },
-                    '/api/services',
+                    '/api/blogs',
                   )
                     .then((response) => {
                       toast({
-                        description: 'The service was updated successfully.',
+                        description: 'The blog was updated successfully.',
                       })
                       return mutate()
                     })
@@ -172,8 +172,8 @@ const ServicesAdmin = ({
               }
             })
           }}
-          title={context + ' Service'}
-          description="Create and edit services. Click save when you're done."
+          title={context + ' Blog'}
+          description="Create and edit blogs. Click save when you're done."
           defaultTitle={defaultTitle}
           defaultSlug={defaultSlug}
           defaultExcerpt={defaultExcerpt}
@@ -186,4 +186,4 @@ const ServicesAdmin = ({
   )
 }
 
-export default ServicesAdmin
+export default BlogsAdmin

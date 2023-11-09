@@ -74,6 +74,7 @@ const Service = ({
           slug: service.slug,
           excerpt: service.excerpt,
           description: htm,
+          updated: new Date(),
         },
         '/api/services',
       )

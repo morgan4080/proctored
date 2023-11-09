@@ -73,6 +73,7 @@ const Blog = ({
           slug: blog.slug,
           excerpt: blog.excerpt,
           description: htm,
+          updated: new Date(),
         },
         '/api/blogs',
       )
@@ -122,7 +123,8 @@ const Blog = ({
                 {blog.title}
                 {session &&
                 session.user &&
-                (session.user as any).userRole == 'admin' ? (
+                (session.user.userRole == 'admin' ||
+                  session.user.userRole == 'superuser') ? (
                   editing ? (
                     <></>
                   ) : (

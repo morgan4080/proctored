@@ -21,6 +21,7 @@ import Error from 'next/error'
 import OrdersAdmin from '@/components/orders/OrdersAdmin'
 import TransactionsAdmin from '@/components/transactions/TransactionsAdmin'
 import ServicesAdmin from '@/components/services/ServicesAdmin'
+import BlogsAdmin from '@/components/blogs/BlogsAdmin'
 
 const inter = Inter({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
@@ -491,6 +492,7 @@ const Admin = ({
                 />
                 {/*  Papers*/}
                 {/*  Blogs*/}
+                <BlogsAdmin current={tab == 'blogs'} blogs={blogs} />
               </div>
             </div>
           </Container>

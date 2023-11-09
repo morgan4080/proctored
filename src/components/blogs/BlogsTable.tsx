@@ -1,3 +1,4 @@
+import { Blog } from '@/lib/service_types'
 import React from 'react'
 import {
   ColumnDef,
@@ -12,18 +13,21 @@ import {
   VisibilityState,
 } from '@tanstack/react-table'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { ArrowUpDown, ChevronDown, MoreHorizontal } from 'lucide-react'
+import { format } from 'date-fns'
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Button } from '@/components/ui/button'
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from 'lucide-react'
+import Link from 'next/link'
+import { toast } from '@/components/ui/use-toast'
+import { ToastAction } from '@/components/ui/toast'
+import { Input } from '@/components/ui/input'
 import {
   Table,
   TableBody,
@@ -32,14 +36,9 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Service } from '@/lib/service_types'
-import { format } from 'date-fns'
-import Link from 'next/link'
-import { toast } from '@/components/ui/use-toast'
-import { ToastAction } from '@/components/ui/toast'
 
-const OrdersTable = ({
-  services,
+const BlogsTable = ({
+  blogs,
   setContext,
   setDefaultID,
   setDefaultTitle,
@@ -48,7 +47,7 @@ const OrdersTable = ({
   setDefaultDescription,
   setShowDialogue,
 }: {
-  services: Service[]
+  blogs: Blog[]
   setContext: (ctx: string) => void
   setDefaultID: (_id: string) => void
   setDefaultTitle: (title: string) => void
@@ -65,9 +64,9 @@ const OrdersTable = ({
     React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
 
-  const deleteService = (id: string) => {}
+  const deleteBlog = (id: string) => {}
 
-  const columns: ColumnDef<Service>[] = [
+  const columns: ColumnDef<Blog>[] = [
     {
       accessorKey: '_id',
       id: '_id',
@@ -123,10 +122,10 @@ const OrdersTable = ({
         )
       },
       cell: ({ row }) => {
-        const service = row.original
+        const blog = row.original
         return (
           <div className="capitalize">
-            {format(new Date(service.updated), 'MMMM dd, yyyy h:mm:ss aa')}
+            {format(new Date(blog.updated), 'MMMM dd, yyyy h:mm:ss aa')}
           </div>
         )
       },
@@ -135,7 +134,7 @@ const OrdersTable = ({
       id: 'actions',
       enableHiding: false,
       cell: ({ row }) => {
-        const service = row.original
+        const blog = row.original
         return (
           <div>
             <DropdownMenu>
@@ -148,35 +147,35 @@ const OrdersTable = ({
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
                 <DropdownMenuItem className="cursor-pointer">
-                  <Link href={'/services/' + service.slug} className="w-full">
-                    View service
+                  <Link href={'/blogs/' + blog.slug} className="w-full">
+                    View blog
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => {
                     setContext('Edit')
-                    setDefaultID(service._id)
-                    setDefaultTitle(service.title)
-                    setDefaultSlug(service.slug)
-                    setDefaultExcerpt(service.excerpt)
-                    setDefaultDescription(service.description)
+                    setDefaultID(blog._id)
+                    setDefaultTitle(blog.title)
+                    setDefaultSlug(blog.slug)
+                    setDefaultExcerpt(blog.excerpt)
+                    setDefaultDescription(blog.description)
                     setShowDialogue(true)
                   }}
                   className="cursor-pointer"
                 >
-                  Edit service
+                  Edit blog
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => {
                     toast({
-                      title: 'Delete: ' + service.title,
+                      title: 'Delete: ' + blog.title,
                       description: 'Would you like to delete this content?',
                       action: (
                         <ToastAction
                           onClick={() => {
-                            deleteService(service._id)
+                            deleteBlog(blog._id)
                           }}
-                          altText="Delete Service"
+                          altText="Delete blog"
                         >
                           Delete
                         </ToastAction>
@@ -196,7 +195,7 @@ const OrdersTable = ({
   ]
 
   const table = useReactTable({
-    data: services,
+    data: blogs,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -218,7 +217,7 @@ const OrdersTable = ({
     <div className="w-full">
       <div className="flex items-center py-4">
         <Input
-          placeholder="Filter services by title..."
+          placeholder="Filter blogs by title..."
           value={(table.getColumn('title')?.getFilterValue() as string) ?? ''}
           onChange={(event) =>
             table.getColumn('title')?.setFilterValue(event.target.value)
@@ -328,4 +327,4 @@ const OrdersTable = ({
   )
 }
 
-export default OrdersTable
+export default BlogsTable

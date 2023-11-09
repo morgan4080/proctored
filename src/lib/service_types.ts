@@ -93,6 +93,7 @@ export interface Blog {
   slug: string
   excerpt: string
   description: string
+  updated: string
 }
 
 export interface OrderWithOwner extends Order {

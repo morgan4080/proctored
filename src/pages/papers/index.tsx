@@ -13,6 +13,7 @@ import { useToast } from '@/components/ui/use-toast'
 import { ToastAction } from '@/components/ui/toast'
 import { Toaster } from '@/components/ui/toaster'
 import { Card, CardContent } from '@/components/ui/card'
+import { format } from 'date-fns'
 
 const inter = Inter({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
@@ -116,7 +117,7 @@ const Papers = ({
                     <article className="flex max-w-xl flex-col items-start justify-between pt-6">
                       <div className="flex items-center gap-x-4 text-xs">
                         <time dateTime="2020-03-16" className="text-gray-500">
-                          Mar 16, 2020
+                          {format(new Date(paper.updated), 'MMMM dd, yyyy')}
                         </time>
                       </div>
                       <div className="group relative">

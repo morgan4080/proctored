@@ -73,6 +73,7 @@ const Paper = ({
           slug: paper.slug,
           excerpt: paper.excerpt,
           description: htm,
+          updated: new Date(),
         },
         '/api/papers',
       )
