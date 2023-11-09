@@ -26,18 +26,11 @@ export default async function handler(
   switch (req.method) {
     case 'PUT':
       try {
-        const { _id, title, slug, excerpt, description } = req.body
-        const paper = {
-          _id: _id,
-          title: title,
-          slug: slug,
-          excerpt: excerpt,
-          description: description,
-        }
+        const { _id, title, slug, excerpt, description, updated } = req.body
         const papers_collection = db.collection('papers')
         const ddd = await papers_collection.updateOne(
           { _id: new ObjectId(_id) },
-          { $set: { description: description } },
+          { $set: { title, slug, excerpt, description, updated } },
         )
 
         const response = {
@@ -55,12 +48,13 @@ export default async function handler(
       break
     case 'POST':
       try {
-        const { title, slug, excerpt, description } = req.body
+        const { title, slug, excerpt, description, updated } = req.body
         const paper = {
           title: title,
           slug: slug,
           excerpt: excerpt,
           description: description,
+          updated: updated,
         }
         const papers_collection = db.collection('papers')
         await papers_collection.insertOne(paper)

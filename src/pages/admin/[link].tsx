@@ -22,6 +22,7 @@ import OrdersAdmin from '@/components/orders/OrdersAdmin'
 import TransactionsAdmin from '@/components/transactions/TransactionsAdmin'
 import ServicesAdmin from '@/components/services/ServicesAdmin'
 import BlogsAdmin from '@/components/blogs/BlogsAdmin'
+import PapersAdmin from '@/components/papers/PapersAdmin'
 
 const inter = Inter({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
@@ -491,6 +492,7 @@ const Admin = ({
                   services={services}
                 />
                 {/*  Papers*/}
+                <PapersAdmin current={tab == 'papers'} papers={papers} />
                 {/*  Blogs*/}
                 <BlogsAdmin current={tab == 'blogs'} blogs={blogs} />
               </div>

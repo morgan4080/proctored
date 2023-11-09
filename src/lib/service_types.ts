@@ -86,6 +86,7 @@ export interface Paper {
   slug: string
   excerpt: string
   description: string
+  updated: string
 }
 export interface Blog {
   _id: string
