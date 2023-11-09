@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form'
 import React, { useEffect, useState } from 'react'
 import { Inter, Lexend } from 'next/font/google'
-import classNames from '../utils/ClassNames'
+import classNames from '../../utils/ClassNames'
 type StoreDataType = {
   id: number
   level: string

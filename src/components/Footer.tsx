@@ -3,7 +3,7 @@ import { Inter } from 'next/font/google'
 import classNames from '../utils/ClassNames'
 import Link from 'next/link'
 import Logo from '@/components/Logo'
-import PaymentIcons from '@/components/PaymentIcons'
+import PaymentIcons from '@/components/transactions/PaymentIcons'
 const inter = Inter({
   weight: ['300', '400', '500', '600', '700'],
   subsets: ['latin'],

@@ -20,18 +20,11 @@ export default async function handler(
   switch (req.method) {
     case 'PUT':
       try {
-        const { _id, title, slug, excerpt, description } = req.body
-        const service = {
-          _id: _id,
-          title: title,
-          slug: slug,
-          excerpt: excerpt,
-          description: description,
-        }
+        const { _id, title, slug, excerpt, description, updated } = req.body
         const services_collection = db.collection('services')
         const ddd = await services_collection.updateOne(
           { _id: new ObjectId(_id) },
-          { $set: { description: description } },
+          { $set: { title, slug, excerpt, description, updated } },
         )
 
         const response = {
@@ -49,20 +42,31 @@ export default async function handler(
       break
     case 'POST':
       try {
-        const { title, slug, excerpt, description } = req.body
-        const service = {
-          title: title,
-          slug: slug,
-          excerpt: excerpt,
-          description: description,
-        }
+        const { title, slug, excerpt, description, updated } = req.body
         const services_collection = db.collection('services')
-        await services_collection.insertOne(service)
-        const response = {
-          data: service,
-          message: 'Service Created Successfully',
+        const { acknowledged, insertedId } =
+          await services_collection.insertOne({
+            title,
+            slug,
+            excerpt,
+            description,
+            updated,
+          })
+        if (acknowledged) {
+          const response = {
+            data: {
+              _id: insertedId.toString(),
+              ...req.body,
+            },
+            message: 'Service Created Successfully',
+          }
+          res.status(200).json(response)
+        } else {
+          res.status(500).json({
+            data: {},
+            message: 'Failed to create service',
+          })
         }
-        res.status(200).json(response)
       } catch (e) {
         console.error(e)
       }

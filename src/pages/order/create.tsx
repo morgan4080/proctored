@@ -5,8 +5,8 @@ import { Separator } from '@/components/ui/separator'
 import { Container } from '@/components/Container'
 import Navigation from '@/components/Navigation'
 import { Inter, Lexend } from 'next/font/google'
-import OrderSummary from '@/components/OrderSummary'
-import OrderDetailsForm from '@/components/OrderDetailsForm'
+import OrderSummary from '@/components/orders/OrderSummary'
+import OrderDetailsForm from '@/components/orders/OrderDetailsForm'
 import Footer from '@/components/Footer'
 import { Toaster } from '@/components/ui/toaster'
 import { toast } from '@/components/ui/use-toast'
@@ -19,11 +19,11 @@ import {
   updateRecord,
 } from '@/lib/utils'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
-import OrderOptionsForm from '@/components/OrderOptionsForm'
+import OrderOptionsForm from '@/components/orders/OrderOptionsForm'
 import { ToastAction } from '@/components/ui/toast'
 import { OrderResponse } from '@/lib/service_types'
 import { useRouter } from 'next/router'
-import PaymentMethod from '@/components/PaymentMethod'
+import PaymentMethod from '@/components/transactions/PaymentMethod'
 import {
   Dialog,
   DialogContent,

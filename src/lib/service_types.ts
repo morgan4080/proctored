@@ -4,6 +4,7 @@ export type Service = {
   slug: string
   excerpt: string
   description: string
+  updated: string
 }
 
 export interface OrderResponse {
