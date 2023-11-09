@@ -123,7 +123,8 @@ const Paper = ({
                 {paper.title}
                 {session &&
                 session.user &&
-                (session.user as any).userRole == 'admin' ? (
+                (session.user.userRole == 'admin' ||
+                  session.user.userRole == 'superuser') ? (
                   editing ? (
                     <></>
                   ) : (
