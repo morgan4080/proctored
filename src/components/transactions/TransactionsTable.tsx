@@ -144,12 +144,12 @@ const OrdersTable = ({ transactions }: { transactions: Transaction[] }) => {
         <Input
           placeholder="Filter transactions by transaction code..."
           value={
-            (table.getColumn('transaction_code')?.getFilterValue() as string) ??
+            (table.getColumn('transactionCode')?.getFilterValue() as string) ??
             ''
           }
           onChange={(event) =>
             table
-              .getColumn('transaction_code')
+              .getColumn('transactionCode')
               ?.setFilterValue(event.target.value)
           }
           className="max-w-sm"

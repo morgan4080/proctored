@@ -3,7 +3,7 @@ import mongoClient from '@/lib/mongodb'
 import { MongoInvalidArgumentError, ObjectId } from 'mongodb'
 import { getServerSession } from 'next-auth'
 import { authOptions } from './auth/[...nextauth]'
-import { OrderWithOwner } from '@/lib/service_types'
+import { TransactionWithOwnerAndOrder } from '@/lib/service_types'
 
 const { clientPromise } = mongoClient
 
@@ -25,7 +25,7 @@ export default async function handler(
       case 'GET':
         const transactionsData = await db
           .collection('transactions')
-          .aggregate<OrderWithOwner>([
+          .aggregate<TransactionWithOwnerAndOrder>([
             {
               $match: {
                 userId: new ObjectId(session.user._id),

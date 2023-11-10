@@ -71,6 +71,7 @@ export interface Order {
 }
 
 export interface Transaction {
+  _id: string
   userId: string
   OrderId: string
   amount: number
@@ -99,4 +100,8 @@ export interface Blog {
 
 export interface OrderWithOwner extends Order {
   owner: User
+}
+export interface TransactionWithOwnerAndOrder extends Transaction {
+  owner: User
+  order: Order
 }
