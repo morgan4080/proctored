@@ -175,10 +175,23 @@ const UsersTable = ({ users }: { users: User[] }) => {
                 >
                   Copy User ID
                 </DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer">
+                  <Link href={`/user/${user._id}/orders`} className="w-full">
+                    View User Dashboard
+                  </Link>
+                </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <Link href={'/user/' + user._id} className="w-full">
+                <DropdownMenuItem className="cursor-pointer">
+                  <Link href={`/user/${user._id}/orders`} className="w-full">
                     Orders
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer">
+                  <Link
+                    href={`/user/${user._id}/transactions`}
+                    className="w-full"
+                  >
+                    Transactions
                   </Link>
                 </DropdownMenuItem>
                 {user.is_writer ? (

@@ -32,12 +32,15 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Order, Transaction, User } from '@/lib/service_types'
-import Link from 'next/link'
+import { TransactionWithOwnerAndOrder } from '@/lib/service_types'
 import { format } from 'date-fns'
 import { formatMoney } from '@/lib/utils'
 
-const OrdersTable = ({ transactions }: { transactions: Transaction[] }) => {
+const TransactionsTable = ({
+  transactions,
+}: {
+  transactions: TransactionWithOwnerAndOrder[]
+}) => {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
@@ -46,7 +49,7 @@ const OrdersTable = ({ transactions }: { transactions: Transaction[] }) => {
     React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
 
-  const columns: ColumnDef<Transaction>[] = [
+  const columns: ColumnDef<TransactionWithOwnerAndOrder>[] = [
     {
       accessorKey: '_id',
       id: '_id',
@@ -257,4 +260,4 @@ const OrdersTable = ({ transactions }: { transactions: Transaction[] }) => {
   )
 }
 
-export default OrdersTable
+export default TransactionsTable

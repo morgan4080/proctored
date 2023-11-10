@@ -8,7 +8,12 @@ import Footer from '@/components/Footer'
 import { Container } from '@/components/Container'
 import OrderTable from '@/components/orders/OrdersTable'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
-import { OrderWithOwner, Transaction, User } from '@/lib/service_types'
+import {
+  OrderWithOwner,
+  Transaction,
+  TransactionWithOwnerAndOrder,
+  User,
+} from '@/lib/service_types'
 import mongoClient from '@/lib/mongodb'
 import Error from 'next/error'
 import { cn, fetcher } from '@/lib/utils'
@@ -68,7 +73,7 @@ export const getServerSideProps = (async (context) => {
   }
 }) satisfies GetServerSideProps<{
   orders: OrderWithOwner[]
-  transactions: Transaction[]
+  transactions: TransactionWithOwnerAndOrder[]
   tab: Tabs | null
 }>
 

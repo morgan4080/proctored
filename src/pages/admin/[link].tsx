@@ -11,7 +11,7 @@ import {
   OrderWithOwner,
   Paper,
   Service,
-  Transaction,
+  TransactionWithOwnerAndOrder,
   User,
 } from '@/lib/service_types'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
@@ -148,9 +148,33 @@ export const getServerSideProps = (async (context) => {
         },
       }
     case 'transactions':
+      // TODO: Aggregate order and owner
       const transactionsData = await db
-        .collection<Transaction>('transactions')
-        .find({})
+        .collection('transactions')
+        .aggregate<TransactionWithOwnerAndOrder>([
+          {
+            $lookup: {
+              from: 'users',
+              localField: 'userId',
+              foreignField: '_id',
+              as: 'owner',
+            },
+          },
+          {
+            $lookup: {
+              from: 'orders',
+              localField: 'OrderId',
+              foreignField: '_id',
+              as: 'order',
+            },
+          },
+          {
+            $addFields: {
+              owner: { $arrayElemAt: ['$owner', 0] },
+              order: { $arrayElemAt: ['$order', 0] },
+            },
+          },
+        ])
         .sort({ metacritic: -1 })
         .limit(10)
         .toArray()
@@ -263,7 +287,7 @@ export const getServerSideProps = (async (context) => {
 }) satisfies GetServerSideProps<{
   users: User[]
   orders: OrderWithOwner[]
-  transactions: Transaction[]
+  transactions: TransactionWithOwnerAndOrder[]
   services: Service[]
   papers: Paper[]
   blogs: Blog[]

@@ -130,8 +130,17 @@ export const getServerSideProps = (async ({ params }) => {
                 },
               },
               {
+                $lookup: {
+                  from: 'orders',
+                  localField: 'OrderId',
+                  foreignField: '_id',
+                  as: 'order',
+                },
+              },
+              {
                 $addFields: {
                   owner: { $arrayElemAt: ['$owner', 0] },
+                  order: { $arrayElemAt: ['$order', 0] },
                 },
               },
             ])
@@ -260,7 +269,7 @@ function User({
               <aside className="px-4 -mx-4 lg:w-1/5">
                 <nav className="flex space-x-2 lg:flex-col lg:space-x-0 lg:space-y-1">
                   <Link
-                    href={'/me/' + 'orders'}
+                    href={`/user/${user._id}/orders`}
                     className={cn(
                       'inline-flex items-center whitespace-nowrap rounded-md text-sm font-medium text-slate-800 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:text-accent-foreground h-9 px-4 py-2 hover:bg-muted justify-start',
                       tab == 'orders' && 'bg-muted',
@@ -284,7 +293,7 @@ function User({
                     <span>Orders</span>
                   </Link>
                   <Link
-                    href={'/me/' + 'transactions'}
+                    href={`/user/${user._id}/transactions`}
                     className={cn(
                       'inline-flex items-center whitespace-nowrap rounded-md text-sm font-medium text-slate-800 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:text-accent-foreground h-9 px-4 py-2 hover:bg-muted justify-start',
                       tab == 'transactions' && 'bg-muted',

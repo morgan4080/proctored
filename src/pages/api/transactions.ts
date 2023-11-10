@@ -40,8 +40,17 @@ export default async function handler(
               },
             },
             {
+              $lookup: {
+                from: 'orders',
+                localField: 'OrderId',
+                foreignField: '_id',
+                as: 'order',
+              },
+            },
+            {
               $addFields: {
                 owner: { $arrayElemAt: ['$owner', 0] },
+                order: { $arrayElemAt: ['$order', 0] },
               },
             },
           ])
