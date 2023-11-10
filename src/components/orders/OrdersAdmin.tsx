@@ -1,7 +1,7 @@
 import React from 'react'
 import { cn } from '@/lib/utils'
 import { Separator } from '@/components/ui/separator'
-import { OrderWithOwner } from '@/lib/service_types'
+import { OrderWithOwnerAndTransaction } from '@/lib/service_types'
 import OrdersTable from '@/components/orders/OrdersTable'
 
 const OrdersAdmin = ({
@@ -9,7 +9,7 @@ const OrdersAdmin = ({
   orders,
 }: {
   current: boolean
-  orders: OrderWithOwner[]
+  orders: OrderWithOwnerAndTransaction[]
 }) => {
   return (
     <div className={cn('space-y-6 hidden', current && 'block')}>

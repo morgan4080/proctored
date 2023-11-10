@@ -21,16 +21,8 @@ import {
 } from '@/components/ui/select'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Button } from '@/components/ui/button'
-import { Order } from '@/lib/service_types'
+import { Order, StoreDataType } from '@/lib/service_types'
 
-type StoreDataType = {
-  id: number
-  level: string
-  deadline: Record<string, number>
-  format: string[]
-  subjects0: string[]
-  subjects: string[]
-}
 const optionsFormSchema = z.object({
   pages: z.preprocess(
     (args) => (args === '' ? undefined : args),
@@ -130,41 +122,25 @@ const OrderOptionsForm = ({
         value = {
           ...value,
           pages:
-            value.pages == 0
-              ? undefined
-              : value.pages !== undefined
+            value.pages !== undefined
               ? parseFloat(`${value.pages}`)
               : value.pages,
           slides:
-            value.slides == 0
-              ? undefined
-              : value.slides !== undefined
+            value.slides !== undefined
               ? parseFloat(`${value.slides}`)
               : value.slides,
           charts:
-            value.charts == 0
-              ? undefined
-              : value.charts !== undefined
+            value.charts !== undefined
               ? parseFloat(`${value.charts}`)
               : value.charts,
           sources:
-            value.sources == 0
-              ? undefined
-              : value.sources !== undefined
+            value.sources !== undefined
               ? parseFloat(`${value.sources}`)
               : value.sources,
-          digital_copies:
-            value.digital_copies == false ? undefined : value.digital_copies,
-          initial_draft:
-            value.initial_draft == false ? undefined : value.initial_draft,
-          one_page_summary:
-            value.one_page_summary == false
-              ? undefined
-              : value.one_page_summary,
-          plagiarism_report:
-            value.plagiarism_report == false
-              ? undefined
-              : value.plagiarism_report,
+          digital_copies: value.digital_copies,
+          initial_draft: value.initial_draft,
+          one_page_summary: value.one_page_summary,
+          plagiarism_report: value.plagiarism_report,
         }
         reportValues(value)
       })()

@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils'
 import UsersAdmin from '@/components/users/usersAdmin'
 import {
   Blog,
-  OrderWithOwner,
+  OrderWithOwnerAndTransaction,
   Paper,
   Service,
   TransactionWithOwnerAndOrder,
@@ -100,7 +100,7 @@ export const getServerSideProps = (async (context) => {
     case 'orders':
       const ordersData = await db
         .collection('orders')
-        .aggregate<OrderWithOwner>([
+        .aggregate<OrderWithOwnerAndTransaction>([
           {
             $lookup: {
               from: 'users',
@@ -110,8 +110,17 @@ export const getServerSideProps = (async (context) => {
             },
           },
           {
+            $lookup: {
+              from: 'transactions',
+              localField: '_id',
+              foreignField: 'orderId',
+              as: 'transaction',
+            },
+          },
+          {
             $addFields: {
               owner: { $arrayElemAt: ['$owner', 0] },
+              transaction: { $arrayElemAt: ['$transaction', 0] },
             },
           },
         ])
@@ -135,7 +144,6 @@ export const getServerSideProps = (async (context) => {
           ...order,
         }
       })
-      console.log(orders)
       return {
         props: {
           users: [],
@@ -286,7 +294,7 @@ export const getServerSideProps = (async (context) => {
   }
 }) satisfies GetServerSideProps<{
   users: User[]
-  orders: OrderWithOwner[]
+  orders: OrderWithOwnerAndTransaction[]
   transactions: TransactionWithOwnerAndOrder[]
   services: Service[]
   papers: Paper[]

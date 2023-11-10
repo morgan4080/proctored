@@ -6,7 +6,7 @@ export default withAuth({
     authorized(data) {
       // `/admin` requires admin role
       const { req, token } = data
-      if (req.nextUrl.pathname === '/admin') {
+      if (req.nextUrl.pathname === '/admin' && '/user/:path*') {
         return token?.userRole === 'admin' || token?.userRole === 'superuser'
       }
       // `/me` only requires the user to be logged in

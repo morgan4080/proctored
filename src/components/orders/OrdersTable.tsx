@@ -32,11 +32,16 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Duration, Order, OrderWithOwner, User } from '@/lib/service_types'
+import { Order, OrderWithOwnerAndTransaction, User } from '@/lib/service_types'
 import Link from 'next/link'
 import { format } from 'date-fns'
+import { useSession } from 'next-auth/react'
 
-const OrdersTable = ({ orders }: { orders: OrderWithOwner[] }) => {
+const OrdersTable = ({
+  orders,
+}: {
+  orders: OrderWithOwnerAndTransaction[]
+}) => {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
@@ -44,6 +49,7 @@ const OrdersTable = ({ orders }: { orders: OrderWithOwner[] }) => {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
+  const { data: session } = useSession()
   const assignWriter = () => {}
 
   const columns: ColumnDef<Order>[] = [
@@ -74,6 +80,7 @@ const OrdersTable = ({ orders }: { orders: OrderWithOwner[] }) => {
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+            className="text-xs"
           >
             Date
             <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -83,7 +90,7 @@ const OrdersTable = ({ orders }: { orders: OrderWithOwner[] }) => {
       cell: ({ row }) => {
         const order = row.original
         return (
-          <div className="capitalize">
+          <div className="text-xs">
             {format(new Date(order.duration.from), 'MMMM dd, yyyy h:mm:ss aa')}
           </div>
         )
@@ -91,23 +98,14 @@ const OrdersTable = ({ orders }: { orders: OrderWithOwner[] }) => {
     },
     {
       accessorKey: 'topic',
-      header: 'Topic',
-      cell: ({ row }) => (
-        <div className="capitalize">{row.getValue('topic')}</div>
-      ),
+      header: () => <div className="text-xs">Topic</div>,
+      cell: ({ row }) => <div className="text-xs">{row.getValue('topic')}</div>,
     },
     {
       accessorKey: 'academic_level',
-      header: 'Level',
+      header: () => <div className="text-xs">Level</div>,
       cell: ({ row }) => (
-        <div className="capitalize">{row.getValue('academic_level')}</div>
-      ),
-    },
-    {
-      accessorKey: 'subject_discipline',
-      header: 'Subject/Discipline',
-      cell: ({ row }) => (
-        <div className="capitalize">{row.getValue('subject_discipline')}</div>
+        <div className="text-xs">{row.getValue('academic_level')}</div>
       ),
     },
     {
@@ -117,6 +115,7 @@ const OrdersTable = ({ orders }: { orders: OrderWithOwner[] }) => {
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+            className="text-xs"
           >
             Deadline
             <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -126,7 +125,7 @@ const OrdersTable = ({ orders }: { orders: OrderWithOwner[] }) => {
       cell: ({ row }) => {
         const order = row.original
         return (
-          <div className="capitalize">
+          <div className="text-xs">
             {format(new Date(order.duration.to), 'MMMM dd, yyyy h:mm:ss aa')}
           </div>
         )
@@ -134,15 +133,43 @@ const OrdersTable = ({ orders }: { orders: OrderWithOwner[] }) => {
     },
     {
       accessorKey: 'owner',
-      header: 'Owner',
+      header: () => <div className="text-xs">Owner</div>,
       cell: ({ row }) => {
         const order = row.original
         return (
-          <Link href={'/user/' + order.userId} className="underline">
+          <Link
+            href={
+              session &&
+              session.user &&
+              (session.user.userRole == 'admin' ||
+                session.user.userRole == 'superuser')
+                ? '/user/' + order.userId + '/orders'
+                : '/me/orders'
+            }
+            className="underline text-xs"
+          >
             {(row.getValue('owner') as User).name}
           </Link>
         )
       },
+    },
+    {
+      accessorKey: 'transaction',
+      header: () => <div className="text-xs">Payment Status</div>,
+      cell: ({ row }) => (
+        <div className="text-xs">
+          {JSON.stringify(row.getValue('transaction'))}
+        </div>
+      ),
+    },
+    {
+      id: 'transaction',
+      header: () => <div className="text-xs">Order Status</div>,
+      cell: ({ row }) => (
+        <div className="text-xs">
+          {JSON.stringify(row.getValue('transaction'))}
+        </div>
+      ),
     },
     {
       id: 'actions',
@@ -150,7 +177,7 @@ const OrdersTable = ({ orders }: { orders: OrderWithOwner[] }) => {
       cell: ({ row }) => {
         const order = row.original
         return (
-          <div>
+          <div className="text-xs">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="h-8 w-8 p-0">
@@ -172,14 +199,19 @@ const OrdersTable = ({ orders }: { orders: OrderWithOwner[] }) => {
                     View order
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => {
-                    assignWriter()
-                  }}
-                  className="cursor-pointer"
-                >
-                  Assign writer
-                </DropdownMenuItem>
+                {session &&
+                session.user &&
+                (session.user.userRole == 'admin' ||
+                  session.user.userRole == 'superuser') ? (
+                  <DropdownMenuItem
+                    onClick={() => {
+                      assignWriter()
+                    }}
+                    className="cursor-pointer"
+                  >
+                    Assign writer
+                  </DropdownMenuItem>
+                ) : null}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>

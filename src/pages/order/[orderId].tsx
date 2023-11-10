@@ -6,12 +6,16 @@ import Navigation from '@/components/Navigation'
 import { Inter, Lexend } from 'next/font/google'
 import Footer from '@/components/Footer'
 import Link from 'next/link'
-import { fetcher } from '@/lib/utils'
+import { calculateOrderPrice, fetcher, formatMoney } from '@/lib/utils'
 import { ObjectId } from 'mongodb'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import mongoClient from '@/lib/mongodb'
-import { Order } from '@/lib/service_types'
+import {
+  OrderWithOwnerAndTransaction,
+  StoreDataType,
+} from '@/lib/service_types'
 import ErrorPage from 'next/error'
+import { format } from 'date-fns'
 const inter = Inter({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
   subsets: ['latin'],
@@ -23,40 +27,91 @@ const lexend = Lexend({
 
 const { clientPromise } = mongoClient
 
-export const getServerSideProps = (async (context) => {
+export const getServerSideProps = (async ({ params }) => {
   const response = await fetcher(process.env.NEXTAUTH_URL + '/api/storedata')
-  const client = await clientPromise
-  const db = client.db('proctor')
-  const order = await db
-    .collection<Order>('orders')
-    .findOne({ _id: new ObjectId(`${context.params?.orderId}`) as any })
-  const od: any = order
-    ? {
+  if (params) {
+    const client = await clientPromise
+    const db = client.db('proctor')
+    const ordersData = await db
+      .collection('orders')
+      .aggregate<OrderWithOwnerAndTransaction>([
+        {
+          $match: {
+            _id: new ObjectId(`${params.orderId}`),
+          },
+        },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'userId',
+            foreignField: '_id',
+            as: 'owner',
+          },
+        },
+        {
+          $lookup: {
+            from: 'transactions',
+            localField: '_id',
+            foreignField: 'orderId',
+            as: 'transaction',
+          },
+        },
+        {
+          $addFields: {
+            owner: { $arrayElemAt: ['$owner', 0] },
+            transaction: { $arrayElemAt: ['$transaction', 0] },
+          },
+        },
+      ])
+      .sort({ metacritic: -1 })
+      .limit(1)
+      .toArray()
+
+    const orders = ordersData.map((o) => {
+      const {
+        _id,
+        userId,
+        owner: { _id: ownerId, ...ownerData },
+        ...order
+      } = o
+      return {
+        _id: _id.toString(),
+        userId: userId.toString(),
+        owner: {
+          _id: ownerId.toString(),
+          ...ownerData,
+        },
         ...order,
-        _id: `${context.params?.orderId}`,
       }
-    : null
-  return {
-    props: {
-      storedata: JSON.parse(response),
-      oId: context.params ? `${context.params.orderId}` : null,
-      order: od,
-      revalidate: 60,
-    },
+    })
+
+    return {
+      props: {
+        storedata: JSON.parse(response) as StoreDataType[],
+        order: orders.length > 0 ? orders[0] : null,
+      },
+    }
+  } else {
+    return {
+      props: {
+        storedata: JSON.parse(response) as StoreDataType[],
+        order: null,
+      },
+    }
   }
 }) satisfies GetServerSideProps<{
-  order: Order | null
-  oId: string | null
+  storedata: StoreDataType[] | null
+  order: OrderWithOwnerAndTransaction | null
 }>
 const Order = ({
+  storedata,
   order,
-  oId,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   if (order) {
     return (
       <div className="relative">
         <Head>
-          <title>Order</title>
+          <title>Order Details</title>
           <meta name="description" content="Proctor Owls Order" />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
           <link rel="icon" href="/favicon.ico" />
@@ -79,34 +134,36 @@ const Order = ({
               <div className="min-w-0 flex-1">
                 <h2
                   className={classNames(
-                    'text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl flex gap-4 items-center',
+                    'text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl',
                   )}
                 >
                   <span className={classNames(lexend.className)}>
-                    Order #123
+                    Order Details
                   </span>
-                  {true && (
-                    <span className="inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20">
+                </h2>
+                <p className="mt-2 text-lg leading-8 text-gray-600 flex gap-4 items-center">
+                  Order Amount
+                  <span className="font-semibold">
+                    $ {formatMoney(calculateOrderPrice(order, storedata))}
+                  </span>
+                  {!order.transaction && (
+                    <span className="inline-flex items-center rounded-full bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20">
                       UNPAID
                     </span>
                   )}
-                  {false && (
-                    <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
+                  {order.transaction && (
+                    <span className="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
                       PAID
                     </span>
                   )}
-                </h2>
-                <p className="mt-2 text-lg leading-8 text-gray-600">
-                  Order Amount.{' '}
-                  <span className="underline font-semibold">$100,000</span>
                 </p>
               </div>
               <div className="mt-5 flex lg:ml-4 lg:mt-0">
                 <span className="block">
                   {/*Update if order is not paid for*/}
                   <Link
-                    href={'/order/edit/' + 123}
-                    className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                    href={'/order/edit/' + order._id}
+                    className="inline-flex items-center rounded-full bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
                   >
                     <svg
                       className="-ml-0.5 mr-1.5 h-3 w-3 text-gray-400"
@@ -123,7 +180,7 @@ const Order = ({
                   {/*Update if order is not paid for*/}
                   <Link
                     href="/order/create"
-                    className="inline-flex items-center rounded-md bg-yellow-50 text-yellow-700 ring-1 ring-inset ring-yellow-600/20 px-3 py-2 text-sm font-semibold shadow-sm hover:bg-black hover:text-white"
+                    className="inline-flex items-center rounded-full bg-yellow-50 text-yellow-700 ring-1 ring-inset ring-yellow-600/20 px-3 py-2 text-sm font-semibold shadow-sm hover:bg-black hover:text-white"
                   >
                     <svg
                       className="-ml-0.5 mr-1.5 h-4 w-4"
@@ -137,16 +194,16 @@ const Order = ({
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
-                        d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m3.75 9v6m3-3H9m1.5-12H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
+                        d="M12 6v12m6-6H6"
                       ></path>
                     </svg>
                     New Order
                   </Link>
                 </span>
                 <span className="ml-3 block">
-                  <button
-                    type="button"
-                    className="inline-flex items-center rounded-md bg-green-50 text-green-700 ring-1 ring-inset ring-green-600/20 px-3 py-2 text-sm font-semibold shadow-sm hover:bg-black hover:text-white"
+                  <Link
+                    href={'/order/edit/' + order._id}
+                    className="inline-flex items-center rounded-full bg-green-50 text-green-700 ring-1 ring-inset ring-green-600/20 px-3 py-2 text-sm font-semibold shadow-sm hover:bg-black hover:text-white"
                   >
                     <svg
                       className="-ml-0.5 mr-1.5 h-5 w-5"
@@ -164,7 +221,7 @@ const Order = ({
                       ></path>
                     </svg>
                     Pay
-                  </button>
+                  </Link>
                 </span>
               </div>
             </div>
@@ -179,7 +236,7 @@ const Order = ({
                   Service
                 </dt>
                 <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                  Proctored exam
+                  {order.service}
                 </dd>
               </div>
               <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-2">
@@ -187,7 +244,7 @@ const Order = ({
                   Academic level
                 </dt>
                 <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                  University
+                  {order.academic_level}
                 </dd>
               </div>
               <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-2 bg-slate-50">
@@ -195,7 +252,7 @@ const Order = ({
                   Topic
                 </dt>
                 <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                  N/A
+                  {order.topic}
                 </dd>
               </div>
               <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-2">
@@ -203,15 +260,23 @@ const Order = ({
                   Subject
                 </dt>
                 <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                  Chemistry
+                  {order.subject_discipline}
                 </dd>
               </div>
               <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-2 bg-slate-50">
                 <dt className="text-sm font-medium leading-6 text-gray-900">
-                  Duration
+                  Dates
                 </dt>
                 <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                  3 Hours
+                  {format(
+                    new Date(order.duration.from),
+                    'MMMM dd, yyyy h:mm:ss aa',
+                  )}
+                  <span className="px-3">-</span>
+                  {format(
+                    new Date(order.duration.to),
+                    'MMMM dd, yyyy h:mm:ss aa',
+                  )}
                 </dd>
               </div>
               <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-2">
@@ -219,7 +284,7 @@ const Order = ({
                   Paper format
                 </dt>
                 <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                  N/A
+                  {order.paper_format}
                 </dd>
               </div>
               <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-2 bg-slate-50">
@@ -227,7 +292,7 @@ const Order = ({
                   Pages
                 </dt>
                 <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                  N/A
+                  {order.pages}
                 </dd>
               </div>
               <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-2">
@@ -235,7 +300,7 @@ const Order = ({
                   Spacing
                 </dt>
                 <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                  N/A
+                  {order.spacing}
                 </dd>
               </div>
               <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-2 bg-slate-50">
@@ -243,7 +308,7 @@ const Order = ({
                   Slides
                 </dt>
                 <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                  N/A
+                  {order.slides}
                 </dd>
               </div>
               <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-2">
@@ -251,7 +316,7 @@ const Order = ({
                   Sources
                 </dt>
                 <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                  N/A
+                  {order.sources}
                 </dd>
               </div>
               <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-2 bg-slate-50">
@@ -259,7 +324,7 @@ const Order = ({
                   Charts
                 </dt>
                 <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                  N/A
+                  {order.charts}
                 </dd>
               </div>
               <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-2">
@@ -267,7 +332,7 @@ const Order = ({
                   Digital copies of sources used
                 </dt>
                 <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                  N/A
+                  {`${order.digital_copies}`}
                 </dd>
               </div>
               <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-2 bg-slate-50">
@@ -275,7 +340,7 @@ const Order = ({
                   Initial Draft
                 </dt>
                 <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                  N/A
+                  {`${order.initial_draft}`}
                 </dd>
               </div>
               <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-2">
@@ -283,7 +348,7 @@ const Order = ({
                   One Page Summary
                 </dt>
                 <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                  N/A
+                  {`${order.one_page_summary}`}
                 </dd>
               </div>
               <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-2 bg-slate-50">
@@ -291,7 +356,7 @@ const Order = ({
                   Plagiarism Report
                 </dt>
                 <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                  N/A
+                  {`${order.plagiarism_report}`}
                 </dd>
               </div>
               <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-2">
@@ -299,10 +364,7 @@ const Order = ({
                   Paper details
                 </dt>
                 <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                  Create inclusive web apps with Next.js! Discover how it
-                  enhances performance, supports internationalization, and
-                  offers awesome features. Boost SEO, user experience, and brand
-                  reputation by building accessible websites.
+                  {order.paper_details}
                 </dd>
               </div>
               <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-2 bg-slate-50">

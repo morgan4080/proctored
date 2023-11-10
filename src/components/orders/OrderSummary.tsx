@@ -69,30 +69,30 @@ function OrderSummary({
           </Button>
         </CardContent>
       </Card>
-      <ScrollArea className="md:h-[350px] relative">
-        <div className="rounded-md border relative">
+      <ScrollArea className="md:h-[350px] rounded-md border relative">
+        <div>
           <button
             onClick={() => {
               printOrder()
             }}
-            className="p-1 absolute right-1 top-1"
+            className="p-1 absolute bg-gray-200 right-4 top-2 z-10"
           >
             <LucidePrinter className="w-3 h-3" />
           </button>
           <div className="p-4" ref={orderSum}>
-            <h4 className="mb-4 text-sm font-bold text-zinc-800 leading-none">
+            <h4 className="sticky mb-4 top-0 py-2 text-sm font-bold text-zinc-800 leading-none bg-white/90">
               Order Summary
               <p className="hidden">${formatMoney(totalAmount)}</p>
             </h4>
             {options.map(({ option, value }, index) => (
               <div key={index}>
+                <Separator className="my-2" />
                 <div className="flex text-xs">
                   <h4 className="capitalize flex-1 font-semibold text-black">
                     {option.replace(/_/g, ' ')}:{' '}
                   </h4>
                   <p className="text-right">{value}</p>
                 </div>
-                <Separator className="my-2" />
               </div>
             ))}
           </div>

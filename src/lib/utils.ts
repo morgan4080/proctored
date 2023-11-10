@@ -1,6 +1,7 @@
 import { type ClassValue, clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
-import { Service } from '@/lib/service_types'
+import { Order, StoreDataType, Duration } from '@/lib/service_types'
+import { addDays, differenceInHours } from 'date-fns'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -79,4 +80,59 @@ export function formatMoney(money: string | number | null | undefined): string {
     .replace(/\B(?=(\d{3})+(?!\d))/g, ', ')}.${
     parseFloat(`${money}`).toFixed(2).split('.')[1]
   }`
+}
+
+export function determineDuration(
+  currentStoreData: StoreDataType,
+  duration: {
+    from: Date
+    to: Date
+  },
+) {
+  return Object.entries(currentStoreData.deadline).reduce(
+    (acc, [key, value]) => {
+      const getObj = () => {
+        if (key.toLowerCase().includes('hour')) {
+          return {
+            [parseInt(key).toString()]: value,
+          }
+        } else {
+          const futureDate = addDays(new Date(), parseInt(key))
+          const currentDate = new Date()
+          const newKey = differenceInHours(futureDate, currentDate)
+          return {
+            [newKey.toString()]: value,
+          }
+        }
+      }
+      const { from, to } = duration
+      const difference = differenceInHours(to, from)
+      console.log(difference, 'HOURS')
+      if (difference >= parseInt(Object.keys(getObj())[0])) {
+        acc = key
+      }
+
+      return acc
+    },
+    '',
+  )
+}
+
+export function calculateOrderPrice(
+  order: Order,
+  storedata: StoreDataType[],
+): number {
+  const currentStoreData = storedata.find(
+    (std: StoreDataType) => std.level === order.academic_level,
+  )
+  if (currentStoreData) {
+    const currentDeadline = determineDuration(currentStoreData, {
+      from: new Date(order.duration.from),
+      to: new Date(order.duration.to),
+    })
+
+    console.log(currentStoreData.deadline[currentDeadline], 'PRICE')
+    return currentStoreData.deadline[currentDeadline]
+  }
+  return 0
 }

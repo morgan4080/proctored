@@ -41,7 +41,7 @@ const Blog = ({
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const [editing, setEditing] = useState(false)
   const [loading, setLoading] = useState(false)
-  const { data: session, status } = useSession()
+  const { data: session } = useSession()
   const [blog, setService] = useState(blg)
   const url = blg == null ? '' : blg.slug
   const { data: updatedData, mutate } = useSWR(

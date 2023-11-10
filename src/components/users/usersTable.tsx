@@ -35,7 +35,17 @@ import {
 import { User } from '@/lib/service_types'
 import Link from 'next/link'
 
-const UsersTable = ({ users }: { users: User[] }) => {
+const UsersTable = ({
+  users,
+  setPermissionsDialogue,
+  setWriterDialogue,
+  setSelectedUser,
+}: {
+  users: User[]
+  setPermissionsDialogue: (open: boolean) => void
+  setWriterDialogue: (open: boolean) => void
+  setSelectedUser: (user: User) => void
+}) => {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
@@ -43,9 +53,6 @@ const UsersTable = ({ users }: { users: User[] }) => {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
-
-  const makeWriter = () => {}
-  const showPermissions = () => {}
 
   const columns: ColumnDef<User>[] = [
     {
@@ -72,7 +79,7 @@ const UsersTable = ({ users }: { users: User[] }) => {
       accessorKey: 'userRole',
       header: 'Role',
       cell: ({ row }) => (
-        <div className="capitalize">
+        <div>
           {row.getValue('userRole') == 'superuser' && (
             <span className="inline-flex items-center rounded-full bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">
               {row.getValue('userRole')}
@@ -195,16 +202,30 @@ const UsersTable = ({ users }: { users: User[] }) => {
                   </Link>
                 </DropdownMenuItem>
                 {user.is_writer ? (
-                  <DropdownMenuItem>
-                    <Link href={'/writer/' + user._id} className="w-full">
-                      Jobs
-                    </Link>
-                  </DropdownMenuItem>
+                  <>
+                    <DropdownMenuItem>
+                      <Link href={'/writer/' + user._id} className="w-full">
+                        View Jobs
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <button
+                        onClick={() => {
+                          setSelectedUser(user)
+                          setWriterDialogue(true)
+                        }}
+                        className="cursor-pointer w-full text-left"
+                      >
+                        Revoke Writer
+                      </button>
+                    </DropdownMenuItem>
+                  </>
                 ) : (
                   <DropdownMenuItem>
                     <button
                       onClick={() => {
-                        makeWriter()
+                        setSelectedUser(user)
+                        setWriterDialogue(true)
                       }}
                       className="cursor-pointer w-full text-left"
                     >
@@ -215,7 +236,8 @@ const UsersTable = ({ users }: { users: User[] }) => {
                 <DropdownMenuItem className="cursor-pointer">
                   <button
                     onClick={() => {
-                      showPermissions()
+                      setSelectedUser(user)
+                      setPermissionsDialogue(true)
                     }}
                     className="cursor-pointer w-full"
                   >

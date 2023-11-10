@@ -6,14 +6,17 @@ import { Container } from '@/components/Container'
 import Navigation from '@/components/Navigation'
 import { Inter, Lexend } from 'next/font/google'
 import OrderSummary from '@/components/orders/OrderSummary'
-import OrderDetailsForm from '@/components/orders/OrderDetailsForm'
+import OrderDetailsForm, {
+  ReportingValues,
+} from '@/components/orders/OrderDetailsForm'
 import Footer from '@/components/Footer'
 import { Toaster } from '@/components/ui/toaster'
 import { toast } from '@/components/ui/use-toast'
-import { addDays, differenceInDays, differenceInHours } from 'date-fns'
+import { differenceInDays, differenceInHours } from 'date-fns'
 import {
   cn,
   createRecord,
+  determineDuration,
   fetcher,
   formatMoney,
   updateRecord,
@@ -21,8 +24,11 @@ import {
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import OrderOptionsForm from '@/components/orders/OrderOptionsForm'
 import { ToastAction } from '@/components/ui/toast'
-import { Order, OrderResponse } from '@/lib/service_types'
-import { useRouter } from 'next/router'
+import {
+  OrderResponse,
+  OrderWithOwnerAndTransaction,
+  StoreDataType,
+} from '@/lib/service_types'
 import PaymentMethod from '@/components/transactions/PaymentMethod'
 import {
   Dialog,
@@ -34,6 +40,7 @@ import { Loader2 } from 'lucide-react'
 import ErrorPage from 'next/error'
 import mongoClient from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
+import { useSession } from 'next-auth/react'
 const inter = Inter({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
   subsets: ['latin'],
@@ -43,62 +50,19 @@ const lexend = Lexend({
   subsets: ['latin'],
 })
 
-type StoreDataType = {
-  id: number
-  level: string
-  deadline: Record<string, number>
-  format: string[]
-  subjects0: string[]
-  subjects: string[]
-}
+type optionType = { option: string; value: string | number | boolean }
 
 const { clientPromise } = mongoClient
-
-export const getServerSideProps = (async (context) => {
-  const response = await fetcher(process.env.NEXTAUTH_URL + '/api/storedata')
-  const client = await clientPromise
-  const db = client.db('proctor')
-  const order = await db
-    .collection<Order>('orders')
-    .findOne({ _id: new ObjectId(`${context.params?.orderId}`) as any })
-  const od: any = order
-    ? {
-        ...order,
-        _id: `${context.params?.orderId}`,
-      }
-    : null
-  return {
-    props: {
-      storedata: JSON.parse(response),
-      oId: context.params ? `${context.params.orderId}` : null,
-      order: od,
-      revalidate: 60,
-    },
-  }
-}) satisfies GetServerSideProps<{
-  storedata: StoreDataType[]
-  order: Order | null
-  oId: string | null
-}>
 const EditOrder = ({
   storedata,
   order,
-  oId,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  const router = useRouter()
-  const [options, setOptions] = useState<
-    { option: string; value: string | number | boolean }[]
-  >([])
-  const [extraOptions, setExtraOptions] = useState<
-    { option: string; value: string | number | boolean }[]
-  >([])
   const [totalAmount, setTotalAmount] = useState<string>('0')
   const [currentLevelId, setCurrentLevelId] = useState<number>(storedata[0].id)
   const [currentDuration, setCurrentDuration] = useState<string>('14 Days')
   const [currentStoreData, setCurrentStoreData] = useState<StoreDataType>(
     storedata[0],
   )
-  const [orderId, setOrderId] = useState<string | null>(oId)
   const [checkout, setCheckout] = useState<boolean>(false)
   const [orderDetails, setOrderDetails] = useState<{
     topic: string
@@ -112,6 +76,8 @@ const EditOrder = ({
   } | null>(null)
   const [currentTab, setCurrentTab] = useState(0)
   const [loading, setLoading] = useState(false)
+  const [allOptions, setAllOptions] = useState<optionType[]>([])
+  const { data: session } = useSession()
 
   useEffect(() => {
     // determine range prices
@@ -128,6 +94,54 @@ const EditOrder = ({
     })
   }, [currentLevelId, currentDuration, storedata])
 
+  useEffect(() => {
+    if (order) {
+      setAllOptions((ops) => {
+        return generateReportOptions([
+          ...ops,
+          ...getOptions({
+            topic: order.topic,
+            duration: {
+              from: new Date(order.duration.from),
+              to: new Date(order.duration.to),
+            },
+            service: order.service,
+            academic_level: order.academic_level,
+            subject_discipline: order.subject_discipline,
+            paper_format: order.paper_format,
+            paper_details: order.paper_details,
+            attachments: order.attachments,
+          }),
+          ...generateKeyValuePairs({
+            pages: order.pages,
+            slides: order.slides,
+            charts: order.charts,
+            sources: order.sources,
+            spacing: order.spacing,
+            digital_copies: order.digital_copies,
+            initial_draft: order.initial_draft,
+            one_page_summary: order.one_page_summary,
+            plagiarism_report: order.plagiarism_report,
+          }),
+        ])
+      })
+
+      const currentData = storedata.find(
+        (std: StoreDataType) => std.level === order.academic_level,
+      )
+
+      if (currentData) {
+        setCurrentLevelId(() => currentData.id)
+        setCurrentDuration(() => {
+          return determineDuration(currentData, {
+            from: new Date(order.duration.from),
+            to: new Date(order.duration.to),
+          })
+        })
+      }
+    }
+  }, [getOptions, storedata, order])
+
   const saveOrder = useCallback(
     (
       orderOptions: {
@@ -142,157 +156,143 @@ const EditOrder = ({
         plagiarism_report: boolean
       } | null,
     ) => {
-      if (orderOptions) {
+      if (orderOptions && order) {
         setLoading(true)
         let data = {
           ...orderOptions,
           ...orderDetails,
+          userId: order.userId,
         }
-        if (orderId) {
-          updateRecord(
-            {
-              _id: orderId,
-              ...data,
-            },
-            '/api/orders',
-          )
-            .then((res) => {
-              console.log(res)
-              const response: OrderResponse = res
-              if (response.status == 200) {
-                toast({
-                  title: response.message,
-                  description: 'Review order or edit, then proceed to pay.',
-                  action: (
-                    <ToastAction
-                      altText="Try again"
-                      onClick={() => {
-                        setCheckout(true)
-                      }}
-                    >
-                      Checkout
-                    </ToastAction>
-                  ),
-                  duration: 9000,
-                  onOpenChange: () => {
-                    router.push('/order/edit/' + orderId)
-                  },
-                })
-              } else {
-                toast({
-                  variant: 'destructive',
-                  title: response.message,
-                  description:
-                    'Something went wrong. Review order and resubmit.',
-                  action: (
-                    <ToastAction
-                      altText="Try again"
-                      onClick={() => {
-                        setCheckout(true)
-                      }}
-                    >
-                      Checkout
-                    </ToastAction>
-                  ),
-                  duration: 9000,
-                  onOpenChange: () => {
-                    router.push('/order/edit/' + orderId)
-                  },
-                })
-              }
-            })
-            .catch((e) => {
+        updateRecord(
+          {
+            _id: order._id,
+            ...data,
+          },
+          '/api/orders',
+        )
+          .then((res) => {
+            console.log(res)
+            const response: OrderResponse = res
+            if (response.status == 200) {
               toast({
-                variant: 'destructive',
-                title: 'Error creating order.',
-                description: e.message,
+                title: response.message,
+                description: 'Review order or edit, then proceed to pay.',
                 action: (
                   <ToastAction
                     altText="Try again"
                     onClick={() => {
-                      saveOrder(orderOptions)
+                      setCheckout(true)
                     }}
                   >
-                    Try again
+                    Checkout
                   </ToastAction>
                 ),
               })
-            })
-            .finally(() => {
-              setLoading(false)
-            })
-        } else {
-          createRecord(data, '/api/orders')
-            .then((res) => {
-              const response: OrderResponse = res
-              if (response.status == 200) {
-                setOrderId(response.data._id)
-                toast({
-                  title: response.message,
-                  description: 'Review order or edit, then proceed to pay.',
-                  action: (
-                    <ToastAction
-                      altText="Try again"
-                      onClick={() => {
-                        setCheckout(true)
-                      }}
-                    >
-                      Checkout
-                    </ToastAction>
-                  ),
-                  duration: 9000,
-                  onOpenChange: () => {
-                    router.push('/order/edit/' + orderId)
-                  },
-                })
-              } else {
-                toast({
-                  variant: 'destructive',
-                  title: response.message,
-                  description:
-                    'Something went wrong. Review order and resubmit.',
-                  action: (
-                    <ToastAction
-                      altText="Try again"
-                      onClick={() => {
-                        setCheckout(true)
-                      }}
-                    >
-                      Checkout
-                    </ToastAction>
-                  ),
-                  duration: 9000,
-                  onOpenChange: () => {
-                    router.push('/order/edit/' + orderId)
-                  },
-                })
-              }
-            })
-            .catch((error) => {
+            } else {
               toast({
                 variant: 'destructive',
-                title: 'Error creating order.',
-                description: error.message,
+                title: response.message,
+                description: 'Something went wrong. Review order and resubmit.',
                 action: (
                   <ToastAction
                     altText="Try again"
                     onClick={() => {
-                      saveOrder(orderOptions)
+                      setCheckout(true)
                     }}
                   >
-                    Try again
+                    Checkout
                   </ToastAction>
                 ),
               })
+            }
+          })
+          .catch((e) => {
+            toast({
+              variant: 'destructive',
+              title: 'Error creating order.',
+              description: e.message,
+              action: (
+                <ToastAction
+                  altText="Try again"
+                  onClick={() => {
+                    saveOrder(orderOptions)
+                  }}
+                >
+                  Try again
+                </ToastAction>
+              ),
             })
-            .finally(() => {
-              setLoading(false)
-            })
-        }
+          })
+          .finally(() => {
+            setLoading(false)
+          })
       }
     },
-    [orderDetails, orderId, router],
+    [orderDetails, order],
   )
+
+  function getOptions(data: ReportingValues) {
+    return Object.entries(data).reduce(
+      (accumulator: optionType[], currentValue) => {
+        const [key, value] = currentValue
+        if (value !== undefined) {
+          switch (key) {
+            case 'academic_level':
+              setCurrentLevelId(() => {
+                return storedata.find(
+                  (std: StoreDataType) => std.level === value,
+                ).id
+              })
+              break
+            case 'duration':
+              if (typeof value === 'object' && !(value instanceof FileList)) {
+                if (
+                  value.hasOwnProperty('from') &&
+                  value.hasOwnProperty('to')
+                ) {
+                  if (value.to && value.from) {
+                    const to = value.to
+                    const from = value.from
+                    setCurrentDuration(() => {
+                      return determineDuration(currentStoreData, {
+                        from,
+                        to,
+                      })
+                    })
+                  }
+                }
+              }
+              break
+          }
+          if (typeof value === 'string') {
+            accumulator.push({
+              option: key,
+              value: value,
+            })
+          } else if (value instanceof FileList) {
+            accumulator.push({
+              option: key,
+              value: value.length.toString(),
+            })
+          } else if (typeof value === 'object') {
+            if (value.hasOwnProperty('from') && value.hasOwnProperty('to')) {
+              if (value.to && value.from) {
+                accumulator.push({
+                  option: key,
+                  value:
+                    differenceInDays(value.to, value.from) > 0
+                      ? differenceInDays(value.to, value.from) + ' days'
+                      : differenceInHours(value.to, value.from) + ' hours',
+                })
+              }
+            }
+          }
+        }
+        return accumulator
+      },
+      [],
+    )
+  }
 
   if (order) {
     return (
@@ -432,117 +432,12 @@ const EditOrder = ({
                       setCurrentTab(1)
                     }}
                     reportValues={(data) => {
-                      setOptions(() =>
-                        Object.entries(data).reduce(
-                          (accumulator: typeof options, currentValue) => {
-                            const [key, value] = currentValue
-                            if (value !== undefined) {
-                              switch (key) {
-                                case 'academic_level':
-                                  setCurrentLevelId(() => {
-                                    return storedata.find(
-                                      (std: StoreDataType) =>
-                                        std.level === value,
-                                    ).id
-                                  })
-                                  break
-                                case 'duration':
-                                  if (
-                                    typeof value === 'object' &&
-                                    !(value instanceof FileList)
-                                  ) {
-                                    if (
-                                      value.hasOwnProperty('from') &&
-                                      value.hasOwnProperty('to')
-                                    ) {
-                                      if (value.to && value.from) {
-                                        const to = value.to
-                                        const from = value.from
-                                        setCurrentDuration(() => {
-                                          return Object.entries(
-                                            currentStoreData.deadline,
-                                          ).reduce((acc, [key, value]) => {
-                                            const getObj = () => {
-                                              if (
-                                                key
-                                                  .toLowerCase()
-                                                  .includes('hour')
-                                              ) {
-                                                return {
-                                                  [parseInt(key).toString()]:
-                                                    value,
-                                                }
-                                              } else {
-                                                const futureDate = addDays(
-                                                  new Date(),
-                                                  parseInt(key),
-                                                )
-                                                const currentDate = new Date()
-                                                const newKey =
-                                                  differenceInHours(
-                                                    futureDate,
-                                                    currentDate,
-                                                  )
-                                                return {
-                                                  [newKey.toString()]: value,
-                                                }
-                                              }
-                                            }
-
-                                            if (
-                                              differenceInHours(to, from) >=
-                                              parseInt(Object.keys(getObj())[0])
-                                            ) {
-                                              acc = key
-                                            }
-
-                                            return acc
-                                          }, '')
-                                        })
-                                      }
-                                    }
-                                  }
-                                  break
-                              }
-                              if (typeof value === 'string') {
-                                accumulator.push({
-                                  option: key,
-                                  value: value,
-                                })
-                              } else if (value instanceof FileList) {
-                                accumulator.push({
-                                  option: key,
-                                  value: value.length.toString(),
-                                })
-                              } else if (typeof value === 'object') {
-                                if (
-                                  value.hasOwnProperty('from') &&
-                                  value.hasOwnProperty('to')
-                                ) {
-                                  if (value.to && value.from) {
-                                    accumulator.push({
-                                      option: key,
-                                      value:
-                                        differenceInDays(value.to, value.from) >
-                                        0
-                                          ? differenceInDays(
-                                              value.to,
-                                              value.from,
-                                            ) + ' days'
-                                          : differenceInHours(
-                                              value.to,
-                                              value.from,
-                                            ) + ' hours',
-                                    })
-                                  }
-                                }
-                              }
-                            }
-                            return accumulator
-                          },
-                          [],
-                        ),
-                      )
+                      setAllOptions((ops) => {
+                        return generateReportOptions([
+                          ...ops,
+                          ...getOptions(data),
+                        ])
+                      })
                     }}
                   />
                 </div>
@@ -563,34 +458,24 @@ const EditOrder = ({
                     storedata={storedata}
                     order={order}
                     reportValues={(data) => {
-                      setExtraOptions(() =>
-                        Object.entries(data).reduce(
-                          (accumulator: typeof extraOptions, currentValue) => {
-                            const [key, value] = currentValue
-                            if (value !== undefined) {
-                              // switch statement for price effectors
-                              accumulator.push({
-                                option: key,
-                                value: value.toString(),
-                              })
-                            }
-                            return accumulator
-                          },
-                          [],
-                        ),
-                      )
+                      setAllOptions((ops) => {
+                        return generateReportOptions([
+                          ...ops,
+                          ...generateKeyValuePairs(data),
+                        ])
+                      })
                     }}
                     proceedWithData={(data) => {
                       saveOrder(data)
                     }}
-                    orderId={orderId}
+                    orderId={order._id}
                   />
                 </div>
               </div>
               <OrderSummary
-                options={[...options, ...extraOptions]}
+                options={allOptions}
                 totalAmount={totalAmount}
-                orderId={orderId}
+                orderId={order._id}
                 setCheckout={() => {
                   setCheckout(!checkout)
                 }}
@@ -598,13 +483,7 @@ const EditOrder = ({
             </div>
           </Container>
         </main>
-        <Dialog
-          open={checkout}
-          defaultOpen={false}
-          onOpenChange={() => {
-            router.push('/order/edit/' + orderId)
-          }}
-        >
+        <Dialog open={checkout} defaultOpen={false}>
           <DialogContent className="sm:max-w-[425px]">
             <PaymentMethod />
           </DialogContent>
@@ -626,3 +505,125 @@ const EditOrder = ({
 }
 
 export default EditOrder
+
+export const getServerSideProps = (async ({ params }) => {
+  const response = await fetcher(process.env.NEXTAUTH_URL + '/api/storedata')
+  if (params) {
+    const client = await clientPromise
+    const db = client.db('proctor')
+    const ordersData = await db
+      .collection('orders')
+      .aggregate<OrderWithOwnerAndTransaction>([
+        {
+          $match: {
+            _id: new ObjectId(`${params.orderId}`),
+          },
+        },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'userId',
+            foreignField: '_id',
+            as: 'owner',
+          },
+        },
+        {
+          $lookup: {
+            from: 'transactions',
+            localField: '_id',
+            foreignField: 'orderId',
+            as: 'transaction',
+          },
+        },
+        {
+          $addFields: {
+            owner: { $arrayElemAt: ['$owner', 0] },
+            transaction: { $arrayElemAt: ['$transaction', 0] },
+          },
+        },
+      ])
+      .sort({ metacritic: -1 })
+      .limit(1)
+      .toArray()
+
+    const orders = ordersData.map((o) => {
+      const {
+        _id,
+        userId,
+        owner: { _id: ownerId, ...ownerData },
+        ...order
+      } = o
+      return {
+        _id: _id.toString(),
+        userId: userId.toString(),
+        owner: {
+          _id: ownerId.toString(),
+          ...ownerData,
+        },
+        ...order,
+      }
+    })
+
+    return {
+      props: {
+        storedata: JSON.parse(response),
+        order: orders.length > 0 ? orders[0] : null,
+      },
+    }
+  } else {
+    return {
+      props: {
+        storedata: JSON.parse(response),
+        order: null,
+      },
+    }
+  }
+}) satisfies GetServerSideProps<{
+  storedata: StoreDataType[]
+  order: OrderWithOwnerAndTransaction | null
+}>
+
+function generateReportOptions(ops: optionType[]) {
+  const optionMap = new Map()
+
+  // Iterate over the array and update the Map with the latest values
+  for (const obj of ops) {
+    const existingValue = optionMap.get(obj.option)
+    if (!existingValue) {
+      optionMap.set(obj.option, obj)
+    } else {
+      optionMap.set(existingValue.option, obj)
+    }
+  }
+
+  // Convert the Map values back to an array
+
+  return Array.from(optionMap.values())
+}
+
+function generateKeyValuePairs(data: {
+  pages?: number | undefined
+  slides?: number | undefined
+  charts?: number | undefined
+  sources?: number | undefined
+  spacing?: string | undefined
+  digital_copies?: boolean | undefined
+  initial_draft?: boolean | undefined
+  one_page_summary?: boolean | undefined
+  plagiarism_report?: boolean | undefined
+}) {
+  return Object.entries(data).reduce(
+    (accumulator: optionType[], currentValue) => {
+      const [key, value] = currentValue
+      if (value !== undefined) {
+        // switch statement for price effectors
+        accumulator.push({
+          option: key,
+          value: value.toString(),
+        })
+      }
+      return accumulator
+    },
+    [],
+  )
+}

@@ -1,25 +1,24 @@
 import React from 'react'
-import { useSession } from 'next-auth/react'
 import Head from 'next/head'
-import classNames from '../../utils/ClassNames'
 import Navigation from '@/components/Navigation'
 import { Inter, Lexend } from 'next/font/google'
 import Footer from '@/components/Footer'
 import { Container } from '@/components/Container'
-import OrderTable from '@/components/orders/OrdersTable'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import {
-  OrderWithOwner,
-  Transaction,
+  OrderWithOwnerAndTransaction,
   TransactionWithOwnerAndOrder,
   User,
 } from '@/lib/service_types'
 import mongoClient from '@/lib/mongodb'
 import Error from 'next/error'
-import { cn, fetcher } from '@/lib/utils'
+import { cn } from '@/lib/utils'
 import Link from 'next/link'
 import OrdersAdmin from '@/components/orders/OrdersAdmin'
 import TransactionsAdmin from '@/components/transactions/TransactionsAdmin'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/pages/api/auth/[...nextauth]'
+import { ObjectId } from 'mongodb'
 const inter = Inter({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
   subsets: ['latin'],
@@ -33,57 +32,168 @@ const lexend = Lexend({
 type Tabs = 'orders' | 'transactions'
 
 const { clientPromise } = mongoClient
-export const getServerSideProps = (async (context) => {
+export const getServerSideProps = (async ({ params, res, req }) => {
   const tab: Tabs | null =
-    context.params && context.params.link
-      ? (`${context.params.link}` as Tabs)
-      : null
+    params && params.link ? (`${params.link}` as Tabs) : null
   const client = await clientPromise
   const db = client.db('proctor')
-  // const session = await getServerSession(req, res, authOptions)
-  switch (tab) {
-    case 'orders':
-      const orders = await fetcher(process.env.NEXTAUTH_URL + '/api/orders')
-      return {
-        props: {
-          orders: orders.data,
-          transactions: [],
-          tab,
-        },
-      }
-    case 'transactions':
-      const transactions = await fetcher(
-        process.env.NEXTAUTH_URL + '/api/transactions',
-      )
-      return {
-        props: {
-          orders: [],
-          transactions: transactions.data,
-          tab,
-        },
-      }
-    default:
-      return {
-        props: {
-          orders: [],
-          transactions: [],
-          tab: null,
-        },
-      }
+  const session = await getServerSession(req, res, authOptions)
+  if (session && session.user) {
+    switch (tab) {
+      case 'orders':
+        const ordersData = await db
+          .collection('orders')
+          .aggregate<OrderWithOwnerAndTransaction>([
+            {
+              $match: {
+                userId: new ObjectId(session.user._id),
+              },
+            },
+            {
+              $lookup: {
+                from: 'users',
+                localField: 'userId',
+                foreignField: '_id',
+                as: 'owner',
+              },
+            },
+            {
+              $lookup: {
+                from: 'transactions',
+                localField: '_id',
+                foreignField: 'orderId',
+                as: 'transaction',
+              },
+            },
+            {
+              $addFields: {
+                owner: { $arrayElemAt: ['$owner', 0] },
+                transaction: { $arrayElemAt: ['$transaction', 0] },
+              },
+            },
+          ])
+          .sort({ metacritic: -1 })
+          .limit(10)
+          .toArray()
+        const orders = ordersData.map((o) => {
+          const {
+            _id,
+            userId,
+            owner: { _id: ownerId, ...ownerData },
+            ...order
+          } = o
+          return {
+            _id: _id.toString(),
+            userId: userId.toString(),
+            owner: {
+              _id: ownerId.toString(),
+              ...ownerData,
+            },
+            ...order,
+          }
+        })
+        return {
+          props: {
+            user: session.user,
+            orders: orders,
+            transactions: [],
+            tab,
+          },
+        }
+      case 'transactions':
+        const transactionsData = await db
+          .collection('transactions')
+          .aggregate<TransactionWithOwnerAndOrder>([
+            {
+              $match: {
+                userId: new ObjectId(session.user._id),
+              },
+            },
+            {
+              $lookup: {
+                from: 'users',
+                localField: 'userId',
+                foreignField: '_id',
+                as: 'owner',
+              },
+            },
+            {
+              $lookup: {
+                from: 'orders',
+                localField: 'OrderId',
+                foreignField: '_id',
+                as: 'order',
+              },
+            },
+            {
+              $addFields: {
+                owner: { $arrayElemAt: ['$owner', 0] },
+                order: { $arrayElemAt: ['$order', 0] },
+              },
+            },
+          ])
+          .sort({ metacritic: -1 })
+          .limit(10)
+          .toArray()
+        const transactions = transactionsData.map((o) => {
+          const {
+            _id,
+            userId,
+            owner: { _id: ownerId, ...ownerData },
+            ...transaction
+          } = o
+          return {
+            _id: _id.toString(),
+            userId: userId.toString(),
+            owner: {
+              _id: ownerId.toString(),
+              ...ownerData,
+            },
+            ...transaction,
+          }
+        })
+        return {
+          props: {
+            user: session.user,
+            orders: [],
+            transactions: transactions,
+            tab,
+          },
+        }
+      default:
+        return {
+          props: {
+            user: session.user,
+            orders: [],
+            transactions: [],
+            tab: null,
+          },
+        }
+    }
+  } else {
+    return {
+      props: {
+        user: null,
+        orders: [],
+        transactions: [],
+        tab: null,
+      },
+    }
   }
 }) satisfies GetServerSideProps<{
-  orders: OrderWithOwner[]
+  user: User | null
+  orders: OrderWithOwnerAndTransaction[]
   transactions: TransactionWithOwnerAndOrder[]
   tab: Tabs | null
 }>
 
-function Me({
+function me({
+  user,
   orders,
   transactions,
   tab,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const { data: session, status } = useSession()
-  if (tab) {
+  if (tab && user) {
     return (
       <div className="relative">
         <Head>
@@ -93,10 +203,7 @@ function Me({
           <link rel="icon" href="/favicon.ico" />
         </Head>
         <main
-          className={classNames(
-            inter.className,
-            'flex min-h-screen flex-col relative',
-          )}
+          className={cn(inter.className, 'flex min-h-screen flex-col relative')}
         >
           <div className="bg-bermuda/95 w-full">
             <Navigation />
@@ -109,9 +216,7 @@ function Me({
             <div className="lg:flex lg:items-center lg:justify-between">
               <div className="min-w-0 flex-1">
                 <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl flex gap-4 items-center">
-                  <span className={classNames(lexend.className)}>
-                    {session ? session.user?.name : ''}
-                  </span>
+                  <span className={cn(lexend.className)}>{user.name}</span>
                 </h2>
                 <div className="mt-2 text-lg leading-8 text-gray-600 space-x-2">
                   User Dashboard
@@ -121,23 +226,8 @@ function Me({
                 <span className="block">
                   <Link
                     href={'/order/create'}
-                    className="inline-flex items-center rounded-md bg-green-50 text-green-700 ring-1 ring-inset ring-green-600/20 px-3 py-2 text-sm font-semibold shadow-sm hover:bg-black hover:text-white"
+                    className="inline-flex items-center rounded-full bg-green-50 text-green-700 ring-1 ring-inset ring-green-600/20 px-3 py-2 text-sm font-semibold shadow-sm hover:bg-black hover:text-white"
                   >
-                    <svg
-                      className="-ml-0.5 mr-1.5 h-4 w-4"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                      aria-hidden="true"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M12 10.5v6m3-3H9m4.06-7.19l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z"
-                      ></path>
-                    </svg>
                     Order
                   </Link>
                 </span>
@@ -157,7 +247,7 @@ function Me({
               <aside className="px-4 -mx-4 lg:w-1/5">
                 <nav className="flex space-x-2 lg:flex-col lg:space-x-0 lg:space-y-1">
                   <Link
-                    href={'/me/' + 'orders'}
+                    href={'/me/orders'}
                     className={cn(
                       'inline-flex items-center whitespace-nowrap rounded-md text-sm font-medium text-slate-800 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:text-accent-foreground h-9 px-4 py-2 hover:bg-muted justify-start',
                       tab == 'orders' && 'bg-muted',
@@ -181,7 +271,7 @@ function Me({
                     <span>Orders</span>
                   </Link>
                   <Link
-                    href={'/me/' + 'transactions'}
+                    href={'/me/transactions'}
                     className={cn(
                       'inline-flex items-center whitespace-nowrap rounded-md text-sm font-medium text-slate-800 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:text-accent-foreground h-9 px-4 py-2 hover:bg-muted justify-start',
                       tab == 'transactions' && 'bg-muted',
@@ -226,4 +316,4 @@ function Me({
   }
 }
 
-export default Me
+export default me

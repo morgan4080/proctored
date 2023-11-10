@@ -1,24 +1,14 @@
 import classNames from '../utils/ClassNames'
 import { signIn, signOut, useSession } from 'next-auth/react'
 import Link from 'next/link'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Inter } from 'next/font/google'
-import { useOnClickOutside } from '@/utils/hooks'
-import {
-  LogOut,
-  User,
-  Boxes,
-  ListOrderedIcon,
-  PackageIcon,
-  LucideNewspaper,
-  LucideArchive,
-} from 'lucide-react'
+// import { useOnClickOutside } from '@/utils/hooks'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { cn, getInitials } from '@/lib/utils'
 import {
   NavigationMenu,
   NavigationMenuContent,
-  NavigationMenuIndicator,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
@@ -26,6 +16,7 @@ import {
   NavigationMenuViewport,
 } from '@/components/ui/navigation-menu'
 import Logo from '@/components/Logo'
+import { useRouter } from 'next/router'
 
 const inter = Inter({
   weight: ['100', '300', '400', '500', '700', '900'],
@@ -34,18 +25,20 @@ const inter = Inter({
 
 const getLinks = async () => {
   const res = await fetch('/api/services?links=true')
-  const { data, message } = await res.json()
+  const { data } = await res.json()
   return data
 }
 
 const Navigation = () => {
-  const { data: session, status } = useSession()
+  const { data: session } = useSession()
 
-  const [serviceMenuOpen, setServiceMenuOpen] = useState(false)
+  const router = useRouter()
 
-  const refDropDown = useRef<HTMLDivElement>(null)
+  // const [serviceMenuOpen, setServiceMenuOpen] = useState(false)
 
-  useOnClickOutside(refDropDown, () => setServiceMenuOpen(false))
+  // const refDropDown = useRef<HTMLDivElement>(null)
+
+  // useOnClickOutside(refDropDown, () => setServiceMenuOpen(false))
 
   const [menu, setMenu] = useState<
     {
@@ -187,7 +180,9 @@ const Navigation = () => {
                       <ListItem
                         onClick={(e) => {
                           e.preventDefault()
-                          signOut().catch((e) => console.log(e))
+                          signOut()
+                            .then(() => router.push('/'))
+                            .catch((e) => console.log(e))
                         }}
                         title="Logout"
                         icon={<></>}

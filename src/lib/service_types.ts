@@ -1,3 +1,11 @@
+export type StoreDataType = {
+  id: number
+  level: string
+  deadline: Record<string, number>
+  format: string[]
+  subjects0: string[]
+  subjects: string[]
+}
 export type Service = {
   _id: string
   title: string
@@ -65,7 +73,7 @@ export interface Order {
   academic_level: string
   subject_discipline: string
   paper_format: string
-  attachments: any[]
+  attachments: FileList
   paper_details: string
   userId: string
 }
@@ -73,9 +81,9 @@ export interface Order {
 export interface Transaction {
   _id: string
   userId: string
-  OrderId: string
+  orderId: string
   amount: number
-  status: string
+  status: 'processing' | 'failed' | 'success'
   transactionCode: string
   currency: string
   date: string
@@ -98,8 +106,9 @@ export interface Blog {
   updated: string
 }
 
-export interface OrderWithOwner extends Order {
+export interface OrderWithOwnerAndTransaction extends Order {
   owner: User
+  transaction: Transaction | null
 }
 export interface TransactionWithOwnerAndOrder extends Transaction {
   owner: User

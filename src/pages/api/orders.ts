@@ -3,7 +3,7 @@ import mongoClient from '@/lib/mongodb'
 import { MongoInvalidArgumentError, ObjectId } from 'mongodb'
 import { getServerSession } from 'next-auth'
 import { authOptions } from './auth/[...nextauth]'
-import { OrderWithOwner } from '@/lib/service_types'
+import { OrderWithOwnerAndTransaction } from '@/lib/service_types'
 
 const { clientPromise } = mongoClient
 
@@ -19,16 +19,15 @@ export default async function handler(
   const client = await clientPromise
   const db = client.db('proctor')
   const session = await getServerSession(req, res, authOptions)
-
   if (session && session.user) {
     switch (req.method) {
       case 'PUT':
         try {
           const orders_collection = db.collection('orders')
-          const { _id, ...orderObject } = req.body
+          const { _id, userId, ...orderObject } = req.body
           const ddd = await orders_collection.updateOne(
             { _id: new ObjectId(req.body._id) },
-            { $set: orderObject },
+            { $set: { ...orderObject, userId: new ObjectId(userId) } },
           )
           const response = {
             data: ddd,
@@ -82,7 +81,7 @@ export default async function handler(
       case 'GET':
         const ordersData = await db
           .collection('orders')
-          .aggregate<OrderWithOwner>([
+          .aggregate<OrderWithOwnerAndTransaction>([
             {
               $match: {
                 userId: new ObjectId(session.user._id),
@@ -97,8 +96,17 @@ export default async function handler(
               },
             },
             {
+              $lookup: {
+                from: 'transactions',
+                localField: '_id',
+                foreignField: 'orderId',
+                as: 'transaction',
+              },
+            },
+            {
               $addFields: {
                 owner: { $arrayElemAt: ['$owner', 0] },
+                transaction: { $arrayElemAt: ['$transaction', 0] },
               },
             },
           ])

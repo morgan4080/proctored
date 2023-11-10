@@ -21,7 +21,7 @@ import {
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import OrderOptionsForm from '@/components/orders/OrderOptionsForm'
 import { ToastAction } from '@/components/ui/toast'
-import { OrderResponse } from '@/lib/service_types'
+import { OrderResponse, StoreDataType } from '@/lib/service_types'
 import { useRouter } from 'next/router'
 import PaymentMethod from '@/components/transactions/PaymentMethod'
 import {
@@ -40,15 +40,6 @@ const lexend = Lexend({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
   subsets: ['latin'],
 })
-
-type StoreDataType = {
-  id: number
-  level: string
-  deadline: Record<string, number>
-  format: string[]
-  subjects0: string[]
-  subjects: string[]
-}
 
 export const getServerSideProps = (async () => {
   const response = await fetcher(process.env.NEXTAUTH_URL + '/api/storedata')
@@ -89,7 +80,7 @@ const CreateOrder = ({
 
   const [currentTab, setCurrentTab] = useState(0)
   const [loading, setLoading] = useState(false)
-  const { data: session, status } = useSession()
+  const { data: session } = useSession()
 
   useEffect(() => {
     // determine range prices
@@ -125,7 +116,7 @@ const CreateOrder = ({
         let data = {
           ...orderOptions,
           ...orderDetails,
-          // userId: session && session.user ? session.user.userId : null,
+          userId: session && session.user ? session.user._id : null,
         }
         if (orderId) {
           updateRecord(
@@ -270,7 +261,7 @@ const CreateOrder = ({
         }
       }
     },
-    [orderDetails, orderId, router],
+    [session, orderDetails, orderId, router],
   )
 
   return (

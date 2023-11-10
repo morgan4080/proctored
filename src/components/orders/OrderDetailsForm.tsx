@@ -44,7 +44,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Order } from '@/lib/service_types'
+import { Order, StoreDataType } from '@/lib/service_types'
 
 function formatRange(range: { from: Date; to: Date }, locale: string) {
   const { from, to } = range
@@ -52,15 +52,6 @@ function formatRange(range: { from: Date; to: Date }, locale: string) {
     month: 'long',
     day: 'numeric',
   }).formatRange(from, to)
-}
-
-type StoreDataType = {
-  id: number
-  level: string
-  deadline: Record<string, number>
-  format: string[]
-  subjects0: string[]
-  subjects: string[]
 }
 
 const ACCEPTED_FILE_TYPES = [
@@ -163,7 +154,7 @@ const defaultValues: Partial<OrderDetailsFormValues> = {
   attachments: [] as FileList | any,
 }
 
-type ReportingValues = {
+export type ReportingValues = {
   topic?: string | undefined
   duration?: { from?: Date | undefined; to?: Date | undefined } | undefined
   service?: string | undefined
@@ -195,19 +186,6 @@ const OrderDetailsForm = ({
       }
     }
   }, [storedata])
-
-  /*service: z.string({
-    required_error: 'Please select a service.',
-  }),
-  academic_level: z.string({
-    required_error: 'Please select academic level.',
-  }),
-  subject_discipline: z.string({
-    required_error: 'Please select subject discipline.',
-  }),
-  paper_format: z.string({
-    required_error: 'Please select paper format.',
-  }),*/
 
   const defValues =
     order == null

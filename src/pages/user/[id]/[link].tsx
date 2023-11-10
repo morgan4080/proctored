@@ -1,20 +1,18 @@
 import React from 'react'
-import { useSession } from 'next-auth/react'
 import Head from 'next/head'
-import classNames from '../../../utils/ClassNames'
 import Navigation from '@/components/Navigation'
 import { Inter, Lexend } from 'next/font/google'
 import Footer from '@/components/Footer'
 import { Container } from '@/components/Container'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import {
-  OrderWithOwner,
+  OrderWithOwnerAndTransaction,
   TransactionWithOwnerAndOrder,
   User,
 } from '@/lib/service_types'
 import mongoClient from '@/lib/mongodb'
 import Error from 'next/error'
-import { cn, fetcher } from '@/lib/utils'
+import { cn } from '@/lib/utils'
 import Link from 'next/link'
 import OrdersAdmin from '@/components/orders/OrdersAdmin'
 import TransactionsAdmin from '@/components/transactions/TransactionsAdmin'
@@ -64,7 +62,7 @@ export const getServerSideProps = (async ({ params }) => {
         case 'orders':
           const ordersData = await db
             .collection('orders')
-            .aggregate<OrderWithOwner>([
+            .aggregate<OrderWithOwnerAndTransaction>([
               {
                 $match: {
                   userId: new ObjectId(user._id),
@@ -79,8 +77,17 @@ export const getServerSideProps = (async ({ params }) => {
                 },
               },
               {
+                $lookup: {
+                  from: 'transactions',
+                  localField: '_id',
+                  foreignField: 'orderId',
+                  as: 'transaction',
+                },
+              },
+              {
                 $addFields: {
                   owner: { $arrayElemAt: ['$owner', 0] },
+                  transaction: { $arrayElemAt: ['$transaction', 0] },
                 },
               },
             ])
@@ -205,7 +212,7 @@ export const getServerSideProps = (async ({ params }) => {
   }
 }) satisfies GetServerSideProps<{
   user: User | null
-  orders: OrderWithOwner[]
+  orders: OrderWithOwnerAndTransaction[]
   transactions: TransactionWithOwnerAndOrder[]
   tab: Tabs | null
 }>
@@ -216,7 +223,6 @@ function User({
   transactions,
   tab,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const { data: session } = useSession()
   if (tab && user) {
     return (
       <div className="relative">
@@ -227,10 +233,7 @@ function User({
           <link rel="icon" href="/favicon.ico" />
         </Head>
         <main
-          className={classNames(
-            inter.className,
-            'flex min-h-screen flex-col relative',
-          )}
+          className={cn(inter.className, 'flex min-h-screen flex-col relative')}
         >
           <div className="bg-bermuda/95 w-full">
             <Navigation />
@@ -243,9 +246,7 @@ function User({
             <div className="lg:flex lg:items-center lg:justify-between">
               <div className="min-w-0 flex-1">
                 <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl flex gap-4 items-center">
-                  <span className={classNames(lexend.className)}>
-                    {session ? session.user?.name : ''}
-                  </span>
+                  <span className={cn(lexend.className)}>{user.name}</span>
                 </h2>
                 <div className="mt-2 text-lg leading-8 text-gray-600 space-x-2">
                   User Dashboard
