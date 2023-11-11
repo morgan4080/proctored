@@ -1,20 +1,25 @@
 import { withAuth } from 'next-auth/middleware'
+import { getToken } from 'next-auth/jwt'
 
 // More on how NextAuth.js middleware works: https://next-auth.js.org/configuration/nextjs#middleware
 export default withAuth({
   callbacks: {
-    authorized(data) {
-      // `/admin` requires admin role
-      const { req, token } = data
-      if (req.nextUrl.pathname === '/admin' && '/user/:path*') {
-        return token?.userRole === 'admin' || token?.userRole === 'superuser'
+    async authorized(data) {
+      const { req } = data
+      const { pathname }: { pathname: string } = req.nextUrl
+      const token = await getToken({ req })
+      const user = token?.user
+      if (
+        user &&
+        (pathname.startsWith('/admin') || pathname.startsWith('/user'))
+      ) {
+        return user.userRole === 'admin' || user.userRole === 'superuser'
       }
-      // `/me` only requires the user to be logged in
       return !!token
     },
   },
 })
 
 export const config = {
-  matcher: ['/admin/:path*', '/order/:path*', '/user/:path*', '/me'],
+  matcher: ['/admin/:path*', '/order/:path*', '/user/:path*', '/me/:path*'],
 }

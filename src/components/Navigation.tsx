@@ -3,9 +3,8 @@ import { signIn, signOut, useSession } from 'next-auth/react'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import { Inter } from 'next/font/google'
-// import { useOnClickOutside } from '@/utils/hooks'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { cn, getInitials } from '@/lib/utils'
+import { cn, fetcher, getInitials } from '@/lib/utils'
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -33,12 +32,6 @@ const Navigation = () => {
   const { data: session } = useSession()
 
   const router = useRouter()
-
-  // const [serviceMenuOpen, setServiceMenuOpen] = useState(false)
-
-  // const refDropDown = useRef<HTMLDivElement>(null)
-
-  // useOnClickOutside(refDropDown, () => setServiceMenuOpen(false))
 
   const [menu, setMenu] = useState<
     {
@@ -172,11 +165,15 @@ const Navigation = () => {
                         title="Profile"
                         icon={<></>}
                       ></ListItem>
-                      <ListItem
-                        href="/admin/users"
-                        title="Admin"
-                        icon={<></>}
-                      ></ListItem>
+                      {session.user &&
+                      (session.user.userRole == 'admin' ||
+                        session.user.userRole == 'superuser') ? (
+                        <ListItem
+                          href="/admin/users"
+                          title="Admin"
+                          icon={<></>}
+                        ></ListItem>
+                      ) : null}
                       <ListItem
                         onClick={(e) => {
                           e.preventDefault()

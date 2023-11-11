@@ -228,329 +228,379 @@ const OrderDetailsForm = ({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <FormField
-          control={form.control}
-          name="service"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel className="text-zinc-800">Type of service</FormLabel>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <FormControl>
-                    <Button
-                      variant="outline"
-                      role="combobox"
-                      className={cn(
-                        'justify-between',
-                        !field.value && 'text-muted-foreground',
-                      )}
-                    >
-                      {field.value
-                        ? services.find((service) => service === field.value)
-                        : 'Select service'}
-                      <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                    </Button>
-                  </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="w-[200px] p-0">
-                  <ScrollArea className="h-72">
-                    <Command>
-                      <CommandInput placeholder="Search service..." />
-                      <CommandEmpty>No service found.</CommandEmpty>
-                      <CommandGroup>
-                        {services.map((service, i) => (
-                          <CommandItem
-                            value={service}
-                            key={i}
-                            onSelect={() => {
-                              form.setValue('service', service)
-                            }}
-                          >
-                            <CheckIcon
-                              className={cn(
-                                'mr-2 h-4 w-4',
-                                service === field.value
-                                  ? 'opacity-100'
-                                  : 'opacity-0',
-                              )}
-                            />
-                            {service}
-                          </CommandItem>
-                        ))}
-                      </CommandGroup>
-                    </Command>
-                  </ScrollArea>
-                </PopoverContent>
-              </Popover>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="academic_level"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel className="text-zinc-800">Academic level</FormLabel>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <FormControl>
-                    <Button
-                      variant="outline"
-                      role="combobox"
-                      className={cn(
-                        'justify-between',
-                        !field.value && 'text-muted-foreground',
-                      )}
-                    >
-                      {field.value
-                        ? storedata.find((item) => item.level === field.value)
-                            ?.level
-                        : 'Select academic level'}
-                      <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                    </Button>
-                  </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="w-[200px] p-0">
-                  <ScrollArea className="h-52">
-                    <Command>
-                      <CommandInput placeholder="Search academic level..." />
-                      <CommandEmpty>No level found.</CommandEmpty>
-                      <CommandGroup>
-                        {storedata.map((item, i) => (
-                          <CommandItem
-                            value={item.level}
-                            key={i}
-                            onSelect={() => {
-                              form.setValue('academic_level', item.level)
-                            }}
-                          >
-                            <CheckIcon
-                              className={cn(
-                                'mr-2 h-4 w-4',
-                                item.level === field.value
-                                  ? 'opacity-100'
-                                  : 'opacity-0',
-                              )}
-                            />
-                            {item.level}
-                          </CommandItem>
-                        ))}
-                      </CommandGroup>
-                    </Command>
-                  </ScrollArea>
-                </PopoverContent>
-              </Popover>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="subject_discipline"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel className="text-zinc-800">
-                Subject, Discipline
-              </FormLabel>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <FormControl>
-                    <Button
-                      variant="outline"
-                      role="combobox"
-                      className={cn(
-                        'justify-between',
-                        !field.value && 'text-muted-foreground',
-                      )}
-                    >
-                      {field.value
-                        ? storedata.length > 0
-                          ? storedata[0].subjects0.find(
-                              (item) => item === field.value,
-                            )
-                          : 'Select service'
-                        : 'Select service'}
-                      <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                    </Button>
-                  </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="w-[200px] p-0">
-                  <ScrollArea className="h-72">
-                    <Command>
-                      <CommandInput placeholder="Search service..." />
-                      <CommandEmpty>No service found.</CommandEmpty>
-                      <CommandGroup>
-                        {storedata.length > 0 &&
-                          storedata[0].subjects0.map((item, i) => (
+        <div className="grid grid-cols-1 space-y-4 md:gap-4 md:space-y-0  md:grid-cols-2">
+          <FormField
+            control={form.control}
+            name="service"
+            render={({ field }) => (
+              <FormItem className="flex flex-col">
+                <FormLabel className="text-zinc-800">Type of service</FormLabel>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        className={cn(
+                          'justify-between',
+                          !field.value && 'text-muted-foreground',
+                        )}
+                      >
+                        {field.value
+                          ? services.find((service) => service === field.value)
+                          : 'Select service'}
+                        <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[200px] p-0">
+                    <ScrollArea className="h-72">
+                      <Command>
+                        <CommandInput placeholder="Search service..." />
+                        <CommandEmpty>No service found.</CommandEmpty>
+                        <CommandGroup>
+                          {services.map((service, i) => (
                             <CommandItem
-                              value={item}
+                              value={service}
                               key={i}
                               onSelect={() => {
-                                form.setValue('subject_discipline', item)
+                                form.setValue('service', service)
                               }}
                             >
                               <CheckIcon
                                 className={cn(
                                   'mr-2 h-4 w-4',
-                                  item === field.value
+                                  service === field.value
                                     ? 'opacity-100'
                                     : 'opacity-0',
                                 )}
                               />
-                              {item}
+                              {service}
                             </CommandItem>
                           ))}
-                      </CommandGroup>
-                    </Command>
-                  </ScrollArea>
-                </PopoverContent>
-              </Popover>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="paper_format"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel className="text-zinc-800">Paper Format</FormLabel>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <FormControl>
-                    <Button
-                      variant="outline"
-                      role="combobox"
-                      className={cn(
-                        'justify-between',
-                        !field.value && 'text-muted-foreground',
-                      )}
-                    >
-                      {field.value
-                        ? storedata.length > 0
-                          ? storedata[0].format.find(
-                              (item) => item === field.value,
-                            )
-                          : 'Select paper format'
-                        : 'Select paper format'}
-                      <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                    </Button>
-                  </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="w-[200px] p-0">
-                  <ScrollArea className="h-52">
-                    <Command>
-                      <CommandInput placeholder="Search paper format..." />
-                      <CommandEmpty>No format found.</CommandEmpty>
-                      <CommandGroup>
-                        {storedata.length > 0 &&
-                          storedata[0].format.map((item, i) => (
+                        </CommandGroup>
+                      </Command>
+                    </ScrollArea>
+                  </PopoverContent>
+                </Popover>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="academic_level"
+            render={({ field }) => (
+              <FormItem className="flex flex-col">
+                <FormLabel className="text-zinc-800">Academic level</FormLabel>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        className={cn(
+                          'justify-between',
+                          !field.value && 'text-muted-foreground',
+                        )}
+                      >
+                        {field.value
+                          ? storedata.find((item) => item.level === field.value)
+                              ?.level
+                          : 'Select academic level'}
+                        <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[200px] p-0">
+                    <ScrollArea className="h-52">
+                      <Command>
+                        <CommandInput placeholder="Search academic level..." />
+                        <CommandEmpty>No level found.</CommandEmpty>
+                        <CommandGroup>
+                          {storedata.map((item, i) => (
                             <CommandItem
-                              value={item}
+                              value={item.level}
                               key={i}
                               onSelect={() => {
-                                form.setValue('paper_format', item)
+                                form.setValue('academic_level', item.level)
                               }}
                             >
                               <CheckIcon
                                 className={cn(
                                   'mr-2 h-4 w-4',
-                                  item === field.value
+                                  item.level === field.value
                                     ? 'opacity-100'
                                     : 'opacity-0',
                                 )}
                               />
-                              {item}
+                              {item.level}
                             </CommandItem>
                           ))}
-                      </CommandGroup>
-                    </Command>
-                  </ScrollArea>
-                </PopoverContent>
-              </Popover>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="duration"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel className="text-zinc-800">
-                Duration (
-                {differenceInDays(field.value.to, field.value.from) > 0
-                  ? differenceInDays(field.value.to, field.value.from) + ' days'
-                  : differenceInHours(field.value.to, field.value.from) +
-                    ' hours'}
-                )
-              </FormLabel>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <FormControl>
-                    <Button
-                      variant={'outline'}
-                      className={cn(
-                        'pl-3 text-left font-normal',
-                        !field.value && 'text-muted-foreground',
-                      )}
+                        </CommandGroup>
+                      </Command>
+                    </ScrollArea>
+                  </PopoverContent>
+                </Popover>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className="grid grid-cols-1 space-y-4 md:gap-4 md:space-y-0  md:grid-cols-2">
+          <FormField
+            control={form.control}
+            name="subject_discipline"
+            render={({ field }) => (
+              <FormItem className="flex flex-col">
+                <FormLabel className="text-zinc-800">
+                  Subject, Discipline
+                </FormLabel>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        className={cn(
+                          'justify-between',
+                          !field.value && 'text-muted-foreground',
+                        )}
+                      >
+                        {field.value
+                          ? storedata.length > 0
+                            ? storedata[0].subjects0.find(
+                                (item) => item === field.value,
+                              )
+                            : 'Select service'
+                          : 'Select service'}
+                        <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[200px] p-0">
+                    <ScrollArea className="h-72">
+                      <Command>
+                        <CommandInput placeholder="Search service..." />
+                        <CommandEmpty>No service found.</CommandEmpty>
+                        <CommandGroup>
+                          {storedata.length > 0 &&
+                            storedata[0].subjects0.map((item, i) => (
+                              <CommandItem
+                                value={item}
+                                key={i}
+                                onSelect={() => {
+                                  form.setValue('subject_discipline', item)
+                                }}
+                              >
+                                <CheckIcon
+                                  className={cn(
+                                    'mr-2 h-4 w-4',
+                                    item === field.value
+                                      ? 'opacity-100'
+                                      : 'opacity-0',
+                                  )}
+                                />
+                                {item}
+                              </CommandItem>
+                            ))}
+                        </CommandGroup>
+                      </Command>
+                    </ScrollArea>
+                  </PopoverContent>
+                </Popover>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="paper_format"
+            render={({ field }) => (
+              <FormItem className="flex flex-col">
+                <FormLabel className="text-zinc-800">Paper Format</FormLabel>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        className={cn(
+                          'justify-between',
+                          !field.value && 'text-muted-foreground',
+                        )}
+                      >
+                        {field.value
+                          ? storedata.length > 0
+                            ? storedata[0].format.find(
+                                (item) => item === field.value,
+                              )
+                            : 'Select paper format'
+                          : 'Select paper format'}
+                        <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[200px] p-0">
+                    <ScrollArea className="h-52">
+                      <Command>
+                        <CommandInput placeholder="Search paper format..." />
+                        <CommandEmpty>No format found.</CommandEmpty>
+                        <CommandGroup>
+                          {storedata.length > 0 &&
+                            storedata[0].format.map((item, i) => (
+                              <CommandItem
+                                value={item}
+                                key={i}
+                                onSelect={() => {
+                                  form.setValue('paper_format', item)
+                                }}
+                              >
+                                <CheckIcon
+                                  className={cn(
+                                    'mr-2 h-4 w-4',
+                                    item === field.value
+                                      ? 'opacity-100'
+                                      : 'opacity-0',
+                                  )}
+                                />
+                                {item}
+                              </CommandItem>
+                            ))}
+                        </CommandGroup>
+                      </Command>
+                    </ScrollArea>
+                  </PopoverContent>
+                </Popover>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className="grid grid-cols-1 space-y-4 md:gap-4 md:space-y-0  md:grid-cols-2">
+          <FormField
+            control={form.control}
+            name="duration"
+            render={({ field }) => (
+              <FormItem className="flex flex-col">
+                <FormLabel className="text-zinc-800">
+                  Deadline (
+                  {field.value
+                    ? differenceInDays(field.value.to, field.value.from) > 0
+                      ? differenceInDays(field.value.to, field.value.from) +
+                        ' days'
+                      : differenceInHours(field.value.to, field.value.from) +
+                        ' hours'
+                    : null}
+                  )
+                </FormLabel>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant={'outline'}
+                        className={cn(
+                          'pl-3 text-left font-normal',
+                          !field.value && 'text-muted-foreground',
+                        )}
+                      >
+                        {field.value ? (
+                          formatRange(field.value, 'en-GB')
+                        ) : (
+                          <span>Pick a deadline</span>
+                        )}
+                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-2" align="start">
+                    <Select
+                      onValueChange={(value) => {
+                        form.setValue('duration', {
+                          from: new Date(),
+                          to: addHours(new Date(), parseInt(value)),
+                        })
+                      }}
                     >
-                      {field.value ? (
-                        formatRange(field.value, 'en-GB')
-                      ) : (
-                        <span>Pick a deadline</span>
-                      )}
-                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                    </Button>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Hours" />
+                      </SelectTrigger>
+                      <SelectContent position="popper">
+                        <SelectItem value="2">2 Hours</SelectItem>
+                        <SelectItem value="4">4 Hours</SelectItem>
+                        <SelectItem value="6">6 Hours</SelectItem>
+                        <SelectItem value="8">8 Hours</SelectItem>
+                        <SelectItem value="10">10 Hours</SelectItem>
+                        <SelectItem value="12">12 Hours</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Calendar
+                      mode="range"
+                      defaultMonth={new Date()}
+                      numberOfMonths={2}
+                      selected={{
+                        from: field.value.from,
+                        to: field.value.to,
+                      }}
+                      onSelect={(r) => {
+                        return field.onChange(r)
+                      }}
+                      disabled={(date) => new Date() > date}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="attachments"
+            render={({ field: { onChange, value } }) => {
+              return (
+                <FormItem className="flex flex-col">
+                  <FormLabel className="text-zinc-800">Attachments</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="file"
+                      accept={'image/*,.doc,.docx,.pdf'}
+                      multiple={true}
+                      onChange={(event) => {
+                        // Triggered when user uploaded a new file
+                        // FileList is immutable, so we need to create a new one
+                        const dataTransfer = new DataTransfer()
+
+                        // Add old attachments
+                        if (value) {
+                          Array.from(value).forEach((attachment) =>
+                            dataTransfer.items.add(attachment),
+                          )
+                        }
+
+                        // Add newly uploaded attachments
+                        Array.from(event.target.files!).forEach((attachment) =>
+                          dataTransfer.items.add(attachment),
+                        )
+
+                        // Validate and update uploaded file
+                        const newFiles = dataTransfer.files
+                        onChange(newFiles)
+                      }}
+                    />
                   </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-2" align="start">
-                  <Select
-                    onValueChange={(value) => {
-                      form.setValue('duration', {
-                        from: new Date(),
-                        to: addHours(new Date(), parseInt(value)),
-                      })
-                    }}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select Hours" />
-                    </SelectTrigger>
-                    <SelectContent position="popper">
-                      <SelectItem value="2">2 Hours</SelectItem>
-                      <SelectItem value="4">4 Hours</SelectItem>
-                      <SelectItem value="6">6 Hours</SelectItem>
-                      <SelectItem value="8">8 Hours</SelectItem>
-                      <SelectItem value="10">10 Hours</SelectItem>
-                      <SelectItem value="12">12 Hours</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <Calendar
-                    mode="range"
-                    defaultMonth={new Date()}
-                    numberOfMonths={2}
-                    selected={{
-                      from: field.value.from,
-                      to: field.value.to,
-                    }}
-                    onSelect={(r) => {
-                      return field.onChange(r)
-                    }}
-                    disabled={(date) => new Date() > date}
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                  <FormMessage />
+                </FormItem>
+              )
+            }}
+          />
+        </div>
         <FormField
           control={form.control}
           name="topic"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="flex flex-col">
               <FormLabel className="text-zinc-800">Topic</FormLabel>
               <FormControl>
                 <Input placeholder="Topic" {...field} />
@@ -561,49 +611,9 @@ const OrderDetailsForm = ({
         />
         <FormField
           control={form.control}
-          name="attachments"
-          render={({ field: { onChange, value } }) => {
-            return (
-              <FormItem>
-                <FormLabel className="text-zinc-800">Attachments</FormLabel>
-                <FormControl>
-                  <Input
-                    type="file"
-                    accept={'image/*,.doc,.docx,.pdf'}
-                    multiple={true}
-                    onChange={(event) => {
-                      // Triggered when user uploaded a new file
-                      // FileList is immutable, so we need to create a new one
-                      const dataTransfer = new DataTransfer()
-
-                      // Add old attachments
-                      if (value) {
-                        Array.from(value).forEach((attachment) =>
-                          dataTransfer.items.add(attachment),
-                        )
-                      }
-
-                      // Add newly uploaded attachments
-                      Array.from(event.target.files!).forEach((attachment) =>
-                        dataTransfer.items.add(attachment),
-                      )
-
-                      // Validate and update uploaded file
-                      const newFiles = dataTransfer.files
-                      onChange(newFiles)
-                    }}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )
-          }}
-        />
-        <FormField
-          control={form.control}
           name="paper_details"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="flex flex-col">
               <FormLabel className="text-zinc-800">Paper details</FormLabel>
               <FormControl>
                 <Textarea placeholder="details...." {...field} />
