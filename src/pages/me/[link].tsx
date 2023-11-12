@@ -6,7 +6,7 @@ import Footer from '@/components/Footer'
 import { Container } from '@/components/Container'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import {
-  OrderWithOwnerAndTransaction,
+  OrderWithOwnerAndTransactionAndWriter,
   TransactionWithOwnerAndOrder,
   User,
 } from '@/lib/service_types'
@@ -43,7 +43,7 @@ export const getServerSideProps = (async ({ params, res, req }) => {
       case 'orders':
         const ordersData = await db
           .collection('orders')
-          .aggregate<OrderWithOwnerAndTransaction>([
+          .aggregate<OrderWithOwnerAndTransactionAndWriter>([
             {
               $match: {
                 userId: new ObjectId(session.user._id),
@@ -60,15 +60,24 @@ export const getServerSideProps = (async ({ params, res, req }) => {
             {
               $lookup: {
                 from: 'transactions',
-                localField: '_id',
-                foreignField: 'orderId',
+                localField: 'transactionId',
+                foreignField: '_id',
                 as: 'transaction',
+              },
+            },
+            {
+              $lookup: {
+                from: 'users',
+                localField: 'writerId',
+                foreignField: '_id',
+                as: 'writer',
               },
             },
             {
               $addFields: {
                 owner: { $arrayElemAt: ['$owner', 0] },
                 transaction: { $arrayElemAt: ['$transaction', 0] },
+                writer: { $arrayElemAt: ['$writer', 0] },
               },
             },
           ])
@@ -182,7 +191,7 @@ export const getServerSideProps = (async ({ params, res, req }) => {
   }
 }) satisfies GetServerSideProps<{
   user: User | null
-  orders: OrderWithOwnerAndTransaction[]
+  orders: OrderWithOwnerAndTransactionAndWriter[]
   transactions: TransactionWithOwnerAndOrder[]
   tab: Tabs | null
 }>

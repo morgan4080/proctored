@@ -11,7 +11,7 @@ import { ObjectId } from 'mongodb'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import mongoClient from '@/lib/mongodb'
 import {
-  OrderWithOwnerAndTransaction,
+  OrderWithOwnerAndTransactionAndWriter,
   StoreDataType,
 } from '@/lib/service_types'
 import ErrorPage from 'next/error'
@@ -34,7 +34,7 @@ export const getServerSideProps = (async ({ params }) => {
     const db = client.db('proctor')
     const ordersData = await db
       .collection('orders')
-      .aggregate<OrderWithOwnerAndTransaction>([
+      .aggregate<OrderWithOwnerAndTransactionAndWriter>([
         {
           $match: {
             _id: new ObjectId(`${params.orderId}`),
@@ -51,15 +51,24 @@ export const getServerSideProps = (async ({ params }) => {
         {
           $lookup: {
             from: 'transactions',
-            localField: '_id',
-            foreignField: 'orderId',
+            localField: 'transactionId',
+            foreignField: '_id',
             as: 'transaction',
+          },
+        },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'writerId',
+            foreignField: '_id',
+            as: 'writer',
           },
         },
         {
           $addFields: {
             owner: { $arrayElemAt: ['$owner', 0] },
             transaction: { $arrayElemAt: ['$transaction', 0] },
+            writer: { $arrayElemAt: ['$writer', 0] },
           },
         },
       ])
@@ -101,7 +110,7 @@ export const getServerSideProps = (async ({ params }) => {
   }
 }) satisfies GetServerSideProps<{
   storedata: StoreDataType[] | null
-  order: OrderWithOwnerAndTransaction | null
+  order: OrderWithOwnerAndTransactionAndWriter | null
 }>
 const Order = ({
   storedata,

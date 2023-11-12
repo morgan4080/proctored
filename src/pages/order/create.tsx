@@ -192,7 +192,10 @@ const CreateOrder = ({
               setLoading(false)
             })
         } else {
-          createRecord(data, '/api/orders')
+          createRecord(
+            { ...data, writerId: null, transactionId: null },
+            '/api/orders',
+          )
             .then((res) => {
               const response: OrderResponse = res
               if (response.status == 200) {

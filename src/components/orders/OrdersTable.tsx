@@ -32,7 +32,10 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Order, OrderWithOwnerAndTransaction, User } from '@/lib/service_types'
+import {
+  OrderWithOwnerAndTransactionAndWriter,
+  User,
+} from '@/lib/service_types'
 import Link from 'next/link'
 import { format } from 'date-fns'
 import { useSession } from 'next-auth/react'
@@ -40,7 +43,7 @@ import { useSession } from 'next-auth/react'
 const OrdersTable = ({
   orders,
 }: {
-  orders: OrderWithOwnerAndTransaction[]
+  orders: OrderWithOwnerAndTransactionAndWriter[]
 }) => {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -52,7 +55,7 @@ const OrdersTable = ({
   const { data: session } = useSession()
   const assignWriter = () => {}
 
-  const columns: ColumnDef<Order>[] = [
+  const columns: ColumnDef<OrderWithOwnerAndTransactionAndWriter>[] = [
     {
       accessorKey: '_id',
       id: '_id',
@@ -158,12 +161,20 @@ const OrdersTable = ({
       header: () => <div className="text-xs">Payment Status</div>,
       cell: ({ row }) => (
         <div className="text-xs">
-          {JSON.stringify(row.getValue('transaction'))}
+          {row.getValue('transaction') == undefined ? (
+            <span className="inline-flex items-center rounded-full bg-yellow-50 px-2 py-1 text-xs font-normal text-yellow-800 ring-1 ring-inset ring-yellow-600/20">
+              pending
+            </span>
+          ) : (
+            <span className="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-normal text-green-700 ring-1 ring-inset ring-green-600/20">
+              success
+            </span>
+          )}
         </div>
       ),
     },
     {
-      id: 'transaction',
+      id: 'status',
       header: () => <div className="text-xs">Order Status</div>,
       cell: ({ row }) => (
         <div className="text-xs">
@@ -197,6 +208,19 @@ const OrdersTable = ({
                 <DropdownMenuItem className="cursor-pointer">
                   <Link href={'/order/' + order._id} className="w-full">
                     View order
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer">
+                  <Link href={'/order/edit/' + order._id} className="w-full">
+                    Edit order
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer">
+                  <Link
+                    href={'/order/edit/' + order._id + '?pay=true'}
+                    className="w-full"
+                  >
+                    Pay for order order
                   </Link>
                 </DropdownMenuItem>
                 {session &&

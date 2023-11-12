@@ -31,11 +31,12 @@ export type Writer = {
   writer_name: string
   rating: number
   jobs_completed: number
-  latest_job: string
+  latest_job: Job | null
 }
 export type Job = {
   id: string
-  order_id: string
+  orderId: string
+  writerId: string
   amount_quoted: number
   payment_status: 'Paid' | 'Unpaid'
   job_status: 'Pending' | 'Declined' | 'Accepted' | 'Completed'
@@ -53,7 +54,6 @@ export type User = {
   is_writer: boolean
   orders: number
   writer_profile: Writer | null
-  jobs: Job[]
 }
 
 export interface Order {
@@ -76,6 +76,8 @@ export interface Order {
   attachments: FileList
   paper_details: string
   userId: string
+  writerId: string
+  transactionId: string
 }
 
 export interface Transaction {
@@ -106,9 +108,10 @@ export interface Blog {
   updated: string
 }
 
-export interface OrderWithOwnerAndTransaction extends Order {
+export interface OrderWithOwnerAndTransactionAndWriter extends Order {
   owner: User
   transaction: Transaction | null
+  writer: Writer | null
 }
 export interface TransactionWithOwnerAndOrder extends Transaction {
   owner: User

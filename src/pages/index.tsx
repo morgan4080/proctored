@@ -242,7 +242,7 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
                     'text-4xl text-center lg:text-left md:text-5xl lg:text-7xl text-white font-medium leading-tight tracking-tight py-2 lg:py-0',
                   )}
                 >
-                  Professional Essay & Academic Writers
+                  Professional Essay Writing & Proctored exams help
                 </h1>
                 <p className="py-6 max-w-2xl text-lg tracking-tight text-white/80 text-center lg:text-left">
                   We write your papers - you get top grades!

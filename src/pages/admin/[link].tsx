@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils'
 import UsersAdmin from '@/components/users/usersAdmin'
 import {
   Blog,
-  OrderWithOwnerAndTransaction,
+  OrderWithOwnerAndTransactionAndWriter,
   Paper,
   Service,
   TransactionWithOwnerAndOrder,
@@ -98,9 +98,10 @@ export const getServerSideProps = (async (context) => {
         },
       }
     case 'orders':
+      //add transaction from transactionId and writer from writerId
       const ordersData = await db
         .collection('orders')
-        .aggregate<OrderWithOwnerAndTransaction>([
+        .aggregate<OrderWithOwnerAndTransactionAndWriter>([
           {
             $lookup: {
               from: 'users',
@@ -112,15 +113,24 @@ export const getServerSideProps = (async (context) => {
           {
             $lookup: {
               from: 'transactions',
-              localField: '_id',
-              foreignField: 'orderId',
+              localField: 'transactionId',
+              foreignField: '_id',
               as: 'transaction',
+            },
+          },
+          {
+            $lookup: {
+              from: 'users',
+              localField: 'writerId',
+              foreignField: '_id',
+              as: 'writer',
             },
           },
           {
             $addFields: {
               owner: { $arrayElemAt: ['$owner', 0] },
               transaction: { $arrayElemAt: ['$transaction', 0] },
+              writer: { $arrayElemAt: ['$writer', 0] },
             },
           },
         ])
@@ -294,7 +304,7 @@ export const getServerSideProps = (async (context) => {
   }
 }) satisfies GetServerSideProps<{
   users: User[]
-  orders: OrderWithOwnerAndTransaction[]
+  orders: OrderWithOwnerAndTransactionAndWriter[]
   transactions: TransactionWithOwnerAndOrder[]
   services: Service[]
   papers: Paper[]
