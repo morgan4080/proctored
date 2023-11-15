@@ -538,7 +538,18 @@ const ServicesAdmin = ({
                     <button
                       type="button"
                       className="underline"
-                      onClick={() => setCategoryContext('CREATE')}
+                      onClick={() => {
+                        categoryForm.setValue('title', '')
+                        categoryForm.setValue('slug', '')
+                        categoryForm.setValue('description', '')
+                        categoryForm.setValue('subcategories', [])
+                        selectServiceCategory(null)
+                        categoryForm.trigger().then(() => {
+                          setCategorySubContext('')
+                          setCategoryContext('CREATE')
+                          categoryForm.clearErrors()
+                        })
+                      }}
                     >
                       Create +
                     </button>
