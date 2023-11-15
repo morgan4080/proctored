@@ -184,7 +184,7 @@ const BlogsTable = ({
                   }}
                   className="cursor-pointer"
                 >
-                  Delete service
+                  Delete blog
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

@@ -62,6 +62,28 @@ export const createRecord = async (data: any, url: string): Promise<any> => {
   })
 }
 
+export const deleteRecord = async (_id: string, url: string): Promise<any> => {
+  const myHeaders = new Headers()
+  myHeaders.append('Content-Type', 'application/json')
+
+  const requestOptions: RequestInit | undefined = {
+    method: 'DELETE',
+    headers: myHeaders,
+    redirect: 'follow',
+  }
+
+  const queryParams = new URLSearchParams()
+
+  queryParams.set('id', _id)
+
+  return new Promise((resolve, reject) => {
+    fetch(url + '?' + queryParams.toString(), requestOptions)
+      .then((response) => response.json())
+      .then((result) => resolve(result))
+      .catch((error) => reject(error))
+  })
+}
+
 export function slugify(str: string) {
   return String(str)
     .normalize('NFKD') // split accented characters into their base characters and diacritical marks

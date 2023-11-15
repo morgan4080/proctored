@@ -1,10 +1,10 @@
 import classNames from '../utils/ClassNames'
 import { signIn, signOut, useSession } from 'next-auth/react'
 import Link from 'next/link'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Inter } from 'next/font/google'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { cn, fetcher, getInitials } from '@/lib/utils'
+import { cn, getInitials } from '@/lib/utils'
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -16,13 +16,25 @@ import {
 } from '@/components/ui/navigation-menu'
 import Logo from '@/components/Logo'
 import { useRouter } from 'next/router'
+import {
+  Menubar,
+  MenubarContent,
+  MenubarItem,
+  MenubarMenu,
+  MenubarSub,
+  MenubarSubContent,
+  MenubarSubTrigger,
+  MenubarTrigger,
+} from '@/components/ui/menubar'
+import { ChevronDown } from 'lucide-react'
+import { CategoryWithSubCategoryAndService } from '@/lib/service_types'
 
 const inter = Inter({
   weight: ['100', '300', '400', '500', '700', '900'],
   subsets: ['latin'],
 })
 
-const getLinks = async () => {
+const getLinks = async (): Promise<CategoryWithSubCategoryAndService[]> => {
   const res = await fetch('/api/services?links=true')
   const { data } = await res.json()
   return data
@@ -36,38 +48,46 @@ const Navigation = () => {
   const [menu, setMenu] = useState<
     {
       name: string
-      items: { title: string; slug: string }[]
+      categories: {
+        _id: string
+        title: string
+        slug: string
+        subcategories: {
+          _id: string
+          title: string
+          slug: string
+          services: { _id: string; title: string; slug: string }[]
+        }[]
+      }[]
       href: string | null
     }[]
   >([
     {
       name: 'Services',
-      items: [],
+      categories: [],
       href: null,
     },
     {
       name: 'Papers',
-      items: [],
+      categories: [],
       href: '/papers',
     },
     {
       name: 'Blogs',
-      items: [],
+      categories: [],
       href: '/blogs',
-    },
-    {
-      name: 'Sign In',
-      items: [],
-      href: null,
     },
   ])
 
-  useEffect(() => {
+  const [openMenu, setOpenMenu] = useState('')
+
+  const addLinks = useCallback(() => {
     getLinks().then((links) => {
       setMenu((men) => {
         return men.map((m) => {
-          if (m.name == 'Services' && m.items.length == 0) {
-            m.items = links
+          if (m.name == 'Services' && m.categories.length == 0) {
+            console.log()
+            m.categories = links
             return m
           } else {
             return m
@@ -75,6 +95,10 @@ const Navigation = () => {
         })
       })
     })
+  }, [])
+
+  useEffect(() => {
+    addLinks()
   }, [])
 
   return (
@@ -89,56 +113,57 @@ const Navigation = () => {
           <Logo className="w-52 mx-auto text-white" />
         </Link>
         <div className="hidden md:flex mx-auto lg:mx-0">
-          <NavigationMenu>
-            <NavigationMenuList className="space-x-4">
-              {menu.map((item, index) =>
-                item.items.length > 0 ? (
-                  <NavigationMenuItem key={index}>
-                    <NavigationMenuTrigger className="NavigationMenuTrigger">
-                      {item.name}
-                    </NavigationMenuTrigger>
-                    <NavigationMenuContent className="NavigationMenuContent">
-                      <ul className="grid gap-1 p-6 md:w-[180px] lg:w-[200px] lg:grid-cols-1">
-                        {item.items.map((component) => (
-                          <ListItem
-                            key={component.title}
-                            title={component.title}
-                            href={'/services/' + component.slug}
-                            icon={<></>}
-                          />
-                        ))}
-                      </ul>
-                    </NavigationMenuContent>
-                  </NavigationMenuItem>
-                ) : item.name == 'Sign In' ? (
-                  !session && (
-                    <NavigationMenuItem key={index}>
-                      <button type={'button'} onClick={() => signIn()}>
-                        <NavigationMenuLink className="NavigationMenuLink">
-                          {item.name}
-                        </NavigationMenuLink>
-                      </button>
-                    </NavigationMenuItem>
-                  )
-                ) : (
-                  <NavigationMenuItem key={index}>
-                    <Link
-                      href={item.href ? item.href : ''}
-                      legacyBehavior
-                      passHref
-                    >
-                      <NavigationMenuLink className="NavigationMenuLink">
-                        {item.name}
-                      </NavigationMenuLink>
-                    </Link>
-                  </NavigationMenuItem>
-                ),
-              )}
-            </NavigationMenuList>
-          </NavigationMenu>
-          {session && (
-            <NavigationMenu originalViewport={false} className="pl-4">
-              <NavigationMenuList className="space-x-4 pl-4 border-l">
+          <Menubar className="bg-transparent border-0 text-white">
+            {menu.map((item, index) =>
+              item.categories.length > 0 ? (
+                <MenubarMenu key={index}>
+                  <MenubarTrigger className="focus:bg-transparent focus:text-white data-[state=open]:bg-transparent data-[state=open]:text-white">
+                    <span className="mr-2">{item.name}</span>
+                    <ChevronDown className="h-3 w-3 text-white" />
+                  </MenubarTrigger>
+                  <MenubarContent>
+                    {item.categories.map((category, i) => (
+                      <MenubarSub key={i}>
+                        <MenubarSubTrigger className="text-xs">
+                          {category.title}
+                        </MenubarSubTrigger>
+                        <MenubarSubContent>
+                          {category.subcategories.map((sub) => (
+                            <MenubarSub key={sub._id}>
+                              <MenubarSubTrigger className="text-xs">
+                                {sub.title}
+                              </MenubarSubTrigger>
+                              <MenubarSubContent>
+                                {sub.services.map((s) => (
+                                  <MenubarItem key={s._id} className="text-xs">
+                                    <Link
+                                      href={`/services/${category.slug}/${sub.slug}/${s.slug}`}
+                                    >
+                                      {s.title}
+                                    </Link>
+                                  </MenubarItem>
+                                ))}
+                              </MenubarSubContent>
+                            </MenubarSub>
+                          ))}
+                        </MenubarSubContent>
+                      </MenubarSub>
+                    ))}
+                  </MenubarContent>
+                </MenubarMenu>
+              ) : (
+                <MenubarMenu key={index}>
+                  <MenubarTrigger className="focus:bg-transparent focus:text-white data-[state=open]:bg-transparent data-[state=open]:text-white">
+                    <Link href={item.href ? item.href : ''}>{item.name}</Link>
+                  </MenubarTrigger>
+                </MenubarMenu>
+              ),
+            )}
+          </Menubar>
+
+          <NavigationMenu originalViewport={false} className="pl-4">
+            <NavigationMenuList className="space-x-4 pl-4 border-l">
+              {session ? (
                 <NavigationMenuItem>
                   <NavigationMenuTrigger
                     chevron={false}
@@ -187,10 +212,18 @@ const Navigation = () => {
                     </ul>
                   </NavigationMenuContent>
                 </NavigationMenuItem>
-              </NavigationMenuList>
-              <NavigationMenuViewport viewportClassName="absolute right-0 top-full flex justify-end" />
-            </NavigationMenu>
-          )}
+              ) : (
+                <NavigationMenuItem>
+                  <button type={'button'} onClick={() => signIn()}>
+                    <NavigationMenuLink className="NavigationMenuLink">
+                      Sign In
+                    </NavigationMenuLink>
+                  </button>
+                </NavigationMenuItem>
+              )}
+            </NavigationMenuList>
+            <NavigationMenuViewport viewportClassName="absolute right-0 top-full flex justify-end" />
+          </NavigationMenu>
         </div>
       </div>
     </div>

@@ -184,7 +184,7 @@ const PapersTable = ({
                   }}
                   className="cursor-pointer"
                 >
-                  Delete service
+                  Delete paper
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

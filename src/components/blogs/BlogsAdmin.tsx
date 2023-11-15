@@ -2,13 +2,13 @@ import React, { useEffect } from 'react'
 import { cn, createRecord, fetcher, updateRecord } from '@/lib/utils'
 import { Separator } from '@/components/ui/separator'
 import { Blog } from '@/lib/service_types'
-import ServiceDialogue from '@/components/services/ServiceDialogue'
 import { toast } from '@/components/ui/use-toast'
 import useSWR from 'swr'
 import { Toaster } from '@/components/ui/toaster'
 import { Dialog, DialogOverlay, DialogPortal } from '@/components/ui/dialog'
 import { Loader2 } from 'lucide-react'
 import BlogsTable from '@/components/blogs/BlogsTable'
+import BlogDialogue from '@/components/blogs/BlogDialogue'
 
 const BlogsAdmin = ({
   current,
@@ -111,7 +111,8 @@ const BlogsAdmin = ({
         </DialogPortal>
       </Dialog>
       {showDialogue ? (
-        <ServiceDialogue
+        <BlogDialogue
+          context={context}
           submitForm={(values) => {
             return new Promise((resolve, reject) => {
               if (values) {

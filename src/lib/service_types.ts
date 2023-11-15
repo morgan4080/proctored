@@ -6,13 +6,28 @@ export type StoreDataType = {
   subjects0: string[]
   subjects: string[]
 }
-export type Service = {
+
+export type ServiceCategories = {
   _id: string
   title: string
   slug: string
-  excerpt: string
   description: string
-  updated: string
+  subcategories: string[]
+}
+
+export type ServiceCategoriesWithSubCategories = {
+  _id: string
+  title: string
+  slug: string
+  description: string
+  subcategories: ServiceSubCategories[]
+}
+
+export type ServiceSubCategories = {
+  _id: string
+  title: string
+  slug: string
+  description: string
 }
 
 export interface OrderResponse {
@@ -116,4 +131,31 @@ export interface OrderWithOwnerAndTransactionAndWriter extends Order {
 export interface TransactionWithOwnerAndOrder extends Transaction {
   owner: User
   order: Order
+}
+
+export interface CategoryWithSubCategoryAndService {
+  _id: string
+  title: string
+  slug: string
+  description: string
+  subcategories: Subcategory[]
+}
+
+export interface Subcategory {
+  _id: string
+  title: string
+  slug: string
+  description: string
+  services: Service[]
+}
+
+export interface Service {
+  _id: string
+  title: string
+  slug: string
+  excerpt: string
+  description: string
+  category: string
+  subcategory: string
+  updated: string
 }

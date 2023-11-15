@@ -107,3 +107,21 @@
 div > .tiptap .ProseMirror .added {
   @apply border
 }
+
+input::placeholder {
+  color: #CCC !important;
+  opacity: 1; /* Firefox */
+}
+
+textarea::placeholder {
+  color: #CCC !important;
+  opacity: 1; /* Firefox */
+}
+
+input::-ms-input-placeholder { /* Edge 12 -18 */
+  color: #CCC !important;
+}
+
+textarea::-ms-input-placeholder { /* Edge 12 -18 */
+  color: #CCC !important;
+}

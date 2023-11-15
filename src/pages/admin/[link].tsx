@@ -11,6 +11,9 @@ import {
   OrderWithOwnerAndTransactionAndWriter,
   Paper,
   Service,
+  ServiceCategories,
+  ServiceCategoriesWithSubCategories,
+  ServiceSubCategories,
   TransactionWithOwnerAndOrder,
   User,
 } from '@/lib/service_types'
@@ -92,6 +95,8 @@ export const getServerSideProps = (async (context) => {
           orders: [],
           transactions: [],
           services: [],
+          serviceCategories: [],
+          serviceSubCategories: [],
           papers: [],
           blogs: [],
           tab,
@@ -160,6 +165,8 @@ export const getServerSideProps = (async (context) => {
           orders: orders,
           transactions: [],
           services: [],
+          serviceCategories: [],
+          serviceSubCategories: [],
           papers: [],
           blogs: [],
           tab,
@@ -209,6 +216,8 @@ export const getServerSideProps = (async (context) => {
           orders: [],
           transactions: transactions,
           services: [],
+          serviceCategories: [],
+          serviceSubCategories: [],
           papers: [],
           blogs: [],
           tab,
@@ -222,10 +231,62 @@ export const getServerSideProps = (async (context) => {
         .limit(10)
         .toArray()
       const services = servicesData.map((s) => {
-        const { _id, ...service } = s
+        const { _id, category, subcategory, ...service } = s
         return {
           _id: _id.toString(),
+          category: category.toString(),
+          subcategory: subcategory.toString(),
           ...service,
+        }
+      })
+      const servicesCategories = await db
+        .collection('services_category')
+        .aggregate<ServiceCategoriesWithSubCategories>([
+          {
+            $lookup: {
+              from: 'services_sub_category',
+              localField: 'subcategories',
+              foreignField: '_id',
+              as: 'subcategories_data',
+            },
+          },
+          {
+            $project: {
+              title: 1,
+              slug: 1,
+              description: 1,
+              subcategories: '$subcategories_data',
+            },
+          },
+        ])
+        .sort({ metacritic: -1 })
+        .limit(10)
+        .toArray()
+      const serviceCategories = servicesCategories.map((s) => {
+        const { _id, subcategories, ...sc } = s
+        return {
+          _id: _id.toString(),
+          subcategories: subcategories.map((sc) => {
+            const { _id, ...other } = sc
+            return {
+              _id: _id.toString(),
+              ...other,
+            }
+          }),
+          ...sc,
+        }
+      })
+      const services_sub_category = await db
+        .collection<ServiceSubCategories>('services_sub_category')
+        .find({})
+        .sort({ metacritic: -1 })
+        .limit(10)
+        .toArray()
+      const services_sub_categories = services_sub_category.map((s) => {
+        const { _id, ...ssc } = s
+        return {
+          _id: _id.toString(),
+          ...ssc,
         }
       })
       return {
@@ -234,6 +295,8 @@ export const getServerSideProps = (async (context) => {
           orders: [],
           transactions: [],
           services: services,
+          serviceCategories: serviceCategories,
+          serviceSubCategories: services_sub_categories,
           papers: [],
           blogs: [],
           tab,
@@ -259,6 +322,8 @@ export const getServerSideProps = (async (context) => {
           orders: [],
           transactions: [],
           services: [],
+          serviceCategories: [],
+          serviceSubCategories: [],
           papers: papers,
           blogs: [],
           tab,
@@ -284,6 +349,8 @@ export const getServerSideProps = (async (context) => {
           orders: [],
           transactions: [],
           services: [],
+          serviceCategories: [],
+          serviceSubCategories: [],
           papers: [],
           blogs: blogs,
           tab,
@@ -296,6 +363,8 @@ export const getServerSideProps = (async (context) => {
           orders: [],
           transactions: [],
           services: [],
+          serviceCategories: [],
+          serviceSubCategories: [],
           papers: [],
           blogs: [],
           tab: null,
@@ -307,6 +376,8 @@ export const getServerSideProps = (async (context) => {
   orders: OrderWithOwnerAndTransactionAndWriter[]
   transactions: TransactionWithOwnerAndOrder[]
   services: Service[]
+  serviceCategories: ServiceCategoriesWithSubCategories[]
+  serviceSubCategories: ServiceSubCategories[]
   papers: Paper[]
   blogs: Blog[]
   tab: Tabs | null
@@ -317,6 +388,8 @@ const Admin = ({
   orders,
   transactions,
   services,
+  serviceCategories,
+  serviceSubCategories,
   papers,
   blogs,
   tab,
@@ -532,6 +605,8 @@ const Admin = ({
                 <ServicesAdmin
                   current={tab == 'services'}
                   services={services}
+                  serviceCategories={serviceCategories}
+                  serviceSubCategories={serviceSubCategories}
                 />
                 {/*  Papers*/}
                 <PapersAdmin current={tab == 'papers'} papers={papers} />

@@ -1,14 +1,15 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import ErrorPage from 'next/error'
 import useSWR from 'swr'
 import Navigation from '@/components/Navigation'
 import Head from 'next/head'
-import classNames from '../../utils/ClassNames'
+import classNames from '../../../../utils/ClassNames'
 import { Inter, Lexend } from 'next/font/google'
 import { Container } from '@/components/Container'
 import Footer from '@/components/Footer'
 import { Toaster } from '@/components/ui/toaster'
-import { EditorProvider, useCurrentEditor, FloatingMenu } from '@tiptap/react'
+import { EditorProvider, useCurrentEditor } from '@tiptap/react'
+import Link from '@tiptap/extension-link'
 import { Color } from '@tiptap/extension-color'
 import ListItem from '@tiptap/extension-list-item'
 import TextStyle from '@tiptap/extension-text-style'
@@ -21,7 +22,7 @@ import { ToastAction } from '@/components/ui/toast'
 import { useSession } from 'next-auth/react'
 import { Loader2 } from 'lucide-react'
 import { useRouter } from 'next/router'
-import { fetcher, updateRecord } from '@/lib/utils'
+import { cn, fetcher, updateRecord } from '@/lib/utils'
 import { Service } from '@/lib/service_types'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 
@@ -39,7 +40,7 @@ const Service = ({
   sv,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter()
-  const { data: session, status } = useSession()
+  const { data: session } = useSession()
   const [service, setService] = useState(sv)
   const url = sv == null ? '' : sv.slug
   const { data: updatedData, mutate } = useSWR(
@@ -52,7 +53,7 @@ const Service = ({
 
   useEffect(() => {
     if (updatedData !== undefined) {
-      const { data, message } = updatedData
+      const { data } = updatedData
       if (data.length > 0) setService(data[0])
     }
     return () => {
@@ -73,17 +74,21 @@ const Service = ({
           title: service.title,
           slug: service.slug,
           excerpt: service.excerpt,
+          category: service.category,
+          subcategory: service.subcategory,
           description: htm,
           updated: new Date(),
         },
         '/api/services',
       )
         .then(() => mutate())
-        .then((result: any) => {
+        .then(() => {
           setLoading(false)
           setEditing(false)
         })
-        .catch((error) => {})
+        .catch((error) => {
+          console.log(error)
+        })
     }
   }
 
@@ -115,12 +120,9 @@ const Service = ({
             className="xl:px-0"
             parentClassName="pt-10 bg-white w-full"
           >
-            <div className="w-full">
-              <h2
-                className={classNames(
-                  lexend.className,
-                  'text-3xl font-bold tracking-tight text-gray-900 capitalise inline-flex relative w-auto',
-                )}
+            <div className="w-full prose">
+              <h1
+                className={cn(lexend.className, 'inline-flex relative w-auto')}
               >
                 {service.title}
                 {session &&
@@ -145,15 +147,13 @@ const Service = ({
                     </button>
                   )
                 ) : null}
-              </h2>
-              <p className="mt-2 text-sm text-slate-500 hover:text-slate-600 max-w-lg">
-                {service.excerpt}
-              </p>
+              </h1>
+              <p>{service.excerpt}</p>
             </div>
           </Container>
           <Container
             className="xl:px-0"
-            parentClassName="pt-10 md:pt-20 bg-white w-full"
+            parentClassName="pb-44 pt-10 bg-white w-full"
           >
             <div className="prose prose-slate" style={{ minWidth: '100%' }}>
               <div className={editing ? 'block' : 'hidden'}>
@@ -198,6 +198,9 @@ const extensions = [
     inline: true,
     allowBase64: true,
   }),
+  Link.configure({
+    openOnClick: false,
+  }),
   StarterKit.configure({
     bulletList: {
       keepMarks: true,
@@ -230,16 +233,36 @@ const MenuBar = ({
     if (event.target.value !== undefined) setColorState(event.target.value)
   }
 
-  if (!editor) {
-    return null
-  }
-
   const addImage = () => {
     const url = window.prompt('URL')
 
     if (url) {
-      editor.chain().focus().setImage({ src: url }).run()
+      editor?.chain().focus().setImage({ src: url }).run()
     }
+  }
+
+  const setLink = useCallback(() => {
+    const previousUrl = editor?.getAttributes('link').href
+    const url = window.prompt('URL', previousUrl)
+
+    // cancelled
+    if (url === null) {
+      return
+    }
+
+    // empty
+    if (url === '') {
+      editor?.chain().focus().extendMarkRange('link').unsetLink().run()
+
+      return
+    }
+
+    // update link
+    editor?.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
+  }, [editor])
+
+  if (!editor) {
+    return null
   }
 
   return (
@@ -425,6 +448,19 @@ const MenuBar = ({
       <button className={'tip'} onClick={addImage}>
         add image
       </button>
+      <button
+        onClick={setLink}
+        className={editor.isActive('link') ? 'is-active tip' : 'tip'}
+      >
+        setLink
+      </button>
+      <button
+        className={'tip'}
+        onClick={() => editor.chain().focus().unsetLink().run()}
+        disabled={!editor.isActive('link')}
+      >
+        unsetLink
+      </button>
       <Button
         onClick={() => {
           toast({
@@ -455,9 +491,9 @@ const MenuBar = ({
 
 export const getServerSideProps = (async (context) => {
   const url = context.params
-    ? '/api/services?slug=' + context.params.slug
+    ? '/api/services?slug=' + context.params.serviceslug
     : '/api/services'
-  const { data, message } = await fetcher(process.env.NEXTAUTH_URL + url)
+  const { data } = await fetcher(process.env.NEXTAUTH_URL + url)
   const services: Service[] = data
   return {
     props: { sv: services.length > 0 ? services[0] : null, revalidate: 60 },

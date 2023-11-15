@@ -17,9 +17,12 @@ module.exports = {
     },
     extend: {
       colors: {
-        bermuda: '#0F80DE',
+        bermuda: '#160048',
         plumes: '#48ACFF',
         reef: '#F3FAFF',
+        teal: {
+          300: '#92e3a9',
+        },
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',

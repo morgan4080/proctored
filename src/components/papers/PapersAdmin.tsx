@@ -10,6 +10,7 @@ import { Dialog, DialogOverlay, DialogPortal } from '@/components/ui/dialog'
 import { Loader2 } from 'lucide-react'
 import BlogsTable from '@/components/blogs/BlogsTable'
 import PapersTable from '@/components/papers/PapersTable'
+import PaperDialogue from '@/components/papers/PaperDialogue'
 
 const PapersAdmin = ({
   current,
@@ -112,7 +113,8 @@ const PapersAdmin = ({
         </DialogPortal>
       </Dialog>
       {showDialogue ? (
-        <ServiceDialogue
+        <PaperDialogue
+          context={context}
           submitForm={(values) => {
             return new Promise((resolve, reject) => {
               if (values) {

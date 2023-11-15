@@ -37,6 +37,8 @@ import { format } from 'date-fns'
 import Link from 'next/link'
 import { toast } from '@/components/ui/use-toast'
 import { ToastAction } from '@/components/ui/toast'
+import { deleteRecord } from '@/lib/utils'
+import { useRouter } from 'next/router'
 
 const OrdersTable = ({
   services,
@@ -46,6 +48,8 @@ const OrdersTable = ({
   setDefaultSlug,
   setDefaultExcerpt,
   setDefaultDescription,
+  setDefaultCategory,
+  setDefaultSubCategory,
   setShowDialogue,
 }: {
   services: Service[]
@@ -55,8 +59,11 @@ const OrdersTable = ({
   setDefaultSlug: (slug: string) => void
   setDefaultExcerpt: (excerpt: string) => void
   setDefaultDescription: (description: string) => void
+  setDefaultCategory: (category: string) => void
+  setDefaultSubCategory: (subcategory: string) => void
   setShowDialogue: (open: boolean) => void
 }) => {
+  const router = useRouter()
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
@@ -65,7 +72,23 @@ const OrdersTable = ({
     React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
 
-  const deleteService = (id: string) => {}
+  const deleteItem = (id: string) => {
+    deleteRecord(id, '/api/services')
+      .then((result) => {
+        toast({
+          title: result.message,
+        })
+      })
+      .catch((error) => {
+        toast({
+          variant: 'destructive',
+          title: JSON.stringify(error),
+        })
+      })
+      .finally(() => {
+        router.reload()
+      })
+  }
 
   const columns: ColumnDef<Service>[] = [
     {
@@ -92,21 +115,23 @@ const OrdersTable = ({
       accessorKey: 'title',
       header: 'Title',
       cell: ({ row }) => (
-        <div className="capitalize">{row.getValue('title')}</div>
+        <div className="capitalize text-xs">{row.getValue('title')}</div>
       ),
     },
     {
       accessorKey: 'slug',
       header: 'Slug',
       cell: ({ row }) => (
-        <div className="capitalize">{row.getValue('slug')}</div>
+        <div className="capitalize text-xs">{row.getValue('slug')}</div>
       ),
     },
     {
       accessorKey: 'excerpt',
       header: 'Excerpt',
       cell: ({ row }) => (
-        <div className="capitalize">{row.getValue('excerpt')}</div>
+        <div className="capitalize text-xs">
+          <p className="line-clamp-2">{row.getValue('excerpt')}</p>
+        </div>
       ),
     },
     {
@@ -125,7 +150,7 @@ const OrdersTable = ({
       cell: ({ row }) => {
         const service = row.original
         return (
-          <div className="capitalize">
+          <div className="capitalize text-xs">
             {format(new Date(service.updated), 'MMMM dd, yyyy h:mm:ss aa')}
           </div>
         )
@@ -160,6 +185,8 @@ const OrdersTable = ({
                     setDefaultSlug(service.slug)
                     setDefaultExcerpt(service.excerpt)
                     setDefaultDescription(service.description)
+                    setDefaultCategory(service.category)
+                    setDefaultSubCategory(service.subcategory)
                     setShowDialogue(true)
                   }}
                   className="cursor-pointer"
@@ -174,7 +201,7 @@ const OrdersTable = ({
                       action: (
                         <ToastAction
                           onClick={() => {
-                            deleteService(service._id)
+                            deleteItem(service._id)
                           }}
                           altText="Delete Service"
                         >
