@@ -119,6 +119,7 @@ const CreateOrder = ({
     { option: string; value: string | number | boolean }[]
   >([])
   const [totalAmount, setTotalAmount] = useState<string>('0')
+  const [priceBeforeExtraOptions, setPriceBeforeExtraOptions] = useState(0)
   const [currentLevelId, setCurrentLevelId] = useState<number>(storedata[0].id)
   const [currentDuration, setCurrentDuration] = useState<string>('14 Days')
   const [currentStoreData, setCurrentStoreData] = useState<StoreDataType>(
@@ -162,6 +163,10 @@ const CreateOrder = ({
       setTotalAmount('0')
     }
   }, [serviceCategory, currentLevelId, currentDuration, storedata])
+
+  useEffect(() => {
+    console.log(priceBeforeExtraOptions.toString())
+  }, [priceBeforeExtraOptions])
 
   const saveOrder = useCallback(
     (
@@ -792,65 +797,67 @@ const CreateOrder = ({
                     order={null}
                     reportValues={(data) => {
                       // switch statement for price effectors
-                      let price = parseFloat(totalAmount)
 
-                      // pages * price
-                      if (typeof data.pages == 'number') {
-                        price = price * data.pages
-                      }
+                      setPriceBeforeExtraOptions((cost) => {
+                        let price = cost
+                        // pages * price
+                        if (typeof data.pages == 'number') {
+                          price = price * data.pages
+                        }
 
-                      // price + (6.5 * slides)
-                      if (typeof data.slides == 'number') {
-                        price = price + 6.5 * data.slides
-                      }
+                        // price + (6.5 * slides)
+                        if (typeof data.slides == 'number') {
+                          price = price + 6.5 * data.slides
+                        }
 
-                      // price + (5.0 * charts)
-                      if (typeof data.charts == 'number') {
-                        price = price + 5.0 * data.charts
-                      }
+                        // price + (5.0 * charts)
+                        if (typeof data.charts == 'number') {
+                          price = price + 5.0 * data.charts
+                        }
 
-                      // 'single' 2 * price
-                      // 'double' price remains the same
-                      if (
-                        typeof data.spacing == 'string' &&
-                        data.spacing == 'single'
-                      ) {
-                        price = 2 * price
-                      }
+                        // 'single' 2 * price per page
+                        // 'double' price remains the same
+                        if (
+                          typeof data.spacing == 'string' &&
+                          data.spacing == 'single'
+                        ) {
+                          price = 2 * price
+                        }
 
-                      // digital_copies true ? price + 9.99
-                      if (
-                        typeof data.digital_copies == 'boolean' &&
-                        data.digital_copies
-                      ) {
-                        price = price + 9.99
-                      }
+                        // digital_copies true ? price + 9.99
+                        if (
+                          typeof data.digital_copies == 'boolean' &&
+                          data.digital_copies
+                        ) {
+                          price = price + 9.99
+                        }
 
-                      // initial_draft true ? price + 10%
-                      if (
-                        typeof data.initial_draft == 'boolean' &&
-                        data.initial_draft
-                      ) {
-                        price = price + price * 0.1
-                      }
+                        // initial_draft true ? price + 10%
+                        if (
+                          typeof data.initial_draft == 'boolean' &&
+                          data.initial_draft
+                        ) {
+                          price = price + price * 0.1
+                        }
 
-                      // one_page_summary true ? price + 17.99
-                      if (
-                        typeof data.one_page_summary == 'boolean' &&
-                        data.one_page_summary
-                      ) {
-                        price = price + 17.99
-                      }
+                        // one_page_summary true ? price + 17.99
+                        if (
+                          typeof data.one_page_summary == 'boolean' &&
+                          data.one_page_summary
+                        ) {
+                          price = price + 17.99
+                        }
 
-                      // plagiarism_report true ? price + 7.99
-                      if (
-                        typeof data.plagiarism_report == 'boolean' &&
-                        data.plagiarism_report
-                      ) {
-                        price = price + 7.99
-                      }
+                        // plagiarism_report true ? price + 7.99
+                        if (
+                          typeof data.plagiarism_report == 'boolean' &&
+                          data.plagiarism_report
+                        ) {
+                          price = price + 7.99
+                        }
 
-                      console.log(price)
+                        return price
+                      })
 
                       setExtraOptions(() =>
                         Object.entries(data).reduce(

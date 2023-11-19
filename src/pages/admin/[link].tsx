@@ -80,7 +80,7 @@ export const getServerSideProps = (async (context) => {
           },
         ])
         .sort({ metacritic: -1 })
-        .limit(10)
+        .limit(1000)
         .toArray()
       const users = usersData.map((u) => {
         const { _id, ...user } = u
@@ -140,7 +140,7 @@ export const getServerSideProps = (async (context) => {
           },
         ])
         .sort({ metacritic: -1 })
-        .limit(10)
+        .limit(1000)
         .toArray()
       const orders = ordersData.map((o) => {
         const {
@@ -201,7 +201,7 @@ export const getServerSideProps = (async (context) => {
           },
         ])
         .sort({ metacritic: -1 })
-        .limit(10)
+        .limit(1000)
         .toArray()
       const transactions = transactionsData.map((t) => {
         const { _id, ...transaction } = t
@@ -228,7 +228,7 @@ export const getServerSideProps = (async (context) => {
         .collection<Service>('services')
         .find({})
         .sort({ metacritic: -1 })
-        .limit(10)
+        .limit(1000)
         .toArray()
       const services = servicesData.map((s) => {
         const { _id, category, subcategory, ...service } = s
@@ -261,7 +261,7 @@ export const getServerSideProps = (async (context) => {
           },
         ])
         .sort({ metacritic: -1 })
-        .limit(10)
+        .limit(1000)
         .toArray()
       const serviceCategories = servicesCategories.map((s) => {
         const { _id, subcategories, ...sc } = s
@@ -281,7 +281,7 @@ export const getServerSideProps = (async (context) => {
         .collection<ServiceSubCategories>('services_sub_category')
         .find({})
         .sort({ metacritic: -1 })
-        .limit(10)
+        .limit(1000)
         .toArray()
       const services_sub_categories = services_sub_category.map((s) => {
         const { _id, ...ssc } = s
@@ -308,7 +308,7 @@ export const getServerSideProps = (async (context) => {
         .collection<Paper>('papers')
         .find({})
         .sort({ metacritic: -1 })
-        .limit(10)
+        .limit(1000)
         .toArray()
       const papers = papersData.map((p) => {
         const { _id, ...paper } = p
@@ -335,7 +335,7 @@ export const getServerSideProps = (async (context) => {
         .collection<Blog>('blogs')
         .find({})
         .sort({ metacritic: -1 })
-        .limit(10)
+        .limit(1000)
         .toArray()
       const blogs = blogsData.map((b) => {
         const { _id, ...blog } = b
