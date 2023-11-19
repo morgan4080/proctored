@@ -290,7 +290,7 @@ export default async function handler(
               },
             ])
             .sort({ metacritic: -1 })
-            .limit(10)
+            .limit(1000)
             .toArray()
           const serviceCategories = servicesCategories.map((s) => {
             const { _id, subcategories, ...sc } = s
@@ -350,7 +350,7 @@ export default async function handler(
             .collection<ServiceSubCategories>('services_sub_category')
             .find({})
             .sort({ metacritic: -1 })
-            .limit(10)
+            .limit(1000)
             .toArray()
           const services_sub_categories = services_sub_category.map((s) => {
             const { _id, ...ssc } = s
@@ -458,7 +458,7 @@ export default async function handler(
             .collection('services')
             .find({ slug: slug })
             .sort({ metacritic: -1 })
-            .limit(10)
+            .limit(1000)
             .toArray()
 
           const response = {
@@ -476,7 +476,7 @@ export default async function handler(
             .collection('services')
             .find({})
             .sort({ metacritic: -1 })
-            .limit(10)
+            .limit(1000)
             .toArray()
           const response = {
             data: services,
