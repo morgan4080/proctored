@@ -75,8 +75,8 @@ export const getServerSideProps = (async ({ params }) => {
         },
       },
     ])
-    .sort({ metacritic: -1 })
-    .limit(10)
+    .sort({ title: -1 })
+    .limit(100)
     .toArray()
   const serviceCategories = servicesCategories.map((s) => {
     const { _id, subcategories, ...sc } = s
