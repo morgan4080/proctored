@@ -77,6 +77,11 @@ const Navigation = () => {
       categories: [],
       href: '/blogs',
     },
+    {
+      name: 'Create Order',
+      categories: [],
+      href: '/order/create',
+    },
   ])
 
   const [openMenu, setOpenMenu] = useState('')
@@ -150,6 +155,12 @@ const Navigation = () => {
                       </MenubarSub>
                     ))}
                   </MenubarContent>
+                </MenubarMenu>
+              ) : item.name == 'Create Order' ? (
+                <MenubarMenu key={index}>
+                  <MenubarTrigger className="focus:bg-transparent focus:text-white data-[state=open]:bg-transparent data-[state=open]:text-white border-2 border-yellow-400 bg-white/20  rounded-full">
+                    <Link href={item.href ? item.href : ''}>{item.name}</Link>
+                  </MenubarTrigger>
                 </MenubarMenu>
               ) : (
                 <MenubarMenu key={index}>

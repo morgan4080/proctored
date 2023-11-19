@@ -3,7 +3,6 @@ import { cn, createRecord, fetcher, slugify, updateRecord } from '@/lib/utils'
 import { Separator } from '@/components/ui/separator'
 import {
   Service,
-  ServiceCategories,
   ServiceCategoriesWithSubCategories,
   ServiceSubCategories,
 } from '@/lib/service_types'
@@ -22,7 +21,7 @@ import {
   DialogPortal,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { Loader2, Pen, PlusIcon } from 'lucide-react'
+import { Shapes, Loader2, Pen, PlusIcon } from 'lucide-react'
 import {
   Table,
   TableBody,
@@ -54,6 +53,9 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { Checkbox } from '@/components/ui/checkbox'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import CodeEditor from '@/components/JSONEDIT/CodeEditor'
+import { ViewUpdate } from '@codemirror/view'
 
 const formSchemaCategories = z.object({
   title: z.string().min(3, {
@@ -66,6 +68,7 @@ const formSchemaCategories = z.object({
     message: 'Description must be at least 10 characters.',
   }),
   subcategories: z.array(z.string()).default([]),
+  products: z.string(),
 })
 
 const formSchemaSubCategories = z.object({
@@ -144,6 +147,7 @@ const ServicesAdmin = ({
       slug: '',
       description: '',
       subcategories: [],
+      products: '[]',
     },
   })
 
@@ -226,45 +230,92 @@ const ServicesAdmin = ({
   const onSubmitCategory = (values: z.infer<typeof formSchemaCategories>) => {
     setLoading(true)
     if (serviceCategory) {
-      // update
-      updateRecord(
-        {
-          ...serviceCategory,
-          ...values,
-        },
-        `/api/services?${qpc.toString()}`,
-      )
-        .then((response) => {
-          toast({
-            description: 'The service category was updated successfully.',
+      if (
+        /^[\],:{}\s]*$/.test(
+          values.products
+            .replace(/\\["\\\/bfnrtu]/g, '@')
+            .replace(
+              /"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,
+              ']',
+            )
+            .replace(/(?:^|:|,)(?:\s*\[)+/g, ''),
+        )
+      ) {
+        // update
+        const { products, ...otherValues } = values
+        updateRecord(
+          {
+            ...serviceCategory,
+            ...otherValues,
+            products: JSON.parse(products),
+          },
+          `/api/services?${qpc.toString()}`,
+        )
+          .then((response) => {
+            toast({
+              description: 'The service category was updated successfully.',
+            })
+            return mutateCategory()
           })
-          return mutateCategory()
+          .catch((error) => {
+            toast({
+              variant: 'destructive',
+              description: error.message,
+            })
+          })
+          .finally(() => {
+            selectServiceCategory(null)
+            setLoading(false)
+            setCategoryContext('VIEW')
+          })
+      } else {
+        toast({
+          variant: 'destructive',
+          description: 'Invalid JSON for products of category: ' + values.title,
         })
-        .catch((error) => {
-          console.log(error)
-        })
-        .finally(() => {
-          selectServiceCategory(null)
-          setLoading(false)
-          setCategoryContext('VIEW')
-        })
+      }
     } else {
       // create
-      createRecord(values, `/api/services?${qpc.toString()}`)
-        .then((response) => {
-          toast({
-            description: 'The service category was created successfully.',
+      if (
+        /^[\],:{}\s]*$/.test(
+          values.products
+            .replace(/\\["\\\/bfnrtu]/g, '@')
+            .replace(
+              /"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,
+              ']',
+            )
+            .replace(/(?:^|:|,)(?:\s*\[)+/g, ''),
+        )
+      ) {
+        // update
+        const { products, ...otherValues } = values
+        createRecord(
+          {
+            ...values,
+            products: JSON.parse(products),
+          },
+          `/api/services?${qpc.toString()}`,
+        )
+          .then((response) => {
+            toast({
+              description: 'The service category was created successfully.',
+            })
+            return mutateCategory()
           })
-          return mutateCategory()
+          .catch((error) => {
+            console.log(error)
+          })
+          .finally(() => {
+            selectServiceCategory(null)
+            setLoading(false)
+            setCategoryContext('VIEW')
+          })
+      } else {
+        toast({
+          variant: 'destructive',
+          description: 'Invalid JSON for products of category: ' + values.title,
         })
-        .catch((error) => {
-          console.log(error)
-        })
-        .finally(() => {
-          selectServiceCategory(null)
-          setLoading(false)
-          setCategoryContext('VIEW')
-        })
+      }
     }
   }
 
@@ -543,6 +594,10 @@ const ServicesAdmin = ({
                         categoryForm.setValue('slug', '')
                         categoryForm.setValue('description', '')
                         categoryForm.setValue('subcategories', [])
+                        categoryForm.setValue(
+                          'products',
+                          JSON.stringify([], null, 2),
+                        )
                         selectServiceCategory(null)
                         categoryForm.trigger().then(() => {
                           setCategorySubContext('')
@@ -555,104 +610,153 @@ const ServicesAdmin = ({
                     </button>
                   </DialogDescription>
                 </DialogHeader>
-                <Table>
-                  {updatedServiceCategory.length == 0 && (
-                    <TableCaption>
-                      No service categories available.
-                    </TableCaption>
-                  )}
-                  <TableHeader className="bg-gray-50">
-                    <TableRow>
-                      <TableHead className="w-[100px] text-xs">Title</TableHead>
-                      <TableHead className="text-left text-xs">
-                        Description
-                      </TableHead>
-                      <TableHead className="text-right text-xs">
-                        Actions
-                      </TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  {updatedServiceCategory.map((sc) => (
-                    <TableBody key={sc._id}>
+                <ScrollArea className="h-72 w-full">
+                  <Table>
+                    {updatedServiceCategory.length == 0 && (
+                      <TableCaption>
+                        No service categories available.
+                      </TableCaption>
+                    )}
+                    <TableHeader className="bg-gray-50">
                       <TableRow>
-                        <TableCell className="font-medium text-xs">
-                          {sc.title}
-                        </TableCell>
-                        <TableCell className="text-left text-xs">
-                          {sc.description}
-                        </TableCell>
-                        <TableCell className="text-right text-xs flex justify-center space-x-2">
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Button
-                                  variant="outline"
-                                  size="icon"
-                                  className="w-5 h-5"
-                                  onClick={() => {
-                                    categoryForm.setValue('title', sc.title)
-                                    categoryForm.setValue('slug', sc.slug)
-                                    categoryForm.setValue(
-                                      'description',
-                                      sc.description,
-                                    )
-                                    categoryForm.setValue(
-                                      'subcategories',
-                                      sc.subcategories.map((ssc) => ssc._id),
-                                    )
-                                    selectServiceCategory(sc)
-                                    categoryForm.trigger().then((r) => {
-                                      setCategorySubContext('ASSIGN')
-                                      setCategoryContext('SELECTED')
-                                    })
-                                  }}
-                                >
-                                  <PlusIcon className="h-3 w-3" />
-                                </Button>
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p className="text-xs">Attach Sub-category</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Button
-                                  variant="outline"
-                                  size="icon"
-                                  className="w-5 h-5"
-                                  onClick={() => {
-                                    categoryForm.setValue('title', sc.title)
-                                    categoryForm.setValue('slug', sc.slug)
-                                    categoryForm.setValue(
-                                      'description',
-                                      sc.description,
-                                    )
-                                    categoryForm.setValue(
-                                      'subcategories',
-                                      sc.subcategories.map((ssc) => ssc._id),
-                                    )
-                                    selectServiceCategory(sc)
-                                    categoryForm.trigger().then((r) => {
-                                      setCategorySubContext('EDIT')
-                                      setCategoryContext('SELECTED')
-                                    })
-                                  }}
-                                >
-                                  <Pen className="h-3 w-3" />
-                                </Button>
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p className="text-xs">Edit Sub-category</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        </TableCell>
+                        <TableHead className="w-[100px] text-xs">
+                          Title
+                        </TableHead>
+                        <TableHead className="text-left text-xs">
+                          Description
+                        </TableHead>
+                        <TableHead className="text-right text-xs">
+                          Actions
+                        </TableHead>
                       </TableRow>
-                    </TableBody>
-                  ))}
-                </Table>
+                    </TableHeader>
+                    {updatedServiceCategory.map((sc) => (
+                      <TableBody key={sc._id}>
+                        <TableRow>
+                          <TableCell className="text-xs">{sc.title}</TableCell>
+                          <TableCell className="text-left text-xs">
+                            <span className="line-clamp-2">
+                              {sc.description}
+                            </span>
+                          </TableCell>
+                          <TableCell className="text-right text-xs flex justify-center space-x-2">
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    variant="outline"
+                                    size="icon"
+                                    className="w-5 h-5"
+                                    onClick={() => {
+                                      categoryForm.setValue('title', sc.title)
+                                      categoryForm.setValue('slug', sc.slug)
+                                      categoryForm.setValue(
+                                        'description',
+                                        sc.description,
+                                      )
+                                      categoryForm.setValue(
+                                        'subcategories',
+                                        sc.subcategories.map((ssc) => ssc._id),
+                                      )
+                                      categoryForm.setValue(
+                                        'products',
+                                        JSON.stringify(sc.products, null, 2),
+                                      )
+                                      selectServiceCategory(sc)
+                                      categoryForm.trigger().then((r) => {
+                                        setCategorySubContext('PRICING')
+                                        setCategoryContext('SELECTED')
+                                      })
+                                    }}
+                                  >
+                                    <Shapes className="h-3 w-3" />
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p className="text-xs">Configure Product</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    variant="outline"
+                                    size="icon"
+                                    className="w-5 h-5"
+                                    onClick={() => {
+                                      categoryForm.setValue('title', sc.title)
+                                      categoryForm.setValue('slug', sc.slug)
+                                      categoryForm.setValue(
+                                        'description',
+                                        sc.description,
+                                      )
+                                      categoryForm.setValue(
+                                        'subcategories',
+                                        sc.subcategories.map((ssc) => ssc._id),
+                                      )
+                                      categoryForm.setValue(
+                                        'products',
+                                        JSON.stringify(sc.products),
+                                      )
+                                      selectServiceCategory(sc)
+                                      categoryForm.trigger().then((r) => {
+                                        setCategorySubContext('ASSIGN')
+                                        setCategoryContext('SELECTED')
+                                      })
+                                    }}
+                                  >
+                                    <PlusIcon className="h-3 w-3" />
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p className="text-xs">Attach Sub-category</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    variant="outline"
+                                    size="icon"
+                                    className="w-5 h-5"
+                                    onClick={() => {
+                                      categoryForm.setValue('title', sc.title)
+                                      categoryForm.setValue('slug', sc.slug)
+                                      categoryForm.setValue(
+                                        'description',
+                                        sc.description,
+                                      )
+                                      categoryForm.setValue(
+                                        'subcategories',
+                                        sc.subcategories.map((ssc) => ssc._id),
+                                      )
+                                      categoryForm.setValue(
+                                        'products',
+                                        JSON.stringify(sc.products),
+                                      )
+                                      selectServiceCategory(sc)
+                                      categoryForm.trigger().then((r) => {
+                                        setCategorySubContext('EDIT')
+                                        setCategoryContext('SELECTED')
+                                      })
+                                    }}
+                                  >
+                                    <Pen className="h-3 w-3" />
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p className="text-xs">Edit Sub-category</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          </TableCell>
+                        </TableRow>
+                      </TableBody>
+                    ))}
+                  </Table>
+                </ScrollArea>
               </>
             )}
 
@@ -729,141 +833,190 @@ const ServicesAdmin = ({
               </>
             )}
 
-            {categoryContext == 'SELECTED' && (
-              <>
-                <DialogHeader>
-                  <DialogTitle>{serviceCategory?.title}</DialogTitle>
-                  <DialogDescription>
-                    Select the sub-categories you want to attach to category.
-                  </DialogDescription>
-                  <DialogDescription className="flex justify-end">
-                    <button
-                      type="button"
-                      className="underline"
-                      onClick={() => setCategoryContext('VIEW')}
-                    >
-                      View +
-                    </button>
-                  </DialogDescription>
-                </DialogHeader>
+            {categoryContext == 'SELECTED' &&
+              (categorySubContext == 'EDIT' ||
+                categorySubContext == 'ASSIGN' ||
+                categorySubContext == 'PRICING') && (
+                <>
+                  {categorySubContext == 'PRICING' ? (
+                    <DialogHeader>
+                      <DialogTitle>{serviceCategory?.title}</DialogTitle>
+                      <DialogDescription>Configure pricing.</DialogDescription>
+                      <DialogDescription className="flex justify-end">
+                        <button
+                          type="button"
+                          className="underline"
+                          onClick={() => setCategoryContext('VIEW')}
+                        >
+                          View +
+                        </button>
+                      </DialogDescription>
+                    </DialogHeader>
+                  ) : (
+                    <DialogHeader>
+                      <DialogTitle>{serviceCategory?.title}</DialogTitle>
+                      <DialogDescription>
+                        Edit/Assign Subcategories.
+                      </DialogDescription>
+                      <DialogDescription className="flex justify-end">
+                        <button
+                          type="button"
+                          className="underline"
+                          onClick={() => setCategoryContext('VIEW')}
+                        >
+                          View +
+                        </button>
+                      </DialogDescription>
+                    </DialogHeader>
+                  )}
 
-                <Form {...categoryForm}>
-                  <form
-                    onSubmit={categoryForm.handleSubmit(onSubmitCategory)}
-                    className="space-y-8"
-                  >
-                    {categorySubContext == 'EDIT' && (
-                      <>
-                        <div className="grid grid-cols-2 gap-4">
+                  <Form {...categoryForm}>
+                    <form
+                      onSubmit={categoryForm.handleSubmit(onSubmitCategory)}
+                      className="space-y-8"
+                    >
+                      {categorySubContext == 'EDIT' && (
+                        <>
+                          <div className="grid grid-cols-2 gap-4">
+                            <FormField
+                              control={categoryForm.control}
+                              name="title"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Title</FormLabel>
+                                  <FormControl>
+                                    <Input {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            <FormField
+                              control={categoryForm.control}
+                              name="slug"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Slug</FormLabel>
+                                  <FormControl>
+                                    <Input disabled {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </div>
                           <FormField
                             control={categoryForm.control}
-                            name="title"
+                            name="description"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>Title</FormLabel>
+                                <FormLabel>Description</FormLabel>
                                 <FormControl>
-                                  <Input {...field} />
+                                  <Textarea {...field} />
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
                             )}
                           />
+                        </>
+                      )}
+
+                      {categorySubContext == 'ASSIGN' && (
+                        <ScrollArea className="h-72 w-full">
                           <FormField
                             control={categoryForm.control}
-                            name="slug"
-                            render={({ field }) => (
+                            name="subcategories"
+                            render={() => (
                               <FormItem>
-                                <FormLabel>Slug</FormLabel>
-                                <FormControl>
-                                  <Input disabled {...field} />
-                                </FormControl>
+                                {updatedServiceSubCategory.map((item) => (
+                                  <FormField
+                                    key={item._id}
+                                    control={categoryForm.control}
+                                    name="subcategories"
+                                    render={({ field }) => {
+                                      return (
+                                        <FormItem
+                                          key={item._id}
+                                          className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4"
+                                        >
+                                          <FormControl>
+                                            <Checkbox
+                                              checked={field.value?.includes(
+                                                item._id,
+                                              )}
+                                              onCheckedChange={(checked) => {
+                                                return checked
+                                                  ? field.onChange([
+                                                      ...field.value,
+                                                      item._id,
+                                                    ])
+                                                  : field.onChange(
+                                                      field.value?.filter(
+                                                        (value) =>
+                                                          value !== item._id,
+                                                      ),
+                                                    )
+                                              }}
+                                            />
+                                          </FormControl>
+
+                                          <div className="space-y-1 leading-none">
+                                            <FormLabel className="text-black font-semibold">
+                                              {item.title}
+                                            </FormLabel>
+                                            <FormDescription>
+                                              <span className="line-clamp-2">
+                                                {item.description}
+                                              </span>
+                                            </FormDescription>
+                                          </div>
+                                        </FormItem>
+                                      )
+                                    }}
+                                  />
+                                ))}
                                 <FormMessage />
                               </FormItem>
                             )}
                           />
-                        </div>
+                        </ScrollArea>
+                      )}
+
+                      {categorySubContext == 'PRICING' && (
                         <FormField
                           control={categoryForm.control}
-                          name="description"
+                          name="products"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Description</FormLabel>
-                              <FormControl>
-                                <Textarea {...field} />
-                              </FormControl>
+                              <FormLabel>Products</FormLabel>
+                              <ScrollArea className="h-72 w-full">
+                                <FormControl>
+                                  <CodeEditor
+                                    value={field.value}
+                                    onChange={(
+                                      value: string,
+                                      viewUpdate: ViewUpdate,
+                                    ) => {
+                                      // console.log(value, viewUpdate)
+                                      field.onChange(value)
+                                    }}
+                                    extensions={[]}
+                                  />
+                                </FormControl>
+                              </ScrollArea>
                               <FormMessage />
                             </FormItem>
                           )}
                         />
-                      </>
-                    )}
-                    {categorySubContext == 'ASSIGN' && (
-                      <>
-                        <FormField
-                          control={categoryForm.control}
-                          name="subcategories"
-                          render={() => (
-                            <FormItem>
-                              {updatedServiceSubCategory.map((item) => (
-                                <FormField
-                                  key={item._id}
-                                  control={categoryForm.control}
-                                  name="subcategories"
-                                  render={({ field }) => {
-                                    return (
-                                      <FormItem
-                                        key={item._id}
-                                        className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4"
-                                      >
-                                        <FormControl>
-                                          <Checkbox
-                                            checked={field.value?.includes(
-                                              item._id,
-                                            )}
-                                            onCheckedChange={(checked) => {
-                                              return checked
-                                                ? field.onChange([
-                                                    ...field.value,
-                                                    item._id,
-                                                  ])
-                                                : field.onChange(
-                                                    field.value?.filter(
-                                                      (value) =>
-                                                        value !== item._id,
-                                                    ),
-                                                  )
-                                            }}
-                                          />
-                                        </FormControl>
+                      )}
 
-                                        <div className="space-y-1 leading-none">
-                                          <FormLabel className="text-black font-semibold">
-                                            {item.title}
-                                          </FormLabel>
-                                          <FormDescription>
-                                            <span className="line-clamp-2">
-                                              {item.description}
-                                            </span>
-                                          </FormDescription>
-                                        </div>
-                                      </FormItem>
-                                    )
-                                  }}
-                                />
-                              ))}
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </>
-                    )}
-                    <DialogFooter>
-                      <Button type="submit">Submit</Button>
-                    </DialogFooter>
-                  </form>
-                </Form>
-              </>
-            )}
+                      <DialogFooter>
+                        <Button type="submit">Submit</Button>
+                      </DialogFooter>
+                    </form>
+                  </Form>
+                </>
+              )}
           </DialogContent>
         </Dialog>
       )}
@@ -885,76 +1038,92 @@ const ServicesAdmin = ({
                     <button
                       type="button"
                       className="underline"
-                      onClick={() => setSubCategoryContext('CREATE')}
+                      onClick={() => {
+                        subCategoryForm.setValue('title', '')
+                        subCategoryForm.setValue('slug', '')
+                        subCategoryForm.setValue('description', '')
+                        selectServiceSubCategory(null)
+                        subCategoryForm.trigger().then(() => {
+                          setSubCategoryContext('CREATE')
+                          subCategoryForm.clearErrors()
+                        })
+                      }}
                     >
                       Create +
                     </button>
                   </DialogDescription>
                 </DialogHeader>
-                <Table>
-                  {updatedServiceSubCategory.length == 0 && (
-                    <TableCaption>
-                      No service sub-categories available.
-                    </TableCaption>
-                  )}
-                  <TableHeader className="bg-gray-50">
-                    <TableRow>
-                      <TableHead className="w-[100px] text-xs">Title</TableHead>
-                      <TableHead className="text-left text-xs">
-                        Description
-                      </TableHead>
-                      <TableHead className="text-right text-xs">
-                        Actions
-                      </TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  {updatedServiceSubCategory.map((sc) => (
-                    <TableBody key={sc._id}>
+                <ScrollArea className="h-72 w-full">
+                  <Table>
+                    {updatedServiceSubCategory.length == 0 && (
+                      <TableCaption>
+                        No service sub-categories available.
+                      </TableCaption>
+                    )}
+                    <TableHeader className="bg-gray-50">
                       <TableRow>
-                        <TableCell className="font-medium text-xs">
-                          {sc.title}
-                        </TableCell>
-                        <TableCell className="text-left text-xs">
-                          <p className="line-clamp-2">{sc.description}</p>
-                        </TableCell>
-                        <TableCell className="text-right text-xs flex justify-center space-x-2">
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Button
-                                  variant="outline"
-                                  size="icon"
-                                  className="w-5 h-5"
-                                  onClick={() => {
-                                    subCategoryForm.setValue('title', sc.title)
-                                    subCategoryForm.setValue('slug', sc.slug)
-                                    subCategoryForm.setValue(
-                                      'description',
-                                      sc.description,
-                                    )
-
-                                    selectServiceSubCategory(sc)
-
-                                    subCategoryForm
-                                      .trigger()
-                                      .then((r) =>
-                                        setSubCategoryContext('SELECTED'),
-                                      )
-                                  }}
-                                >
-                                  <Pen className="h-3 w-3" />
-                                </Button>
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p className="text-xs">Edit Sub-category</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        </TableCell>
+                        <TableHead className="w-[100px] text-xs">
+                          Title
+                        </TableHead>
+                        <TableHead className="text-left text-xs">
+                          Description
+                        </TableHead>
+                        <TableHead className="text-right text-xs">
+                          Actions
+                        </TableHead>
                       </TableRow>
-                    </TableBody>
-                  ))}
-                </Table>
+                    </TableHeader>
+                    {updatedServiceSubCategory.map((sc) => (
+                      <TableBody key={sc._id}>
+                        <TableRow>
+                          <TableCell className="text-xs">{sc.title}</TableCell>
+                          <TableCell className="text-left text-xs">
+                            <span className="line-clamp-2">
+                              {sc.description}
+                            </span>
+                          </TableCell>
+                          <TableCell className="text-right text-xs flex justify-center space-x-2">
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    variant="outline"
+                                    size="icon"
+                                    className="w-5 h-5"
+                                    onClick={() => {
+                                      subCategoryForm.setValue(
+                                        'title',
+                                        sc.title,
+                                      )
+                                      subCategoryForm.setValue('slug', sc.slug)
+                                      subCategoryForm.setValue(
+                                        'description',
+                                        sc.description,
+                                      )
+
+                                      selectServiceSubCategory(sc)
+
+                                      subCategoryForm
+                                        .trigger()
+                                        .then((r) =>
+                                          setSubCategoryContext('SELECTED'),
+                                        )
+                                    }}
+                                  >
+                                    <Pen className="h-3 w-3" />
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p className="text-xs">Edit Sub-category</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          </TableCell>
+                        </TableRow>
+                      </TableBody>
+                    ))}
+                  </Table>
+                </ScrollArea>
               </>
             )}
 

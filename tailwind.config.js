@@ -17,7 +17,7 @@ module.exports = {
     },
     extend: {
       colors: {
-        bermuda: '#160048',
+        bermuda: '#005398',
         plumes: '#48ACFF',
         reef: '#F3FAFF',
         teal: {

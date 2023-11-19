@@ -15,16 +15,18 @@ import { toast } from '@/components/ui/use-toast'
 import { differenceInDays, differenceInHours } from 'date-fns'
 import {
   cn,
-  createRecord,
   determineDuration,
   fetcher,
   formatMoney,
+  generateKeyValuePairs,
+  generateReportOptions,
   updateRecord,
 } from '@/lib/utils'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import OrderOptionsForm from '@/components/orders/OrderOptionsForm'
 import { ToastAction } from '@/components/ui/toast'
 import {
+  optionType,
   OrderResponse,
   OrderWithOwnerAndTransactionAndWriter,
   StoreDataType,
@@ -40,7 +42,6 @@ import { Loader2 } from 'lucide-react'
 import ErrorPage from 'next/error'
 import mongoClient from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
-import { useSession } from 'next-auth/react'
 const inter = Inter({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
   subsets: ['latin'],
@@ -49,8 +50,6 @@ const lexend = Lexend({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
   subsets: ['latin'],
 })
-
-type optionType = { option: string; value: string | number | boolean }
 
 const { clientPromise } = mongoClient
 const EditOrder = ({
@@ -77,7 +76,6 @@ const EditOrder = ({
   const [currentTab, setCurrentTab] = useState(0)
   const [loading, setLoading] = useState(false)
   const [allOptions, setAllOptions] = useState<optionType[]>([])
-  const { data: session } = useSession()
 
   useEffect(() => {
     // determine range prices
@@ -590,48 +588,3 @@ export const getServerSideProps = (async ({ params }) => {
   storedata: StoreDataType[]
   order: OrderWithOwnerAndTransactionAndWriter | null
 }>
-
-function generateReportOptions(ops: optionType[]) {
-  const optionMap = new Map()
-
-  // Iterate over the array and update the Map with the latest values
-  for (const obj of ops) {
-    const existingValue = optionMap.get(obj.option)
-    if (!existingValue) {
-      optionMap.set(obj.option, obj)
-    } else {
-      optionMap.set(existingValue.option, obj)
-    }
-  }
-
-  // Convert the Map values back to an array
-
-  return Array.from(optionMap.values())
-}
-
-function generateKeyValuePairs(data: {
-  pages?: number | undefined
-  slides?: number | undefined
-  charts?: number | undefined
-  sources?: number | undefined
-  spacing?: string | undefined
-  digital_copies?: boolean | undefined
-  initial_draft?: boolean | undefined
-  one_page_summary?: boolean | undefined
-  plagiarism_report?: boolean | undefined
-}) {
-  return Object.entries(data).reduce(
-    (accumulator: optionType[], currentValue) => {
-      const [key, value] = currentValue
-      if (value !== undefined) {
-        // switch statement for price effectors
-        accumulator.push({
-          option: key,
-          value: value.toString(),
-        })
-      }
-      return accumulator
-    },
-    [],
-  )
-}

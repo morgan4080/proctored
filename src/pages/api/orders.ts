@@ -3,6 +3,7 @@ import mongoClient from '@/lib/mongodb'
 import { MongoInvalidArgumentError, ObjectId } from 'mongodb'
 import { getServerSession } from 'next-auth'
 import { authOptions } from './auth/[...nextauth]'
+import nodemailer from 'nodemailer'
 import { OrderWithOwnerAndTransactionAndWriter } from '@/lib/service_types'
 
 const { clientPromise } = mongoClient
@@ -12,6 +13,16 @@ type ResponseData = {
   message: string
   status: number
 }
+
+// Create a transporter with Google SMTP settings
+const transporter = nodemailer.createTransport({
+  service: 'gmail', // Use the Gmail service
+  auth: {
+    user: process.env.GMAIL_USERNAME, // Your Gmail address
+    pass: process.env.GMAIL_PASS, // Your Gmail password or an app-specific password
+  },
+})
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<ResponseData>,
@@ -39,16 +50,32 @@ export default async function handler(
               transactionId: new ObjectId(transactionId),
             }
           }
-          const ddd = await orders_collection.updateOne(
+          const { acknowledged, ...rest } = await orders_collection.updateOne(
             { _id: new ObjectId(req.body._id) },
             { $set: data },
           )
-          const response = {
-            data: ddd,
-            message: 'Order updated Successfully',
-            status: 200,
+
+          if (acknowledged) {
+            const mailOptions = {
+              from: 'murungi.mutugi@gmail.com',
+              to: session.user.email,
+              subject: 'UPDATED ORDER ID:' + req.body.toString(),
+              text: 'TEST.',
+            }
+            const info = await transporter.sendMail(mailOptions)
+            const response = {
+              data: { ...rest, ...info },
+              message: 'Order updated Successfully',
+              status: 200,
+            }
+            res.status(200).json(response)
+          } else {
+            res.status(500).json({
+              data: {},
+              message: 'Failed to edit order',
+              status: 500,
+            })
           }
-          res.status(200).json(response)
         } catch (e: MongoInvalidArgumentError | any) {
           console.error(e)
           res.status(400).json({
@@ -67,11 +94,19 @@ export default async function handler(
               userId: new ObjectId(session.user._id),
             })
           if (acknowledged) {
+            const mailOptions = {
+              from: 'murungi.mutugi@gmail.com',
+              to: session.user.email,
+              subject: 'ORDER ID:' + insertedId.toString(),
+              text: 'TEST.',
+            }
+            const info = await transporter.sendMail(mailOptions)
             const response = {
               data: {
                 _id: insertedId.toString(),
                 userId: session.user._id,
                 ...req.body,
+                ...info,
               },
               message: 'Order created Successfully',
               status: 200,

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import ErrorPage from 'next/error'
 import type { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import Navigation from '@/components/Navigation'
@@ -24,6 +24,7 @@ import { Service } from '@/lib/service_types'
 import mongoClient from '@/lib/mongodb'
 import useSWR from 'swr'
 import { fetcher, updateRecord } from '@/lib/utils'
+import Link from '@tiptap/extension-link'
 
 const inter = Inter({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
@@ -196,6 +197,9 @@ const extensions = [
     inline: true,
     allowBase64: true,
   }),
+  Link.configure({
+    openOnClick: false,
+  }),
   StarterKit.configure({
     bulletList: {
       keepMarks: true,
@@ -228,16 +232,36 @@ const MenuBar = ({
     if (event.target.value !== undefined) setColorState(event.target.value)
   }
 
-  if (!editor) {
-    return null
-  }
-
   const addImage = () => {
     const url = window.prompt('URL')
 
     if (url) {
-      editor.chain().focus().setImage({ src: url }).run()
+      editor?.chain().focus().setImage({ src: url }).run()
     }
+  }
+
+  const setLink = useCallback(() => {
+    const previousUrl = editor?.getAttributes('link').href
+    const url = window.prompt('URL', previousUrl)
+
+    // cancelled
+    if (url === null) {
+      return
+    }
+
+    // empty
+    if (url === '') {
+      editor?.chain().focus().extendMarkRange('link').unsetLink().run()
+
+      return
+    }
+
+    // update link
+    editor?.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
+  }, [editor])
+
+  if (!editor) {
+    return null
   }
 
   return (
@@ -422,6 +446,19 @@ const MenuBar = ({
       </>
       <button className={'tip'} onClick={addImage}>
         add image
+      </button>
+      <button
+        onClick={setLink}
+        className={editor.isActive('link') ? 'is-active tip' : 'tip'}
+      >
+        setLink
+      </button>
+      <button
+        className={'tip'}
+        onClick={() => editor.chain().focus().unsetLink().run()}
+        disabled={!editor.isActive('link')}
+      >
+        unsetLink
       </button>
       <Button
         onClick={() => {

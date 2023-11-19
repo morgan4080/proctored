@@ -1,6 +1,6 @@
 import { type ClassValue, clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
-import { Order, StoreDataType, Duration } from '@/lib/service_types'
+import { Order, StoreDataType, Duration, optionType } from '@/lib/service_types'
 import { addDays, differenceInHours } from 'date-fns'
 
 export function cn(...inputs: ClassValue[]) {
@@ -157,4 +157,43 @@ export function calculateOrderPrice(
     return currentStoreData.deadline[currentDeadline]
   }
   return 0
+}
+
+export function generateReportOptions(ops: optionType[]) {
+  const optionMap = new Map()
+
+  // Iterate over the array and update the Map with the latest values
+  for (const obj of ops) {
+    const existingValue = optionMap.get(obj.option)
+    if (!existingValue) {
+      optionMap.set(obj.option, obj)
+    } else {
+      optionMap.set(existingValue.option, obj)
+    }
+  }
+
+  // Convert the Map values back to an array
+
+  return Array.from(optionMap.values())
+}
+
+type DataStructure<T> = {
+  [key in keyof T]?: T[key] | undefined
+}
+
+export function generateKeyValuePairs<T>(data: DataStructure<T>) {
+  return Object.entries(data).reduce(
+    (accumulator: optionType[], currentValue) => {
+      const [key, value] = currentValue
+      if (value !== undefined) {
+        // switch statement for price effectors
+        accumulator.push({
+          option: key,
+          value: value ? value.toString() : (value as any),
+        })
+      }
+      return accumulator
+    },
+    [],
+  )
 }

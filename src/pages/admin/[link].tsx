@@ -255,6 +255,7 @@ export const getServerSideProps = (async (context) => {
               title: 1,
               slug: 1,
               description: 1,
+              products: 1,
               subcategories: '$subcategories_data',
             },
           },

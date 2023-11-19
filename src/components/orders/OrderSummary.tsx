@@ -75,7 +75,7 @@ function OrderSummary({
             onClick={() => {
               printOrder()
             }}
-            className="p-1 absolute bg-gray-200 right-4 top-2 z-10"
+            className="p-1 absolute bg-gray-200 right-2 rounded-sm top-2 z-10"
           >
             <LucidePrinter className="w-3 h-3" />
           </button>
@@ -87,11 +87,16 @@ function OrderSummary({
             {options.map(({ option, value }, index) => (
               <div key={index}>
                 <Separator className="my-2" />
-                <div className="flex text-xs">
-                  <h4 className="capitalize flex-1 font-semibold text-black">
+                <div className="flex text-xs w-full">
+                  <h4 className="flex-1 capitalize font-semibold text-black">
                     {option.replace(/_/g, ' ')}:{' '}
                   </h4>
-                  <p className="text-right">{value}</p>
+                  <div
+                    className="overflow-hidden break-words"
+                    style={{ inlineSize: '200px' }}
+                  >
+                    <p className="text-right">{value}</p>
+                  </div>
                 </div>
               </div>
             ))}

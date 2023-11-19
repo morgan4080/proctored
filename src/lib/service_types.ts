@@ -1,3 +1,5 @@
+export type optionType = { option: string; value: string | number | boolean }
+
 export type StoreDataType = {
   id: number
   level: string
@@ -15,12 +17,23 @@ export type ServiceCategories = {
   subcategories: string[]
 }
 
+export interface ProductConfiguration {
+  name: string
+  price: number
+}
+
+export type Product = {
+  name: string
+  configurations: ProductConfiguration[]
+}
+
 export type ServiceCategoriesWithSubCategories = {
   _id: string
   title: string
   slug: string
   description: string
   subcategories: ServiceSubCategories[]
+  products: Product[]
 }
 
 export type ServiceSubCategories = {

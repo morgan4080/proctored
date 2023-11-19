@@ -3,7 +3,7 @@
     "id": 1,
     "level": "High School",
     "deadline": {
-      "2 Hours": 50,
+      "6 Hours": 50,
       "12 Hours": 20,
       "24 Hours": 18,
       "48 Hours": 15,
@@ -14,10 +14,13 @@
       "14 Days": 8
     },
     "format": [
+      "APA 7",
       "APA",
       "MLA",
-      "Chicago/Turabian",
+      "Turabian",
+      "Chicago",
       "Havard",
+      "Oxford",
       "Other"
     ],
     "subjects0": [
@@ -149,7 +152,6 @@
       "Powerpoint Presentation Plain",
       "Power Point Presentation with Speaker Notes",
       "Proof Reading",
-      "Proctored Exam",
       "Paraphrasing",
       "Research Paper",
       "Research Proposal",
@@ -166,7 +168,7 @@
     "id": 2,
     "level": "College",
     "deadline": {
-      "2 Hours": 60,
+      "6 Hours": 60,
       "12 Hours": 22,
       "24 Hours": 20,
       "48 Hours": 17,
@@ -177,10 +179,13 @@
       "14 Days": 10
     },
     "format": [
+      "APA 7",
       "APA",
       "MLA",
-      "Chicago/Turabian",
+      "Turabian",
+      "Chicago",
       "Havard",
+      "Oxford",
       "Other"
     ],
     "subjects0": [
@@ -328,7 +333,7 @@
     "id": 3,
     "level": "Undergraduate",
     "deadline": {
-      "2 Hours": 70,
+      "6 Hours": 70,
       "12 Hours": 24,
       "24 Hours": 21,
       "48 Hours": 18,
@@ -339,10 +344,13 @@
       "14 Days": 11
     },
     "format": [
+      "APA 7",
       "APA",
       "MLA",
-      "Chicago/Turabian",
+      "Turabian",
+      "Chicago",
       "Havard",
+      "Oxford",
       "Other"
     ],
     "subjects0": [
@@ -490,7 +498,7 @@
     "id": 4,
     "level": "Master's",
     "deadline": {
-      "2 Hours": 80,
+      "6 Hours": 80,
       "12 Hours": 30,
       "24 Hours": 28,
       "48 Hours": 25,
@@ -501,10 +509,13 @@
       "14 Days": 14
     },
     "format": [
+      "APA 7",
       "APA",
       "MLA",
-      "Chicago/Turabian",
+      "Turabian",
+      "Chicago",
       "Havard",
+      "Oxford",
       "Other"
     ],
     "subjects0": [
@@ -652,7 +663,7 @@
     "id": 5,
     "level": "PhD",
     "deadline": {
-      "2 Hours": 90,
+      "6 Hours": 90,
       "12 Hours": 34,
       "24 Hours": 32,
       "48 Hours": 30,
@@ -663,10 +674,13 @@
       "14 Days": 16
     },
     "format": [
+      "APA 7",
       "APA",
       "MLA",
-      "Chicago/Turabian",
+      "Turabian",
+      "Chicago",
       "Havard",
+      "Oxford",
       "Other"
     ],
     "subjects0": [

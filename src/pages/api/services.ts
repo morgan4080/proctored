@@ -27,7 +27,8 @@ export default async function handler(
     case 'PUT':
       if (category) {
         try {
-          const { _id, title, slug, description, subcategories } = req.body
+          const { _id, title, slug, description, subcategories, products } =
+            req.body
           const services_collection = db.collection('services_category')
           const ddd = await services_collection.updateOne(
             { _id: new ObjectId(_id) },
@@ -39,6 +40,7 @@ export default async function handler(
                 subcategories: (subcategories as string[]).map(
                   (sc) => new ObjectId(sc),
                 ),
+                products,
               },
             },
           )
@@ -115,7 +117,7 @@ export default async function handler(
       break
     case 'POST':
       if (category) {
-        const { title, slug, description, subcategories } = req.body
+        const { title, slug, description, subcategories, products } = req.body
         const services_collection = db.collection('services_category')
         const { acknowledged, insertedId } =
           await services_collection.insertOne({
@@ -125,6 +127,7 @@ export default async function handler(
             subcategories: (subcategories as string[]).map(
               (sc) => new ObjectId(sc),
             ),
+            products,
           })
         if (acknowledged) {
           const response = {
@@ -224,6 +227,7 @@ export default async function handler(
                     title: 1,
                     slug: 1,
                     description: 1,
+                    products: 1,
                     subcategories: '$subcategories_data',
                   },
                 },
@@ -280,6 +284,7 @@ export default async function handler(
                   title: 1,
                   slug: 1,
                   description: 1,
+                  products: 1,
                   subcategories: '$subcategories_data',
                 },
               },

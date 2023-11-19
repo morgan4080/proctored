@@ -83,10 +83,10 @@ const detailsFormSchema = z.object({
     }),
   duration: z.object({
     from: z.date({
-      required_error: 'A date of birth is required.',
+      required_error: 'From date is required.',
     }),
     to: z.date({
-      required_error: 'A date of birth is required.',
+      required_error: 'To date is required.',
     }),
   }),
   service: z.string({
@@ -526,8 +526,6 @@ const OrderDetailsForm = ({
                         <SelectValue placeholder="Select Hours" />
                       </SelectTrigger>
                       <SelectContent position="popper">
-                        <SelectItem value="2">2 Hours</SelectItem>
-                        <SelectItem value="4">4 Hours</SelectItem>
                         <SelectItem value="6">6 Hours</SelectItem>
                         <SelectItem value="8">8 Hours</SelectItem>
                         <SelectItem value="10">10 Hours</SelectItem>
