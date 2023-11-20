@@ -164,10 +164,6 @@ const CreateOrder = ({
     }
   }, [serviceCategory, currentLevelId, currentDuration, storedata])
 
-  useEffect(() => {
-    console.log(priceBeforeExtraOptions.toString())
-  }, [priceBeforeExtraOptions])
-
   const saveOrder = useCallback(
     (
       orderOptions: {
@@ -638,6 +634,7 @@ const CreateOrder = ({
                           proceedWithData={(data) => {
                             setOrderDetails(data)
                             setCurrentTab(1)
+                            setPriceBeforeExtraOptions(parseFloat(totalAmount))
                           }}
                           reportValues={(data) => {
                             setOptions(() =>
@@ -796,32 +793,49 @@ const CreateOrder = ({
                     storedata={storedata}
                     order={null}
                     reportValues={(data) => {
-                      // switch statement for price effectors
+                      setTotalAmount(() => {
+                        let price = 0
+                        let spacing = 1
+                        let pagesPricing = 0
+                        let slidesPricing = 0
+                        let chartsPricing = 0
+                        let digitalCopyPricing = 0
+                        let onePageSummaryPricing = 0
+                        let plagiarismReportPricing = 0
+                        let applyInitialDraft = false
+                        let initialDraftPricing = (
+                          apply: boolean,
+                          p: number,
+                        ) => {
+                          if (apply) {
+                            return p * 0.1
+                          }
+                          return 0
+                        }
 
-                      setPriceBeforeExtraOptions((cost) => {
-                        let price = cost
                         // pages * price
                         if (typeof data.pages == 'number') {
-                          price = price * data.pages
+                          pagesPricing = priceBeforeExtraOptions * data.pages
                         }
 
                         // price + (6.5 * slides)
                         if (typeof data.slides == 'number') {
-                          price = price + 6.5 * data.slides
+                          slidesPricing = 6.5 * data.slides
                         }
 
                         // price + (5.0 * charts)
                         if (typeof data.charts == 'number') {
-                          price = price + 5.0 * data.charts
+                          chartsPricing = 5.0 * data.charts
                         }
 
                         // 'single' 2 * price per page
                         // 'double' price remains the same
-                        if (
-                          typeof data.spacing == 'string' &&
-                          data.spacing == 'single'
-                        ) {
-                          price = 2 * price
+                        if (typeof data.spacing == 'string') {
+                          if (data.spacing == 'single') {
+                            spacing = 2
+                          } else {
+                            spacing = 1
+                          }
                         }
 
                         // digital_copies true ? price + 9.99
@@ -829,7 +843,7 @@ const CreateOrder = ({
                           typeof data.digital_copies == 'boolean' &&
                           data.digital_copies
                         ) {
-                          price = price + 9.99
+                          digitalCopyPricing = 9.99
                         }
 
                         // initial_draft true ? price + 10%
@@ -837,7 +851,7 @@ const CreateOrder = ({
                           typeof data.initial_draft == 'boolean' &&
                           data.initial_draft
                         ) {
-                          price = price + price * 0.1
+                          applyInitialDraft = true
                         }
 
                         // one_page_summary true ? price + 17.99
@@ -845,7 +859,7 @@ const CreateOrder = ({
                           typeof data.one_page_summary == 'boolean' &&
                           data.one_page_summary
                         ) {
-                          price = price + 17.99
+                          onePageSummaryPricing = 17.99
                         }
 
                         // plagiarism_report true ? price + 7.99
@@ -853,10 +867,18 @@ const CreateOrder = ({
                           typeof data.plagiarism_report == 'boolean' &&
                           data.plagiarism_report
                         ) {
-                          price = price + 7.99
+                          plagiarismReportPricing = 7.99
                         }
 
-                        return price
+                        price =
+                          pagesPricing * spacing +
+                          slidesPricing +
+                          chartsPricing +
+                          plagiarismReportPricing +
+                          onePageSummaryPricing +
+                          digitalCopyPricing +
+                          initialDraftPricing(applyInitialDraft, pagesPricing)
+                        return parseFloat(price.toFixed(2)).toString()
                       })
 
                       setExtraOptions(() =>
