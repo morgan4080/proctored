@@ -40,7 +40,7 @@ import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import { Button } from '@/components/ui/button'
 import mongoClient from '@/lib/mongodb'
 import Link from 'next/link'
-import ProctoredExamOrder from '@/components/orders/ProctoredExamOrder'
+import SpecialisedExamOrder from '@/components/orders/SpecialisedExamOrder'
 const inter = Inter({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
   subsets: ['latin'],
@@ -128,8 +128,8 @@ const CreateOrder = ({
   const [orderId, setOrderId] = useState<string | null>(null)
   const [checkout, setCheckout] = useState(false)
   const [showChevronLeft, setShowChevronLeft] = useState(false)
+  const [showChevronRight, setShowChevronRight] = useState(false)
   const viewportRef = useRef(null)
-  const [showChevronRight, setShowChevronRight] = useState(true)
   const [orderDetails, setOrderDetails] = useState<{
     topic: string
     duration: { from: Date; to: Date }
@@ -146,8 +146,18 @@ const CreateOrder = ({
   const { data: session } = useSession()
 
   useEffect(() => {
+    if (viewportRef.current) {
+      const htm: HTMLElement = viewportRef.current
+      const isOverflowing = htm.scrollWidth > htm.offsetWidth
+      setShowChevronRight(isOverflowing)
+    }
+  }, [viewportRef])
+
+  useEffect(() => {
     // determine range prices
-    if (!/proctor/i.test(serviceCategory)) {
+    if (/proctor/i.test(serviceCategory) || /nursing/i.test(serviceCategory)) {
+      setTotalAmount('0')
+    } else {
       const currentData = storedata.find(
         (std: StoreDataType) => std.id === currentLevelId,
       )
@@ -159,8 +169,6 @@ const CreateOrder = ({
       setTotalAmount(() => {
         return currentData.deadline[currentDuration]
       })
-    } else {
-      setTotalAmount('0')
     }
   }, [serviceCategory, currentLevelId, currentDuration, storedata])
 
@@ -450,7 +458,8 @@ const CreateOrder = ({
                     value={sc.slug}
                     className="space-y-6"
                   >
-                    {/proctor/i.test(sc.title) ? (
+                    {/proctor/i.test(sc.title) ||
+                    /nursing/i.test(serviceCategory) ? (
                       <nav className="flex space-x-2 lg:flex-col lg:space-x-0 lg:space-y-1">
                         <button
                           onClick={() => setCurrentTab(0)}
@@ -565,8 +574,9 @@ const CreateOrder = ({
                         </p>
                       </div>
                       <Separator />
-                      {/proctor/i.test(sc.title) ? (
-                        <ProctoredExamOrder
+                      {/proctor/i.test(sc.title) ||
+                      /nursing/i.test(serviceCategory) ? (
+                        <SpecialisedExamOrder
                           products={sc.products}
                           order={null}
                           proceedWithData={(data) => {

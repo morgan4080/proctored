@@ -54,10 +54,10 @@ const ACCEPTED_FILE_TYPES = [
 const proctoredFormSchema = z.object({
   exam: z
     .string({
-      required_error: 'Select the exam type.',
+      required_error: 'Select the type.',
     })
     .min(1, {
-      message: 'Select the exam type.',
+      message: 'Select the type.',
     }),
   subject: z
     .custom<{
@@ -124,7 +124,7 @@ const defaultValues: Partial<ProctoredFormValues> = {
 }
 
 type ProctoredFormValues = z.infer<typeof proctoredFormSchema>
-const ProctoredExamOrder = ({
+const SpecialisedExamOrder = ({
   products,
   order,
   proceedWithData,
@@ -180,7 +180,7 @@ const ProctoredExamOrder = ({
             name="exam"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel className="text-zinc-800">Exam Type*</FormLabel>
+                <FormLabel className="text-zinc-800">Type *</FormLabel>
                 <Popover>
                   <PopoverTrigger asChild>
                     <FormControl>
@@ -192,7 +192,7 @@ const ProctoredExamOrder = ({
                           !field.value && 'text-muted-foreground',
                         )}
                       >
-                        {field.value ? field.value : 'Select exam type'}
+                        {field.value ? field.value : 'Select type'}
                         <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                       </Button>
                     </FormControl>
@@ -201,7 +201,7 @@ const ProctoredExamOrder = ({
                     <ScrollArea className="h-72">
                       <Command>
                         <CommandInput placeholder="Search service..." />
-                        <CommandEmpty>No exam type found.</CommandEmpty>
+                        <CommandEmpty>No type found.</CommandEmpty>
                         <CommandGroup>
                           {products.map((product, i) => (
                             <CommandItem
@@ -237,7 +237,9 @@ const ProctoredExamOrder = ({
             name="subject"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel className="text-zinc-800">Exam Subject*</FormLabel>
+                <FormLabel className="text-zinc-800">
+                  Subject/Discipline *
+                </FormLabel>
                 <Popover modal={true}>
                   <PopoverTrigger asChild>
                     <FormControl>
@@ -258,7 +260,7 @@ const ProctoredExamOrder = ({
                     <ScrollArea className="h-48">
                       <Command>
                         <CommandInput placeholder="Search service subcategory..." />
-                        <CommandEmpty>No exam type selected.</CommandEmpty>
+                        <CommandEmpty>No type selected.</CommandEmpty>
                         <CommandGroup>
                           {products
                             .find(
@@ -299,7 +301,9 @@ const ProctoredExamOrder = ({
             name="date"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel className="text-zinc-800">Exam Date*</FormLabel>
+                <FormLabel className="text-zinc-800">
+                  Start Date & Time*
+                </FormLabel>
                 <Popover>
                   <PopoverTrigger asChild>
                     <FormControl>
@@ -434,4 +438,4 @@ const ProctoredExamOrder = ({
   )
 }
 
-export default ProctoredExamOrder
+export default SpecialisedExamOrder

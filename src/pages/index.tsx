@@ -183,7 +183,7 @@ export default function Home({
       name: 'Who are essay dons?',
       description: `
           In recent years, there has been rising demand among students for online homework help.
-           Owing to this demand, Essaydons.com was established with an aim to offer high quality homework help services to anyone that came knocking our door.
+           Owing to this demand, ProctorOwls.com was established with an aim to offer high quality homework help services to anyone that came knocking our door.
             We are one of those companies that have been of great help to many students for the past eight years. Over time we have built trust among our clients through continuously providing high-quality homework help services.
              So far we have served over forty thousand clients in different fields of study.
            The company has recruited over three hundred professional writers to ensure that you always have a writer to personally attend to any of your homework needs.
@@ -1026,7 +1026,7 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
                   homework writers. The company has clear guidelines and rules
                   on plagiarism which our writers have always been keen to
                   adhere to. The level of discipline and commitment our writers
-                  have has ensured that essaydons.com never gets to deal with
+                  have has ensured that ProctorOwls.com never gets to deal with
                   any plagiarism case for all the time we have been in the
                   homework help service industry. With the advancement of
                   plagiarism checking tools, it is even hard for us to submit
@@ -1074,11 +1074,11 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
                   Our writers have gained industry experience in their various
                   fields of expertise. Therefore, they not only apply academic
                   knowledge to your homework but also add a professional touch
-                  to it. Essaydons.com assures you that your assignment is in
+                  to it. ProctorOwls.com assures you that your assignment is in
                   the best hands and brains. Our quality assurance team also
                   conducts training and tests on our writers to ensure that
-                  essaydons.com homework quality standards are always met by our
-                  writers.
+                  ProctorOwls.com homework quality standards are always met by
+                  our writers.
                 </p>
               </div>
               <div className="flex flex-col">
@@ -1087,7 +1087,7 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
                 </h5>
                 <p className="text-center md:text-left pt-4">
                   You can always get your homework needs tended to 24/7
-                  regardless of your location. Essaydons.com has hired enough
+                  regardless of your location. ProctorOwls.com has hired enough
                   writers and support personnel to ensure that you do not have
                   to wait to get your homework needs attended to. Our response
                   from both our writers and customer support is prompt and comes
