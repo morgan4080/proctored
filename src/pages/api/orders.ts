@@ -35,8 +35,14 @@ export default async function handler(
       case 'PUT':
         try {
           const orders_collection = db.collection('orders')
-          const { _id, userId, writerId, transactionId, ...orderObject } =
-            req.body
+          const {
+            _id,
+            userId,
+            writerId,
+            transactionId,
+            serviceCategoryId,
+            ...orderObject
+          } = req.body
           let data = { ...orderObject, userId: new ObjectId(userId) }
           if (req.body.writerId) {
             data = {
@@ -50,6 +56,12 @@ export default async function handler(
               transactionId: new ObjectId(transactionId),
             }
           }
+          if (req.body.serviceCategoryId) {
+            data = {
+              ...data,
+              serviceCategoryId: new ObjectId(serviceCategoryId),
+            }
+          }
           const { acknowledged, ...rest } = await orders_collection.updateOne(
             { _id: new ObjectId(req.body._id) },
             { $set: data },
@@ -57,10 +69,10 @@ export default async function handler(
 
           if (acknowledged) {
             const mailOptions = {
-              from: 'murungi.mutugi@gmail.com',
+              from: 'proctorowls@gmail.com',
               to: session.user.email,
-              subject: 'UPDATED ORDER ID:' + req.body.toString(),
-              text: 'TEST.',
+              subject: 'UPDATED ORDER ID:' + req.body._id,
+              text: JSON.stringify(req.body),
             }
             const info = await transporter.sendMail(mailOptions)
             const response = {
@@ -92,13 +104,14 @@ export default async function handler(
             await services_collection.insertOne({
               ...req.body,
               userId: new ObjectId(session.user._id),
+              serviceCategoryId: new ObjectId(req.body.serviceCategoryId),
             })
           if (acknowledged) {
             const mailOptions = {
               from: 'murungi.mutugi@gmail.com',
               to: session.user.email,
               subject: 'ORDER ID:' + insertedId.toString(),
-              text: 'TEST.',
+              text: 'TEST.' + JSON.stringify(req.body),
             }
             const info = await transporter.sendMail(mailOptions)
             const response = {

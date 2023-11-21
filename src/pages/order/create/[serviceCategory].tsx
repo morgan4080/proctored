@@ -138,7 +138,7 @@ const CreateOrder = ({
     subject_discipline: string
     paper_format: string
     attachments: FileList
-    paper_details: string
+    details: string
   } | null>(null)
 
   const [currentTab, setCurrentTab] = useState(0)
@@ -185,168 +185,189 @@ const CreateOrder = ({
         one_page_summary: boolean
         plagiarism_report: boolean
       } | null,
+      details = orderDetails,
     ) => {
-      if (orderOptions) {
+      if (orderOptions && details) {
         setLoading(true)
-        let data = {
-          ...orderOptions,
-          ...orderDetails,
-          userId: session && session.user ? session.user._id : null,
-        }
-        if (orderId) {
-          updateRecord(
-            {
-              _id: orderId,
-              ...data,
-            },
-            '/api/orders',
-          )
-            .then((res) => {
-              console.log(res)
-              const response: OrderResponse = res
-              if (response.status == 200) {
-                toast({
-                  title: response.message,
-                  description: 'Review order or edit, then proceed to pay.',
-                  action: (
-                    <ToastAction
-                      altText="Try again"
-                      onClick={() => {
-                        setCheckout(true)
-                      }}
-                    >
-                      Checkout
-                    </ToastAction>
-                  ),
-                  duration: 9000,
-                  onOpenChange: () => {
-                    router.push('/order/edit/' + orderId)
-                  },
-                })
-              } else {
+        const sc = serviceCategories.find((svc) => svc.slug == serviceCategory)
+        if (sc) {
+          let data = {
+            ...orderOptions,
+            ...details,
+            userId: session && session.user ? session.user._id : null,
+            serviceCategoryId: sc._id,
+            totalPrice: parseFloat(totalAmount),
+          }
+          if (orderId) {
+            updateRecord(
+              {
+                _id: orderId,
+                ...data,
+              },
+              '/api/orders',
+            )
+              .then((res) => {
+                console.log(res)
+                const response: OrderResponse = res
+                if (response.status == 200) {
+                  toast({
+                    title: response.message,
+                    description: 'Review order or edit, then proceed to pay.',
+                    action: (
+                      <ToastAction
+                        altText="Try again"
+                        onClick={() => {
+                          setCheckout(true)
+                        }}
+                      >
+                        Checkout
+                      </ToastAction>
+                    ),
+                    duration: 9000,
+                    onOpenChange: () => {
+                      router.push('/order/edit/' + orderId)
+                    },
+                  })
+                } else {
+                  toast({
+                    variant: 'destructive',
+                    title: response.message,
+                    description:
+                      'Something went wrong. Review order and resubmit.',
+                    action: (
+                      <ToastAction
+                        altText="Try again"
+                        onClick={() => {
+                          setCheckout(true)
+                        }}
+                      >
+                        Checkout
+                      </ToastAction>
+                    ),
+                    duration: 9000,
+                    onOpenChange: () => {
+                      router.push('/order/edit/' + orderId)
+                    },
+                  })
+                }
+              })
+              .catch((e) => {
                 toast({
                   variant: 'destructive',
-                  title: response.message,
-                  description:
-                    'Something went wrong. Review order and resubmit.',
+                  title: 'Error creating order.',
+                  description: e.message,
                   action: (
                     <ToastAction
                       altText="Try again"
                       onClick={() => {
-                        setCheckout(true)
+                        saveOrder(orderOptions)
                       }}
                     >
-                      Checkout
+                      Try again
                     </ToastAction>
                   ),
-                  duration: 9000,
-                  onOpenChange: () => {
-                    router.push('/order/edit/' + orderId)
-                  },
                 })
-              }
-            })
-            .catch((e) => {
-              toast({
-                variant: 'destructive',
-                title: 'Error creating order.',
-                description: e.message,
-                action: (
-                  <ToastAction
-                    altText="Try again"
-                    onClick={() => {
-                      saveOrder(orderOptions)
-                    }}
-                  >
-                    Try again
-                  </ToastAction>
-                ),
               })
-            })
-            .finally(() => {
-              setLoading(false)
-            })
-        } else {
-          createRecord(
-            { ...data, writerId: null, transactionId: null },
-            '/api/orders',
-          )
-            .then((res) => {
-              const response: OrderResponse = res
-              if (response.status == 200) {
-                setOrderId(response.data._id)
-                toast({
-                  title: response.message,
-                  description: 'Review order or edit, then proceed to pay.',
-                  action: (
-                    <ToastAction
-                      altText="Try again"
-                      onClick={() => {
-                        setCheckout(true)
-                      }}
-                    >
-                      Checkout
-                    </ToastAction>
-                  ),
-                  duration: 9000,
-                  onOpenChange: () => {
-                    router.push('/order/edit/' + orderId)
-                  },
-                })
-              } else {
+              .finally(() => {
+                setLoading(false)
+              })
+          } else {
+            createRecord(
+              { ...data, writerId: null, transactionId: null },
+              '/api/orders',
+            )
+              .then((res) => {
+                const response: OrderResponse = res
+                if (response.status == 200) {
+                  setOrderId(response.data._id)
+                  toast({
+                    title: response.message,
+                    description: 'Review order or edit, then proceed to pay.',
+                    action: (
+                      <ToastAction
+                        altText="Try again"
+                        onClick={() => {
+                          setCheckout(true)
+                        }}
+                      >
+                        Checkout
+                      </ToastAction>
+                    ),
+                    duration: 9000,
+                    onOpenChange: () => {
+                      router.push('/order/edit/' + orderId)
+                    },
+                  })
+                } else {
+                  toast({
+                    variant: 'destructive',
+                    title: response.message,
+                    description:
+                      'Something went wrong. Review order and resubmit.',
+                    action: (
+                      <ToastAction
+                        altText="Try again"
+                        onClick={() => {
+                          setCheckout(true)
+                        }}
+                      >
+                        Checkout
+                      </ToastAction>
+                    ),
+                    duration: 9000,
+                    onOpenChange: () => {
+                      router.push('/order/edit/' + orderId)
+                    },
+                  })
+                }
+              })
+              .catch((error) => {
                 toast({
                   variant: 'destructive',
-                  title: response.message,
-                  description:
-                    'Something went wrong. Review order and resubmit.',
+                  title: 'Error creating order.',
+                  description: error.message,
                   action: (
                     <ToastAction
                       altText="Try again"
                       onClick={() => {
-                        setCheckout(true)
+                        saveOrder(orderOptions)
                       }}
                     >
-                      Checkout
+                      Try again
                     </ToastAction>
                   ),
-                  duration: 9000,
-                  onOpenChange: () => {
-                    router.push('/order/edit/' + orderId)
-                  },
                 })
-              }
-            })
-            .catch((error) => {
-              toast({
-                variant: 'destructive',
-                title: 'Error creating order.',
-                description: error.message,
-                action: (
-                  <ToastAction
-                    altText="Try again"
-                    onClick={() => {
-                      saveOrder(orderOptions)
-                    }}
-                  >
-                    Try again
-                  </ToastAction>
-                ),
               })
-            })
-            .finally(() => {
-              setLoading(false)
-            })
+              .finally(() => {
+                setLoading(false)
+              })
+          }
         }
+      } else {
+        toast({
+          variant: 'destructive',
+          title: 'Error creating order.',
+          description:
+            'Order Missing Details, Confirm the forms are completely filled.',
+        })
       }
     },
-    [session, orderDetails, orderId, router],
+    [
+      totalAmount,
+      serviceCategories,
+      serviceCategory,
+      orderDetails,
+      session,
+      orderId,
+      router,
+    ],
   )
 
   return (
     <div className="relative">
       <Head>
-        <title>Create Order | {serviceCategory}</title>
-        <meta name="description" content="Proctor Owls Order" />
+        <title>Create Order</title>
+        <meta name="description" content={'Order: Service' + serviceCategory} />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -458,8 +479,7 @@ const CreateOrder = ({
                     value={sc.slug}
                     className="space-y-6"
                   >
-                    {/proctor/i.test(sc.title) ||
-                    /nursing/i.test(serviceCategory) ? (
+                    {/proctor/i.test(sc.title) || /nursing/i.test(sc.title) ? (
                       <nav className="flex space-x-2 lg:flex-col lg:space-x-0 lg:space-y-1">
                         <button
                           onClick={() => setCurrentTab(0)}
@@ -575,12 +595,39 @@ const CreateOrder = ({
                       </div>
                       <Separator />
                       {/proctor/i.test(sc.title) ||
-                      /nursing/i.test(serviceCategory) ? (
+                      /nursing/i.test(sc.title) ? (
                         <SpecialisedExamOrder
                           products={sc.products}
                           order={null}
                           proceedWithData={(data) => {
-                            console.log(data)
+                            const sc = serviceCategories.find(
+                              (svc) => svc.slug == serviceCategory,
+                            )
+                            if (sc) {
+                              saveOrder(
+                                {
+                                  pages: 0,
+                                  slides: 0,
+                                  charts: 0,
+                                  sources: 0,
+                                  spacing: 'N/A',
+                                  digital_copies: false,
+                                  initial_draft: false,
+                                  one_page_summary: false,
+                                  plagiarism_report: false,
+                                },
+                                {
+                                  topic: data.topic ? data.topic : 'N/A',
+                                  duration: { from: data.date, to: data.date },
+                                  service: sc.title,
+                                  academic_level: data.exam,
+                                  subject_discipline: data.subject.name,
+                                  paper_format: 'N/A',
+                                  attachments: data.attachments,
+                                  details: data.details ? data.details : 'N/A',
+                                },
+                              )
+                            }
                           }}
                           reportValues={({
                             attachments,

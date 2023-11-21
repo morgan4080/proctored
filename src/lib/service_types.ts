@@ -102,10 +102,12 @@ export interface Order {
   subject_discipline: string
   paper_format: string
   attachments: FileList
-  paper_details: string
+  details: string
   userId: string
   writerId: string
   transactionId: string
+  serviceCategoryId: string
+  totalPrice: string
 }
 
 export interface Transaction {
@@ -138,6 +140,7 @@ export interface Blog {
 
 export interface OrderWithOwnerAndTransactionAndWriter extends Order {
   owner: User
+  serviceCategory: ServiceCategoriesWithSubCategories
   transaction: Transaction | null
   writer: Writer | null
 }

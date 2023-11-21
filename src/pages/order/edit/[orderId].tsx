@@ -12,7 +12,7 @@ import OrderDetailsForm, {
 import Footer from '@/components/Footer'
 import { Toaster } from '@/components/ui/toaster'
 import { toast } from '@/components/ui/use-toast'
-import { differenceInDays, differenceInHours } from 'date-fns'
+import { differenceInDays, differenceInHours, format } from 'date-fns'
 import {
   cn,
   determineDuration,
@@ -29,6 +29,7 @@ import {
   optionType,
   OrderResponse,
   OrderWithOwnerAndTransactionAndWriter,
+  ServiceCategoriesWithSubCategories,
   StoreDataType,
 } from '@/lib/service_types'
 import PaymentMethod from '@/components/transactions/PaymentMethod'
@@ -42,6 +43,9 @@ import { Loader2 } from 'lucide-react'
 import ErrorPage from 'next/error'
 import mongoClient from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import Link from 'next/link'
+import SpecialisedExamOrder from '@/components/orders/SpecialisedExamOrder'
 const inter = Inter({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
   subsets: ['latin'],
@@ -53,9 +57,13 @@ const lexend = Lexend({
 
 const { clientPromise } = mongoClient
 const EditOrder = ({
+  serviceCategories,
   storedata,
   order,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+  const [options, setOptions] = useState<
+    { option: string; value: string | number | boolean }[]
+  >([])
   const [totalAmount, setTotalAmount] = useState<string>('0')
   const [currentLevelId, setCurrentLevelId] = useState<number>(storedata[0].id)
   const [currentDuration, setCurrentDuration] = useState<string>('14 Days')
@@ -71,7 +79,7 @@ const EditOrder = ({
     subject_discipline: string
     paper_format: string
     attachments: FileList
-    paper_details: string
+    details: string
   } | null>(null)
   const [currentTab, setCurrentTab] = useState(0)
   const [loading, setLoading] = useState(false)
@@ -92,50 +100,54 @@ const EditOrder = ({
     })
   }, [currentLevelId, currentDuration, storedata])
 
-  useEffect(() => {
-    if (order) {
-      setAllOptions((ops) => {
-        return generateReportOptions([
-          ...ops,
-          ...getOptions({
-            topic: order.topic,
-            duration: {
+  const prefill = useCallback(() => {
+    const slug = order?.serviceCategory.slug
+    if (slug && (/proctor/i.test(slug) || /nursing/i.test(slug))) {
+    } else {
+      if (order) {
+        setAllOptions((ops) => {
+          return generateReportOptions([
+            ...ops,
+            ...getOptions({
+              topic: order.topic,
+              duration: {
+                from: new Date(order.duration.from),
+                to: new Date(order.duration.to),
+              },
+              service: order.service,
+              academic_level: order.academic_level,
+              subject_discipline: order.subject_discipline,
+              paper_format: order.paper_format,
+              details: order.details,
+              attachments: order.attachments,
+            }),
+            ...generateKeyValuePairs({
+              pages: order.pages,
+              slides: order.slides,
+              charts: order.charts,
+              sources: order.sources,
+              spacing: order.spacing,
+              digital_copies: order.digital_copies,
+              initial_draft: order.initial_draft,
+              one_page_summary: order.one_page_summary,
+              plagiarism_report: order.plagiarism_report,
+            }),
+          ])
+        })
+
+        const currentData = storedata.find(
+          (std: StoreDataType) => std.level === order.academic_level,
+        )
+
+        if (currentData) {
+          setCurrentLevelId(() => currentData.id)
+          setCurrentDuration(() => {
+            return determineDuration(currentData, {
               from: new Date(order.duration.from),
               to: new Date(order.duration.to),
-            },
-            service: order.service,
-            academic_level: order.academic_level,
-            subject_discipline: order.subject_discipline,
-            paper_format: order.paper_format,
-            paper_details: order.paper_details,
-            attachments: order.attachments,
-          }),
-          ...generateKeyValuePairs({
-            pages: order.pages,
-            slides: order.slides,
-            charts: order.charts,
-            sources: order.sources,
-            spacing: order.spacing,
-            digital_copies: order.digital_copies,
-            initial_draft: order.initial_draft,
-            one_page_summary: order.one_page_summary,
-            plagiarism_report: order.plagiarism_report,
-          }),
-        ])
-      })
-
-      const currentData = storedata.find(
-        (std: StoreDataType) => std.level === order.academic_level,
-      )
-
-      if (currentData) {
-        setCurrentLevelId(() => currentData.id)
-        setCurrentDuration(() => {
-          return determineDuration(currentData, {
-            from: new Date(order.duration.from),
-            to: new Date(order.duration.to),
+            })
           })
-        })
+        }
       }
     }
   }, [storedata, order])
@@ -153,6 +165,7 @@ const EditOrder = ({
         one_page_summary: boolean
         plagiarism_report: boolean
       } | null,
+      details = orderDetails,
     ) => {
       if (orderOptions && order) {
         setLoading(true)
@@ -291,6 +304,8 @@ const EditOrder = ({
     )
   }
 
+  prefill()
+
   if (order) {
     return (
       <div className="relative">
@@ -312,172 +327,322 @@ const EditOrder = ({
 
           <Container
             className="xl:px-0"
-            parentClassName="pt-10 bg-white w-full"
+            parentClassName="pt-10 pb-32 bg-white w-full"
           >
-            <div className="lg:flex lg:items-center lg:justify-between">
-              <div className="min-w-0 flex-1">
-                <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl flex gap-4 items-center">
-                  <span className={classNames(lexend.className)}>
-                    Edit Order{' '}
-                  </span>
-                </h2>
-                <p className="mt-2 text-lg leading-8 text-gray-600">
-                  Order Amount.{' '}
-                  <span className="font-semibold">
-                    ${formatMoney(totalAmount)}
-                  </span>
-                </p>
+            <Tabs defaultValue={order.serviceCategory.slug}>
+              <div className="lg:flex lg:items-center lg:justify-center">
+                <div className="min-w-0 flex-1">
+                  <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl flex gap-4 items-center">
+                    <span className={classNames(lexend.className)}>
+                      Edit Order{' '}
+                    </span>
+                  </h2>
+                </div>
+                <div className="flex relative justify-end">
+                  <TabsList className="flex">
+                    {[order.serviceCategory].map((sc) => (
+                      <TabsTrigger
+                        key={sc._id}
+                        value={sc.slug}
+                        className={cn(
+                          lexend.className,
+                          'data-[state=active]:ring-bermuda/20 data-[state=active]:ring-1 data-[state=active]:shadow-lg data-[state=active]:shadow-yellow-200',
+                        )}
+                      >
+                        <Link href={`/order/edit/${order._id}`}>
+                          {sc.title}
+                        </Link>
+                      </TabsTrigger>
+                    ))}
+                  </TabsList>
+                </div>
               </div>
-              <div className="mt-5 flex lg:ml-4 lg:mt-0">
-                <span className="block"></span>
-              </div>
-            </div>
-          </Container>
-          <Container
-            className="xl:px-0"
-            parentClassName="pb-32 bg-white w-full"
-          >
-            <div
-              data-orientation="horizontal"
-              role="none"
-              className="shrink-0 bg-border h-[1px] w-full my-6"
-            ></div>
-            <div className="flex flex-col space-y-8 lg:flex-row lg:space-x-12 lg:space-y-0">
-              <aside className="px-4 -mx-4 lg:w-1/5">
-                <nav className="flex space-x-2 lg:flex-col lg:space-x-0 lg:space-y-1">
-                  <button
-                    onClick={() => setCurrentTab(0)}
-                    className={cn(
-                      'inline-flex items-center whitespace-nowrap rounded-md text-sm font-medium text-slate-800 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:text-accent-foreground h-9 px-4 py-2 hover:bg-muted justify-start',
-                      currentTab == 0 && 'bg-muted',
-                    )}
-                    type="button"
-                  >
-                    <svg
-                      className="w-3 h-3 mr-2"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                      aria-hidden="true"
+              <div
+                data-orientation="horizontal"
+                role="none"
+                className="shrink-0 bg-border h-[1px] w-full my-6"
+              ></div>
+              <div className="flex flex-col space-y-8 lg:flex-row lg:space-x-12 lg:space-y-0">
+                <aside className="px-4 -mx-4 lg:w-1/5">
+                  {[order.serviceCategory].map((sc) => (
+                    <TabsContent
+                      key={sc._id}
+                      value={sc.slug}
+                      className="space-y-6"
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m6.75 12H9m1.5-12H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
-                      ></path>
-                    </svg>
-                    <span>Order details</span>
-                  </button>
-                  <button
-                    onClick={() => {
-                      if (orderDetails) {
-                        setCurrentTab(1)
-                      } else {
-                        toast({
-                          title: 'Complete order details',
-                          description: (
-                            <p>Check all form fields and click proceed.</p>
-                          ),
+                      {/proctor/i.test(sc.title) ||
+                      /nursing/i.test(sc.title) ? (
+                        <nav className="flex space-x-2 lg:flex-col lg:space-x-0 lg:space-y-1">
+                          <button
+                            onClick={() => setCurrentTab(0)}
+                            className={cn(
+                              'inline-flex items-center whitespace-nowrap rounded-md text-sm font-medium text-slate-800 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:text-accent-foreground h-9 px-4 py-2 hover:bg-muted justify-start',
+                              currentTab == 0 && 'bg-muted',
+                            )}
+                            type="button"
+                          >
+                            <svg
+                              className="w-3 h-3 mr-2"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              viewBox="0 0 24 24"
+                              xmlns="http://www.w3.org/2000/svg"
+                              aria-hidden="true"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m6.75 12H9m1.5-12H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
+                              ></path>
+                            </svg>
+                            <span>Order details</span>
+                          </button>
+                        </nav>
+                      ) : (
+                        <nav className="flex space-x-2 lg:flex-col lg:space-x-0 lg:space-y-1">
+                          <button
+                            onClick={() => setCurrentTab(0)}
+                            className={cn(
+                              'inline-flex items-center whitespace-nowrap rounded-md text-sm font-medium text-slate-800 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:text-accent-foreground h-9 px-4 py-2 hover:bg-muted justify-start',
+                              currentTab == 0 && 'bg-muted',
+                            )}
+                            type="button"
+                          >
+                            <svg
+                              className="w-3 h-3 mr-2"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              viewBox="0 0 24 24"
+                              xmlns="http://www.w3.org/2000/svg"
+                              aria-hidden="true"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m6.75 12H9m1.5-12H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
+                              ></path>
+                            </svg>
+                            <span>Order details</span>
+                          </button>
+                          <button
+                            onClick={() => {
+                              if (orderDetails) {
+                                setCurrentTab(1)
+                              } else {
+                                toast({
+                                  title: 'Complete order details',
+                                  description: (
+                                    <p>
+                                      Check all form fields and click proceed.
+                                    </p>
+                                  ),
+                                })
+                              }
+                            }}
+                            className={cn(
+                              'inline-flex items-center whitespace-nowrap rounded-md text-sm font-medium text-slate-800 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:text-accent-foreground h-9 px-4 py-2 hover:bg-muted justify-start',
+                              currentTab == 1 && 'bg-muted',
+                            )}
+                            type="button"
+                          >
+                            <svg
+                              className="w-3 h-3 mr-2"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              viewBox="0 0 24 24"
+                              xmlns="http://www.w3.org/2000/svg"
+                              aria-hidden="true"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z"
+                              ></path>
+                            </svg>
+                            <span>Order options</span>
+                          </button>
+                        </nav>
+                      )}
+                    </TabsContent>
+                  ))}
+                </aside>
+                <div className="flex-1 lg:max-w-2xl">
+                  <div className={cn('hidden', currentTab == 0 && 'block')}>
+                    {[order.serviceCategory].map((sc) => (
+                      <TabsContent
+                        key={sc._id}
+                        value={sc.slug}
+                        className="space-y-6"
+                      >
+                        <div>
+                          <h3 className="text-lg text-slate-800 font-medium">
+                            {sc.title}
+                          </h3>
+                          <p className="text-sm text-muted-foreground">
+                            Kindly fill out all the required fields.
+                          </p>
+                        </div>
+                        <Separator />
+                        {/proctor/i.test(sc.title) ||
+                        /nursing/i.test(sc.title) ? (
+                          <SpecialisedExamOrder
+                            products={sc.products}
+                            order={order}
+                            proceedWithData={(data) => {
+                              if (sc) {
+                                saveOrder(
+                                  {
+                                    pages: 0,
+                                    slides: 0,
+                                    charts: 0,
+                                    sources: 0,
+                                    spacing: 'N/A',
+                                    digital_copies: false,
+                                    initial_draft: false,
+                                    one_page_summary: false,
+                                    plagiarism_report: false,
+                                  },
+                                  {
+                                    topic: data.topic ? data.topic : 'N/A',
+                                    duration: {
+                                      from: data.date,
+                                      to: data.date,
+                                    },
+                                    service: sc.title,
+                                    academic_level: data.exam,
+                                    subject_discipline: data.subject.name,
+                                    paper_format: 'N/A',
+                                    attachments: data.attachments,
+                                    details: data.details
+                                      ? data.details
+                                      : 'N/A',
+                                  },
+                                )
+                              }
+                            }}
+                            reportValues={({
+                              attachments,
+                              subject,
+                              date,
+                              ...other
+                            }) => {
+                              let dat = {}
+                              if (
+                                attachments &&
+                                attachments instanceof FileList
+                              ) {
+                                dat = {
+                                  ...dat,
+                                  attachments: Array.from(attachments)
+                                    .map((file, i) => {
+                                      return i + 1 + '). ' + file.name
+                                    })
+                                    .toString()
+                                    .split(',')
+                                    .join(',\n'),
+                                }
+                              }
+                              if (date) {
+                                dat = {
+                                  ...dat,
+                                  date: format(
+                                    new Date(date as Date),
+                                    'dd/MM/yyyy HH:mm:ss',
+                                  ),
+                                }
+                              }
+                              if (subject) {
+                                setTotalAmount(
+                                  `${
+                                    (subject as { name: string; price: number })
+                                      .price
+                                  }`,
+                                )
+                                dat = {
+                                  ...dat,
+                                  subject: (
+                                    subject as { name: string; price: number }
+                                  ).name,
+                                }
+                              } else {
+                                setTotalAmount('0')
+                              }
+                              setOptions(() =>
+                                generateKeyValuePairs({
+                                  ...other,
+                                  ...dat,
+                                }),
+                              )
+                            }}
+                          />
+                        ) : (
+                          <OrderDetailsForm
+                            storedata={storedata}
+                            order={order}
+                            proceedWithData={(data) => {
+                              setOrderDetails(data)
+                              setCurrentTab(1)
+                            }}
+                            reportValues={(data) => {
+                              setAllOptions((ops) => {
+                                return generateReportOptions([
+                                  ...ops,
+                                  ...getOptions(data),
+                                ])
+                              })
+                            }}
+                          />
+                        )}
+                      </TabsContent>
+                    ))}
+                  </div>
+                  <div
+                    className={cn(
+                      'space-y-6 hidden',
+                      currentTab == 1 && 'block',
+                    )}
+                  >
+                    <div>
+                      <h3 className="text-lg text-slate-800 font-medium">
+                        Order options
+                      </h3>
+                      <p className="text-sm text-muted-foreground">
+                        Please fill out all the required fields. This will
+                        factor into your final price.
+                      </p>
+                    </div>
+                    <Separator />
+                    <OrderOptionsForm
+                      storedata={storedata}
+                      order={order}
+                      reportValues={(data) => {
+                        setAllOptions((ops) => {
+                          return generateReportOptions([
+                            ...ops,
+                            ...generateKeyValuePairs(data),
+                          ])
                         })
-                      }
-                    }}
-                    className={cn(
-                      'inline-flex items-center whitespace-nowrap rounded-md text-sm font-medium text-slate-800 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:text-accent-foreground h-9 px-4 py-2 hover:bg-muted justify-start',
-                      currentTab == 1 && 'bg-muted',
-                    )}
-                    type="button"
-                  >
-                    <svg
-                      className="w-3 h-3 mr-2"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                      aria-hidden="true"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z"
-                      ></path>
-                    </svg>
-                    <span>Order options</span>
-                  </button>
-                </nav>
-              </aside>
-              <div className="flex-1 lg:max-w-2xl">
-                <div
-                  className={cn('space-y-6 hidden', currentTab == 0 && 'block')}
-                >
-                  <div>
-                    <h3 className="text-lg text-slate-800 font-medium">
-                      Order details
-                    </h3>
-                    <p className="text-sm text-muted-foreground">
-                      Kindly fill out all the required fields.
-                    </p>
+                      }}
+                      proceedWithData={(data) => {
+                        saveOrder(data)
+                      }}
+                      orderId={order._id}
+                    />
                   </div>
-                  <Separator />
-                  <OrderDetailsForm
-                    storedata={storedata}
-                    order={order}
-                    proceedWithData={(data) => {
-                      setOrderDetails(data)
-                      setCurrentTab(1)
-                    }}
-                    reportValues={(data) => {
-                      setAllOptions((ops) => {
-                        return generateReportOptions([
-                          ...ops,
-                          ...getOptions(data),
-                        ])
-                      })
-                    }}
-                  />
                 </div>
-                <div
-                  className={cn('space-y-6 hidden', currentTab == 1 && 'block')}
-                >
-                  <div>
-                    <h3 className="text-lg text-slate-800 font-medium">
-                      Order options
-                    </h3>
-                    <p className="text-sm text-muted-foreground">
-                      Please fill out all the required fields. This will factor
-                      into your final price.
-                    </p>
-                  </div>
-                  <Separator />
-                  <OrderOptionsForm
-                    storedata={storedata}
-                    order={order}
-                    reportValues={(data) => {
-                      setAllOptions((ops) => {
-                        return generateReportOptions([
-                          ...ops,
-                          ...generateKeyValuePairs(data),
-                        ])
-                      })
-                    }}
-                    proceedWithData={(data) => {
-                      saveOrder(data)
-                    }}
-                    orderId={order._id}
-                  />
-                </div>
+                <OrderSummary
+                  options={allOptions}
+                  totalAmount={totalAmount}
+                  orderId={order._id}
+                  setCheckout={() => {
+                    setCheckout(!checkout)
+                  }}
+                />
               </div>
-              <OrderSummary
-                options={allOptions}
-                totalAmount={totalAmount}
-                orderId={order._id}
-                setCheckout={() => {
-                  setCheckout(!checkout)
-                }}
-              />
-            </div>
+            </Tabs>
           </Container>
         </main>
         <Dialog open={checkout} defaultOpen={false}>
@@ -541,10 +706,29 @@ export const getServerSideProps = (async ({ params }) => {
           },
         },
         {
+          $lookup: {
+            from: 'services_category',
+            localField: 'serviceCategoryId',
+            foreignField: '_id',
+            pipeline: [
+              {
+                $lookup: {
+                  from: 'services_sub_category',
+                  localField: 'subcategories',
+                  foreignField: '_id',
+                  as: 'subcategories',
+                },
+              },
+            ],
+            as: 'serviceCategory',
+          },
+        },
+        {
           $addFields: {
             owner: { $arrayElemAt: ['$owner', 0] },
             transaction: { $arrayElemAt: ['$transaction', 0] },
             writer: { $arrayElemAt: ['$writer', 0] },
+            serviceCategory: { $arrayElemAt: ['$serviceCategory', 0] },
           },
         },
       ])
@@ -557,6 +741,14 @@ export const getServerSideProps = (async ({ params }) => {
         _id,
         userId,
         owner: { _id: ownerId, ...ownerData },
+        serviceCategory: {
+          _id: serviceCategoryId,
+          title,
+          slug,
+          products,
+          description,
+          subcategories,
+        },
         ...order
       } = o
       return {
@@ -566,12 +758,67 @@ export const getServerSideProps = (async ({ params }) => {
           _id: ownerId.toString(),
           ...ownerData,
         },
+        serviceCategory: {
+          _id: serviceCategoryId.toString(),
+          title,
+          slug,
+          description,
+          products,
+          subcategories: subcategories.map((sc) => {
+            const { _id, ...other } = sc
+            return {
+              _id: _id.toString(),
+              ...other,
+            }
+          }),
+        },
         ...order,
+        serviceCategoryId: serviceCategoryId.toString(),
+      }
+    })
+
+    const servicesCategories = await db
+      .collection('services_category')
+      .aggregate<ServiceCategoriesWithSubCategories>([
+        {
+          $lookup: {
+            from: 'services_sub_category',
+            localField: 'subcategories',
+            foreignField: '_id',
+            as: 'subcategories_data',
+          },
+        },
+        {
+          $project: {
+            title: 1,
+            slug: 1,
+            description: 1,
+            products: 1,
+            subcategories: '$subcategories_data',
+          },
+        },
+      ])
+      .sort({ title: -1 })
+      .limit(100)
+      .toArray()
+    const serviceCategories = servicesCategories.map((s) => {
+      const { _id, subcategories, ...sc } = s
+      return {
+        _id: _id.toString(),
+        subcategories: subcategories.map((sc) => {
+          const { _id, ...other } = sc
+          return {
+            _id: _id.toString(),
+            ...other,
+          }
+        }),
+        ...sc,
       }
     })
 
     return {
       props: {
+        serviceCategories: serviceCategories,
         storedata: JSON.parse(response),
         order: orders.length > 0 ? orders[0] : null,
       },
@@ -579,12 +826,14 @@ export const getServerSideProps = (async ({ params }) => {
   } else {
     return {
       props: {
+        serviceCategories: [],
         storedata: JSON.parse(response),
         order: null,
       },
     }
   }
 }) satisfies GetServerSideProps<{
+  serviceCategories: ServiceCategoriesWithSubCategories[]
   storedata: StoreDataType[]
   order: OrderWithOwnerAndTransactionAndWriter | null
 }>

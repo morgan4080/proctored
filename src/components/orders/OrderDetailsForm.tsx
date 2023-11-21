@@ -135,7 +135,7 @@ const detailsFormSchema = z.object({
 
     return !checker.includes(false)
   }),
-  paper_details: z
+  details: z
     .string({
       required_error: 'Please add paper details.',
     })
@@ -162,7 +162,7 @@ export type ReportingValues = {
   subject_discipline?: string | undefined
   paper_format?: string | undefined
   attachments?: FileList | undefined
-  paper_details?: string | undefined
+  details?: string | undefined
 }
 
 const OrderDetailsForm = ({
@@ -200,7 +200,7 @@ const OrderDetailsForm = ({
           academic_level: order.academic_level,
           subject_discipline: order.subject_discipline,
           paper_format: order.paper_format,
-          paper_details: order.paper_details,
+          details: order.details,
           attachments: [] as FileList | any,
         }
 
@@ -609,7 +609,7 @@ const OrderDetailsForm = ({
         />
         <FormField
           control={form.control}
-          name="paper_details"
+          name="details"
           render={({ field }) => (
             <FormItem className="flex flex-col">
               <FormLabel className="text-zinc-800">Paper details</FormLabel>
