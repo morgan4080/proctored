@@ -17,7 +17,6 @@ import {
   cn,
   determineDuration,
   fetcher,
-  formatMoney,
   generateKeyValuePairs,
   generateReportOptions,
   updateRecord,
@@ -46,6 +45,7 @@ import { ObjectId } from 'mongodb'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import Link from 'next/link'
 import SpecialisedExamOrder from '@/components/orders/SpecialisedExamOrder'
+import serviceCategory from '@/pages/order/create/[serviceCategory]'
 const inter = Inter({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
   subsets: ['latin'],
@@ -65,6 +65,7 @@ const EditOrder = ({
     { option: string; value: string | number | boolean }[]
   >([])
   const [totalAmount, setTotalAmount] = useState<string>('0')
+  const [priceBeforeExtraOptions, setPriceBeforeExtraOptions] = useState(0)
   const [currentLevelId, setCurrentLevelId] = useState<number>(storedata[0].id)
   const [currentDuration, setCurrentDuration] = useState<string>('14 Days')
   const [currentStoreData, setCurrentStoreData] = useState<StoreDataType>(
@@ -86,23 +87,36 @@ const EditOrder = ({
   const [allOptions, setAllOptions] = useState<optionType[]>([])
 
   useEffect(() => {
-    // determine range prices
-    const currentData = storedata.find(
-      (std: StoreDataType) => std.id === currentLevelId,
-    )
-
-    setCurrentStoreData(() => {
-      return currentData
-    })
-
-    setTotalAmount(() => {
-      return currentData.deadline[currentDuration]
-    })
-  }, [currentLevelId, currentDuration, storedata])
-
-  const prefill = useCallback(() => {
     const slug = order?.serviceCategory.slug
     if (slug && (/proctor/i.test(slug) || /nursing/i.test(slug))) {
+      setTotalAmount(order.totalPrice)
+    } else {
+      // determine range prices
+      const currentData = storedata.find(
+        (std: StoreDataType) => std.id === currentLevelId,
+      )
+
+      setCurrentStoreData(() => {
+        return currentData
+      })
+
+      setTotalAmount(() => {
+        return currentData.deadline[currentDuration]
+      })
+    }
+  }, [currentLevelId, currentDuration, storedata, order])
+
+  useEffect(() => {
+    const slug = order?.serviceCategory.slug
+    if (slug && (/proctor/i.test(slug) || /nursing/i.test(slug))) {
+      if (order) {
+        /*setOptions(() =>
+          generateKeyValuePairs({
+            ...other,
+            ...dat,
+          }),
+        )*/
+      }
     } else {
       if (order) {
         setAllOptions((ops) => {
@@ -167,12 +181,14 @@ const EditOrder = ({
       } | null,
       details = orderDetails,
     ) => {
-      if (orderOptions && order) {
+      if (orderOptions && order && details) {
         setLoading(true)
         let data = {
           ...orderOptions,
-          ...orderDetails,
+          ...details,
           userId: order.userId,
+          serviceCategoryId: order.serviceCategory._id,
+          totalPrice: parseFloat(totalAmount),
         }
         updateRecord(
           {
@@ -238,7 +254,7 @@ const EditOrder = ({
           })
       }
     },
-    [orderDetails, order],
+    [orderDetails, order, totalAmount],
   )
 
   function getOptions(data: ReportingValues) {
@@ -248,11 +264,14 @@ const EditOrder = ({
         if (value !== undefined) {
           switch (key) {
             case 'academic_level':
-              setCurrentLevelId(() => {
-                return storedata.find(
-                  (std: StoreDataType) => std.level === value,
-                ).id
-              })
+              let cData = storedata.find(
+                (std: StoreDataType) => std.level === value,
+              )
+              if (cData) {
+                setCurrentLevelId(() => {
+                  return cData.id
+                })
+              }
               break
             case 'duration':
               if (typeof value === 'object' && !(value instanceof FileList)) {
@@ -303,8 +322,6 @@ const EditOrder = ({
       [],
     )
   }
-
-  prefill()
 
   if (order) {
     return (
@@ -585,6 +602,9 @@ const EditOrder = ({
                             proceedWithData={(data) => {
                               setOrderDetails(data)
                               setCurrentTab(1)
+                              setPriceBeforeExtraOptions(
+                                parseFloat(totalAmount),
+                              )
                             }}
                             reportValues={(data) => {
                               setAllOptions((ops) => {
@@ -619,6 +639,94 @@ const EditOrder = ({
                       storedata={storedata}
                       order={order}
                       reportValues={(data) => {
+                        setTotalAmount(() => {
+                          let price = 0
+                          let spacing = 1
+                          let pagesPricing = 0
+                          let slidesPricing = 0
+                          let chartsPricing = 0
+                          let digitalCopyPricing = 0
+                          let onePageSummaryPricing = 0
+                          let plagiarismReportPricing = 0
+                          let applyInitialDraft = false
+                          let initialDraftPricing = (
+                            apply: boolean,
+                            p: number,
+                          ) => {
+                            if (apply) {
+                              return p * 0.1
+                            }
+                            return 0
+                          }
+
+                          // pages * price
+                          if (typeof data.pages == 'number') {
+                            pagesPricing = priceBeforeExtraOptions * data.pages
+                          }
+
+                          // price + (6.5 * slides)
+                          if (typeof data.slides == 'number') {
+                            slidesPricing = 6.5 * data.slides
+                          }
+
+                          // price + (5.0 * charts)
+                          if (typeof data.charts == 'number') {
+                            chartsPricing = 5.0 * data.charts
+                          }
+
+                          // 'single' 2 * price per page
+                          // 'double' price remains the same
+                          if (typeof data.spacing == 'string') {
+                            if (data.spacing == 'single') {
+                              spacing = 2
+                            } else {
+                              spacing = 1
+                            }
+                          }
+
+                          // digital_copies true ? price + 9.99
+                          if (
+                            typeof data.digital_copies == 'boolean' &&
+                            data.digital_copies
+                          ) {
+                            digitalCopyPricing = 9.99
+                          }
+
+                          // initial_draft true ? price + 10%
+                          if (
+                            typeof data.initial_draft == 'boolean' &&
+                            data.initial_draft
+                          ) {
+                            applyInitialDraft = true
+                          }
+
+                          // one_page_summary true ? price + 17.99
+                          if (
+                            typeof data.one_page_summary == 'boolean' &&
+                            data.one_page_summary
+                          ) {
+                            onePageSummaryPricing = 17.99
+                          }
+
+                          // plagiarism_report true ? price + 7.99
+                          if (
+                            typeof data.plagiarism_report == 'boolean' &&
+                            data.plagiarism_report
+                          ) {
+                            plagiarismReportPricing = 7.99
+                          }
+
+                          price =
+                            pagesPricing * spacing +
+                            slidesPricing +
+                            chartsPricing +
+                            plagiarismReportPricing +
+                            onePageSummaryPricing +
+                            digitalCopyPricing +
+                            initialDraftPricing(applyInitialDraft, pagesPricing)
+                          return parseFloat(price.toFixed(2)).toString()
+                        })
+
                         setAllOptions((ops) => {
                           return generateReportOptions([
                             ...ops,
@@ -633,14 +741,36 @@ const EditOrder = ({
                     />
                   </div>
                 </div>
-                <OrderSummary
-                  options={allOptions}
-                  totalAmount={totalAmount}
-                  orderId={order._id}
-                  setCheckout={() => {
-                    setCheckout(!checkout)
-                  }}
-                />
+                <div className="lg:w-3/12 relative">
+                  {[order.serviceCategory].map((sc) => (
+                    <TabsContent
+                      key={sc._id}
+                      value={sc.slug}
+                      className="space-y-6"
+                    >
+                      {/proctor/i.test(sc.title) ||
+                      /nursing/i.test(sc.title) ? (
+                        <OrderSummary
+                          options={[...options]}
+                          totalAmount={totalAmount}
+                          orderId={order._id}
+                          setCheckout={() => {
+                            setCheckout(!checkout)
+                          }}
+                        />
+                      ) : (
+                        <OrderSummary
+                          options={allOptions}
+                          totalAmount={totalAmount}
+                          orderId={order._id}
+                          setCheckout={() => {
+                            setCheckout(!checkout)
+                          }}
+                        />
+                      )}
+                    </TabsContent>
+                  ))}{' '}
+                </div>
               </div>
             </Tabs>
           </Container>

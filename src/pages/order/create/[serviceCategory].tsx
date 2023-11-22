@@ -21,6 +21,7 @@ import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import OrderOptionsForm from '@/components/orders/OrderOptionsForm'
 import { ToastAction } from '@/components/ui/toast'
 import {
+  optionType,
   OrderResponse,
   ServiceCategoriesWithSubCategories,
   StoreDataType,
@@ -115,9 +116,7 @@ const CreateOrder = ({
   const [options, setOptions] = useState<
     { option: string; value: string | number | boolean }[]
   >([])
-  const [extraOptions, setExtraOptions] = useState<
-    { option: string; value: string | number | boolean }[]
-  >([])
+  const [extraOptions, setExtraOptions] = useState<optionType[]>([])
   const [totalAmount, setTotalAmount] = useState<string>('0')
   const [priceBeforeExtraOptions, setPriceBeforeExtraOptions] = useState(0)
   const [currentLevelId, setCurrentLevelId] = useState<number>(storedata[0].id)
@@ -961,14 +960,16 @@ const CreateOrder = ({
                   />
                 </div>
               </div>
-              <OrderSummary
-                options={[...options, ...extraOptions]}
-                totalAmount={totalAmount}
-                orderId={orderId}
-                setCheckout={() => {
-                  setCheckout(!checkout)
-                }}
-              />
+              <div className="lg:w-3/12 relative">
+                <OrderSummary
+                  options={[...options, ...extraOptions]}
+                  totalAmount={totalAmount}
+                  orderId={orderId}
+                  setCheckout={() => {
+                    setCheckout(!checkout)
+                  }}
+                />
+              </div>
             </div>
           </Tabs>
         </Container>

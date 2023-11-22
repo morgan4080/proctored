@@ -11,7 +11,7 @@ import { StarIcon } from '@heroicons/react/24/solid'
 import classNames from '../utils/ClassNames'
 import PaymentIcons from '@/components/transactions/PaymentIcons'
 import PriceCalc from '@/components/transactions/PriceCalc'
-import React, { Fragment, useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import mongoClient from '@/lib/mongodb'
 import type { InferGetServerSidePropsType, GetServerSideProps } from 'next'
 import { useToast } from '@/components/ui/use-toast'
@@ -25,12 +25,11 @@ import {
 } from '@/components/ui/accordion'
 import { Card, CardContent } from '@/components/ui/card'
 import { Service } from '@/lib/service_types'
+import { Button } from '@/components/ui/button'
+import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react'
+import { element } from 'prop-types'
 
 const { clientPromise } = mongoClient
-
-type ConnectionStatus = {
-  isConnected: boolean
-}
 
 export const getServerSideProps = (async () => {
   try {
@@ -215,10 +214,8 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
     },
   ]
 
-  const [selected, setSelected] = useState(FAQ[0])
-
   return (
-    <div className="relative">
+    <div className="relative overflow-hidden">
       <Head>
         <title>PROCTOR OWLS</title>
         <meta name="description" content="We take proctored exams for you" />
@@ -239,13 +236,18 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
                 <h1
                   className={classNames(
                     lexend.className,
-                    'text-4xl text-center lg:text-left md:text-5xl lg:text-7xl text-white font-medium leading-tight tracking-tight py-2 lg:py-0',
+                    'text-4xl text-center lg:text-left md:text-6xl text-white font-medium leading-tight tracking-tight py-2 lg:py-0',
                   )}
                 >
-                  Professional Essay Writing & Proctored exams help
+                  Professional
+                  <br />
+                  <span className="wrap transition duration-150 ease-in-out"></span>
+                  <br />
+                  Help
                 </h1>
                 <p className="py-6 max-w-2xl text-lg tracking-tight text-white/80 text-center lg:text-left">
-                  We write your papers - you get top grades!
+                  We are reliable professional writers & academic researchers.
+                  We pursue quality and excellence in providing academic help.
                 </p>
                 <Link
                   href="/order/create"
@@ -261,8 +263,8 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
           </Container>
         </div>
 
-        <Container className="xl:px-0 pb-28 pt-20 sm:py-32">
-          <div className="px-4 max-w-2xl md:mx-auto md:text-center xl:max-w-none">
+        <div className="mx-auto w-full px-4 sm:px-6 lg:px-8 xl:px-0 pb-28 pt-20 sm:py-32">
+          <div className="px-4 mx-auto text-center max-w-sm md:max-w-4xl">
             <h2
               className={classNames(
                 lexend.className,
@@ -277,16 +279,16 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
               perfect match.
             </p>
           </div>
-          <div className="mt-16">
-            <div className="flex-1 max-w-7xl mx-auto overflow-x-hidden">
-              <ScrollArea className="sm:mx-auto max-w-sm sm:max-w-xl md:max-w-2xl lg:max-w-5xl xl:max-w-7xl whitespace-nowrap ">
+          <div className="mt-16 w-full">
+            <div className="flex-1 mx-auto">
+              <ScrollArea className="sm:mx-auto whitespace-nowrap">
                 <div className="flex space-x-8 p-4">
                   {writers.map((writer, index) => (
                     <div
                       key={index}
-                      className="shrink-0 group rounded-lg max-w-xs border px-5 py-4 border-gray-300 bg-gray-100 dark:border-neutral-700 dark:bg-neutral-800/30"
+                      className="shrink-0 group rounded-lg max-w-xs border px-5 py-4 border-gray-300 bg-gray-100 dark:border-neutral-700 dark:bg-neutral-800/30 relative"
                     >
-                      <div className="flex-1 flex relative pb-4 border-b">
+                      <div className="flex-1 flex relative">
                         <div className="mr-6">
                           <Image
                             src={writer.profile_image}
@@ -394,7 +396,7 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
               </ScrollArea>
             </div>
           </div>
-        </Container>
+        </div>
 
         <div className="bg-reef w-full">
           <Container className="xl:px-0 pb-28 pt-20 sm:py-32">
@@ -527,7 +529,7 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
           </Container>
         </div>
 
-        <Container className="xl:px-0 pb-28 pt-20 sm:py-32">
+        <Container className="xl:px-0 pb-28 pt-20 sm:py-28">
           <div className="max-w-2xl md:mx-auto md:text-center xl:max-w-none">
             <h2
               className={classNames(
@@ -636,11 +638,7 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
                 </ul>
               </div>
               <div className="col-span-1 flex justify-center lg:justify-end">
-                <Card className="bg-bermuda border-0">
-                  <CardContent className="py-6">
-                    <PriceCalc />
-                  </CardContent>
-                </Card>
+                <PriceCalc />
               </div>
             </div>
           </Container>
@@ -659,50 +657,104 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
             </h2>
           </div>
           <div className="grid space-y-16 lg:space-y-0 lg:grid-cols-1 max-w-5xl mx-auto">
-            <figure className="md:flex rounded-xl p-8 md:p-0 bg-reef">
-              <div className="p-6">
-                <Image
-                  className="w-24 h-24 md:w-56 md:h-auto md:rounded-none rounded-full mx-auto"
-                  src="/img_2.png"
-                  alt=""
-                  width="384"
-                  height="512"
-                />
-              </div>
-              <div className="pt-6 md:p-8 text-center md:text-left space-y-4">
-                <blockquote>
-                  <span className="flex items-center justify-center md:justify-start">
-                    {[0, 1, 2, 3, 4].map((rating) => (
-                      <StarIcon
-                        key={rating}
-                        className={classNames(
-                          4.9 > rating ? 'text-yellow-400' : 'text-gray-200',
-                          'flex-shrink-0 h-5 w-5',
-                        )}
-                        aria-hidden="true"
-                      />
-                    ))}
-                  </span>
-                  <h5 className="text-lg font-semibold text-black">
-                    Paper was written before the deadline.
-                  </h5>
-                  <p className="text-lg font-medium pt-2">
-                    “Prof. Alicia is very professional and I am happy about her
-                    work. She helped me a lot and saved me a huge amount of
-                    time. I will be very happy to contact her for future
-                    academic work again”
-                  </p>
-                </blockquote>
-                <figcaption className="font-medium">
-                  <div className="text-sky-500 dark:text-sky-400">
-                    Callie D.
-                  </div>
-                  <div className="text-slate-700 dark:text-slate-500">
-                    January 5, 2023
-                  </div>
-                </figcaption>
-              </div>
-            </figure>
+            <div className="flex items-center justify-center gap-4">
+              <figure className="md:flex rounded-xl p-8 md:p-0 bg-reef">
+                <div className="p-6">
+                  <Image
+                    className="w-24 h-24 md:w-56 md:h-auto md:rounded-none rounded-full mx-auto"
+                    src="/img_2.png"
+                    alt=""
+                    width="384"
+                    height="512"
+                  />
+                </div>
+                <div className="pt-6 md:p-8 text-center md:text-left space-y-4">
+                  <blockquote>
+                    <span className="flex items-center justify-center md:justify-start">
+                      {[0, 1, 2, 3, 4].map((rating) => (
+                        <StarIcon
+                          key={rating}
+                          className={classNames(
+                            4.9 > rating ? 'text-yellow-400' : 'text-gray-200',
+                            'flex-shrink-0 h-5 w-5',
+                          )}
+                          aria-hidden="true"
+                        />
+                      ))}
+                    </span>
+                    <h5 className="text-lg font-semibold text-black">
+                      Paper was written before the deadline.
+                    </h5>
+                    <p className="text-lg font-medium pt-2">
+                      “Prof. Alicia is very professional and I am happy about
+                      her work. She helped me a lot and saved me a huge amount
+                      of time. I will be very happy to contact her for future
+                      academic work again”
+                    </p>
+                  </blockquote>
+                  <figcaption className="font-medium">
+                    <div className="text-sky-500 dark:text-sky-400">
+                      Callie D.
+                    </div>
+                    <div className="text-slate-700 dark:text-slate-500">
+                      January 5, 2023
+                    </div>
+                  </figcaption>
+                </div>
+              </figure>
+              <figure className="md:flex rounded-xl p-8 md:p-0 bg-reef">
+                <div className="p-6">
+                  <Image
+                    className="w-24 h-24 md:w-56 md:h-auto md:rounded-none rounded-full mx-auto"
+                    src="/img_2.png"
+                    alt=""
+                    width="384"
+                    height="512"
+                  />
+                </div>
+                <div className="pt-6 md:p-8 text-center md:text-left space-y-4">
+                  <blockquote>
+                    <span className="flex items-center justify-center md:justify-start">
+                      {[0, 1, 2, 3, 4].map((rating) => (
+                        <StarIcon
+                          key={rating}
+                          className={classNames(
+                            4.9 > rating ? 'text-yellow-400' : 'text-gray-200',
+                            'flex-shrink-0 h-5 w-5',
+                          )}
+                          aria-hidden="true"
+                        />
+                      ))}
+                    </span>
+                    <h5 className="text-lg font-semibold text-black">
+                      Paper was written before the deadline.
+                    </h5>
+                    <p className="text-lg font-medium pt-2">
+                      “Prof. Alicia is very professional and I am happy about
+                      her work. She helped me a lot and saved me a huge amount
+                      of time. I will be very happy to contact her for future
+                      academic work again”
+                    </p>
+                  </blockquote>
+                  <figcaption className="font-medium">
+                    <div className="text-sky-500 dark:text-sky-400">
+                      Callie D.
+                    </div>
+                    <div className="text-slate-700 dark:text-slate-500">
+                      January 5, 2023
+                    </div>
+                  </figcaption>
+                </div>
+              </figure>
+            </div>
+          </div>
+          <div className="flex justify-center py-4">
+            <Button variant="outline" size="icon" className="border-0">
+              <ChevronLeftIcon className="h-4 w-4" />
+            </Button>
+            <Button variant="outline" size="icon" className="border-0">
+              <ChevronRightIcon className="h-4 w-4" />
+            </Button>
           </div>
         </Container>
 
@@ -1257,6 +1309,26 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
       </main>
       <Footer />
       <Toaster />
+      <button
+        onClick={(ev) => {
+          window.scrollTo(0, 0)
+        }}
+        ref={(element) => {
+          window.addEventListener('scroll', () => {
+            const par = element?.parentElement
+            if (par) {
+              const { y } = par.getBoundingClientRect()
+              if (y == 0) {
+                element?.classList.remove('visible')
+              } else {
+                element?.classList.add('visible')
+              }
+            }
+          })
+        }}
+        type="button"
+        className="scroll-top-button"
+      ></button>
     </div>
   )
 }

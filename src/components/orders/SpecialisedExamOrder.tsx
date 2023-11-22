@@ -1,4 +1,4 @@
-import { Product as StoreProduct } from '@/lib/service_types'
+import { Order, Product as StoreProduct } from '@/lib/service_types'
 import * as z from 'zod'
 import {
   Form,
@@ -131,7 +131,7 @@ const SpecialisedExamOrder = ({
   reportValues,
 }: {
   products: StoreProduct[]
-  order: Record<any, any> | null
+  order: Order | null
   proceedWithData: (data: ProctoredFormValues) => void
   reportValues: (data: ProctorReportValues) => void
 }) => {
@@ -140,10 +140,14 @@ const SpecialisedExamOrder = ({
       ? defaultValues
       : {
           topic: order.topic,
-          exam: order.exam,
-          subject: order.subject,
+          exam: order.academic_level,
+          subject: products
+            .find((prod) => prod.name == order.academic_level)
+            ?.configurations.find(
+              (conf) => conf.name == order.subject_discipline,
+            ),
           details: order.details,
-          date: order.date,
+          date: new Date(order.duration.from),
           attachments: [] as FileList | any,
         }
 
@@ -188,7 +192,7 @@ const SpecialisedExamOrder = ({
                         variant="outline"
                         role="combobox"
                         className={cn(
-                          'justify-between',
+                          'justify-between text-slate-800',
                           !field.value && 'text-muted-foreground',
                         )}
                       >
@@ -247,7 +251,7 @@ const SpecialisedExamOrder = ({
                         variant="outline"
                         role="combobox"
                         className={cn(
-                          'justify-between',
+                          'justify-between text-slate-800',
                           !field.value && 'text-muted-foreground',
                         )}
                       >
@@ -310,7 +314,7 @@ const SpecialisedExamOrder = ({
                       <Button
                         variant={'outline'}
                         className={cn(
-                          'pl-3 text-left font-normal',
+                          'pl-3 text-left font-normal text-slate-800',
                           !field.value && 'text-muted-foreground',
                         )}
                       >
@@ -335,6 +339,27 @@ const SpecialisedExamOrder = ({
                           className="mt-2"
                           type="time"
                           disabled={form.watch('date') == undefined}
+                          defaultValue={
+                            order
+                              ? `${
+                                  new Date(order.duration.from).getHours() < 10
+                                    ? '0'
+                                    : ''
+                                }${new Date(order.duration.from).getHours()}:${
+                                  new Date(order.duration.from).getMinutes() <
+                                  10
+                                    ? '0'
+                                    : ''
+                                }${new Date(
+                                  order.duration.from,
+                                ).getMinutes()}:${
+                                  new Date(order.duration.from).getSeconds() <
+                                  10
+                                    ? '0'
+                                    : ''
+                                }${new Date(order.duration.from).getSeconds()}`
+                              : ''
+                          }
                           onChange={(event) => {
                             // Parse the time string into a Date object
                             const time = parse(
@@ -367,7 +392,7 @@ const SpecialisedExamOrder = ({
             render={({ field }) => (
               <FormItem className="flex flex-col">
                 <FormLabel className="text-zinc-800">Topic</FormLabel>
-                <FormControl>
+                <FormControl className="text-slate-800">
                   <Input placeholder="Topic" {...field} />
                 </FormControl>
                 <FormMessage />
@@ -382,7 +407,7 @@ const SpecialisedExamOrder = ({
             return (
               <FormItem className="flex flex-col">
                 <FormLabel className="text-zinc-800">Attachments</FormLabel>
-                <FormControl>
+                <FormControl className="text-slate-800">
                   <Input
                     type="file"
                     accept={'image/*,.doc,.docx,.pdf'}
@@ -421,7 +446,7 @@ const SpecialisedExamOrder = ({
           render={({ field }) => (
             <FormItem className="flex flex-col">
               <FormLabel className="text-zinc-800">Extra details</FormLabel>
-              <FormControl>
+              <FormControl className="text-slate-800">
                 <Textarea placeholder="details...." {...field} />
               </FormControl>
               <FormMessage />

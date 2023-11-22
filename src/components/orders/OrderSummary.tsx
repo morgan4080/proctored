@@ -46,7 +46,7 @@ function OrderSummary({
     }
   }
   return (
-    <div className="lg:w-3/12 relative">
+    <>
       <Card className="mb-6 bg-zinc-100 md:sticky md:bottom-0">
         <CardHeader>
           <CardTitle>${formatMoney(totalAmount)}</CardTitle>
@@ -107,7 +107,7 @@ function OrderSummary({
         ref={ifmcontentstoprint}
         style={{ height: 0, width: 0, position: 'absolute' }}
       ></iframe>
-    </div>
+    </>
   )
 }
 
