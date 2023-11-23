@@ -229,7 +229,7 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
         )}
       >
         <Navigation />
-        <div className="w-full bg-gradient-radial from-plumes to-bermuda -mt-44 md:-mt-44 lg:-mt-28">
+        <div className="w-full bg-gradient-to-br from-bermuda to-plumes -mt-44 md:-mt-44 lg:-mt-28">
           <Container className="xl:px-0 pb-24 pt-56 lg:pt-44 lg:pb-36">
             <div className="lg:grid lg:grid-cols-2">
               <div className="flex flex-col justify-center items-center lg:items-start">
@@ -607,7 +607,7 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
           </div>
         </Container>
 
-        <div className="w-full bg-gradient-radial from-plumes to-bermuda">
+        <div className="w-full bg-gradient-to-br from-bermuda to-plumes">
           <Container className="xl:px-0 py-32">
             <div className="grid space-y-16 lg:space-y-0 lg:grid-cols-2 max-w-6xl mx-auto">
               <div className="col-span-1 text-center md:text-left">
@@ -839,7 +839,7 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
           </Container>
         </div>
 
-        <div className="w-full bg-gradient-radial from-plumes to-bermuda">
+        <div className="w-full bg-gradient-to-br from-bermuda to-plumes">
           <Container className="xl:px-0 pb-20">
             <div className="space-y-2 pt-20 pb-16">
               <h2
