@@ -143,7 +143,7 @@ const Navigation = () => {
           className="absolute top-0 left-0 bottom-0 w-screen bg-white z-10"
           variants={sidebar}
         />
-        <Nav menu={menu} />
+        <Nav menu={menu} className={cn(isOpen && 'z-10')} />
       </motion.nav>
 
       <div className="w-full px-0 xl:px-0 z-10">
@@ -346,16 +346,24 @@ type MenuType = {
   href: string | null
 }
 
-export const Nav = ({ menu }: { menu: MenuType[] }) => (
-  <motion.ul
-    variants={variantsN}
-    className="absolute top-[80px] w-screen p-[25px] z-10"
-  >
-    {menu.map((item, index) => (
-      <MenuI item={item} key={index} />
-    ))}
-  </motion.ul>
-)
+export const Nav = React.forwardRef<
+  React.ElementRef<'ul'>,
+  React.ComponentPropsWithoutRef<'a'> & { menu: MenuType[] }
+>(({ className, menu }, ref) => {
+  return (
+    <motion.ul
+      ref={ref}
+      variants={variantsN}
+      className={cn('absolute top-[80px] w-screen p-[25px]', className)}
+    >
+      {menu.map((item, index) => (
+        <MenuI item={item} key={index} />
+      ))}
+    </motion.ul>
+  )
+})
+
+Nav.displayName = 'CustomNav'
 
 const variantsM = {
   open: {

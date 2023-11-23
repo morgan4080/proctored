@@ -236,7 +236,7 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
                 <h1
                   className={classNames(
                     lexend.className,
-                    'text-4xl text-center lg:text-left md:text-6xl text-white font-medium leading-tight tracking-tight py-2 lg:py-0',
+                    'text-4xl text-center lg:text-left md:text-6xl lg:text-7xl text-white font-medium leading-tight tracking-tight py-2 lg:py-0',
                   )}
                 >
                   Professional
