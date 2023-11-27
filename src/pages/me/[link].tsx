@@ -74,21 +74,48 @@ export const getServerSideProps = (async ({ params, res, req }) => {
               },
             },
             {
+              $lookup: {
+                from: 'services_category',
+                localField: 'serviceCategoryId',
+                foreignField: '_id',
+                pipeline: [
+                  {
+                    $lookup: {
+                      from: 'services_sub_category',
+                      localField: 'subcategories',
+                      foreignField: '_id',
+                      as: 'subcategories',
+                    },
+                  },
+                ],
+                as: 'serviceCategory',
+              },
+            },
+            {
               $addFields: {
                 owner: { $arrayElemAt: ['$owner', 0] },
                 transaction: { $arrayElemAt: ['$transaction', 0] },
                 writer: { $arrayElemAt: ['$writer', 0] },
+                serviceCategory: { $arrayElemAt: ['$serviceCategory', 0] },
               },
             },
           ])
           .sort({ metacritic: -1 })
-          .limit(10)
+          .limit(1000)
           .toArray()
         const orders = ordersData.map((o) => {
           const {
             _id,
             userId,
             owner: { _id: ownerId, ...ownerData },
+            serviceCategory: {
+              _id: serviceCategoryId,
+              title,
+              slug,
+              products,
+              description,
+              subcategories,
+            },
             ...order
           } = o
           return {
@@ -98,7 +125,22 @@ export const getServerSideProps = (async ({ params, res, req }) => {
               _id: ownerId.toString(),
               ...ownerData,
             },
+            serviceCategory: {
+              _id: serviceCategoryId.toString(),
+              title,
+              slug,
+              description,
+              products,
+              subcategories: subcategories.map((sc) => {
+                const { _id, ...other } = sc
+                return {
+                  _id: _id.toString(),
+                  ...other,
+                }
+              }),
+            },
             ...order,
+            serviceCategoryId: serviceCategoryId.toString(),
           }
         })
         return {

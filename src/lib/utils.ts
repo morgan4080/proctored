@@ -153,7 +153,6 @@ export function calculateOrderPrice(
       to: new Date(order.duration.to),
     })
 
-    console.log(currentStoreData.deadline[currentDeadline], 'PRICE')
     return currentStoreData.deadline[currentDeadline]
   }
   return 0

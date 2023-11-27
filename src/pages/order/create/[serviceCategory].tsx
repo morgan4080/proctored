@@ -34,7 +34,7 @@ import {
   DialogOverlay,
   DialogPortal,
 } from '@/components/ui/dialog'
-import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-react'
+import { ChevronLeft, ChevronRight, FilePlus2, Loader2 } from 'lucide-react'
 import { useSession } from 'next-auth/react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
@@ -206,7 +206,6 @@ const CreateOrder = ({
               '/api/orders',
             )
               .then((res) => {
-                console.log(res)
                 const response: OrderResponse = res
                 if (response.status == 200) {
                   toast({
@@ -227,22 +226,14 @@ const CreateOrder = ({
                       router.push('/order/edit/' + orderId)
                     },
                   })
+
+                  setTimeout(() => setCheckout(true), 1000)
                 } else {
                   toast({
                     variant: 'destructive',
                     title: response.message,
                     description:
                       'Something went wrong. Review order and resubmit.',
-                    action: (
-                      <ToastAction
-                        altText="Try again"
-                        onClick={() => {
-                          setCheckout(true)
-                        }}
-                      >
-                        Checkout
-                      </ToastAction>
-                    ),
                     duration: 9000,
                     onOpenChange: () => {
                       router.push('/order/edit/' + orderId)
@@ -297,22 +288,13 @@ const CreateOrder = ({
                       router.push('/order/edit/' + orderId)
                     },
                   })
+                  setTimeout(() => setCheckout(true), 1000)
                 } else {
                   toast({
                     variant: 'destructive',
                     title: response.message,
                     description:
                       'Something went wrong. Review order and resubmit.',
-                    action: (
-                      <ToastAction
-                        altText="Try again"
-                        onClick={() => {
-                          setCheckout(true)
-                        }}
-                      >
-                        Checkout
-                      </ToastAction>
-                    ),
                     duration: 9000,
                     onOpenChange: () => {
                       router.push('/order/edit/' + orderId)
@@ -381,13 +363,8 @@ const CreateOrder = ({
           parentClassName="pt-10 pb-32 bg-white w-full"
         >
           <Tabs defaultValue={serviceCategory}>
-            <div className="lg:flex lg:items-center lg:justify-center">
-              <div className="min-w-0 flex-1">
-                <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl flex gap-4 items-center">
-                  <span className={cn(lexend.className)}>Create Order </span>
-                </h2>
-              </div>
-              <div className="flex relative justify-end">
+            <div className="flex flex-col">
+              <div className="flex relative justify-start">
                 <ScrollArea
                   onScroll={(e) => {
                     const target = (e as any).target
@@ -405,20 +382,24 @@ const CreateOrder = ({
                       }
                     }
                   }}
-                  className="flex max-w-2xl whitespace-nowrap"
+                  className="flex w-auto whitespace-nowrap"
                   viewportRef={viewportRef}
                 >
-                  <TabsList className="flex">
+                  <TabsList className="flex p-2.5 h-16">
                     {serviceCategories.map((sc) => (
                       <TabsTrigger
                         key={sc._id}
                         value={sc.slug}
                         className={cn(
                           lexend.className,
-                          'data-[state=active]:ring-bermuda/20 data-[state=active]:ring-1 data-[state=active]:shadow-lg data-[state=active]:shadow-yellow-200',
+                          'data-[state=active]:ring-teal-500 data-[state=active]:ring-1 data-[state=active]:text-plumes data-[state=active]:shadow-lg data-[state=active]:bg-teal-300 data-[state=active]:shadow-green-200 p-3',
                         )}
                       >
-                        <Link href={`/order/create/${sc.slug}`}>
+                        <FilePlus2 className="w-4 mr-2" />
+                        <Link
+                          href={`/order/create/${sc.slug}`}
+                          className="underline"
+                        >
                           {sc.title}
                         </Link>
                       </TabsTrigger>

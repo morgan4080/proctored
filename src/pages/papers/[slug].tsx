@@ -152,7 +152,7 @@ const Paper = ({
           </Container>
           <Container
             className="xl:px-0"
-            parentClassName="pt-10 md:pt-20 bg-white w-full"
+            parentClassName="pt-10 md:pt-20 bg-white w-full pb-32"
           >
             <div className="prose prose-slate" style={{ minWidth: '100%' }}>
               <div className={editing ? 'block' : 'hidden'}>

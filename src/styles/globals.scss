@@ -213,3 +213,8 @@ textarea::-ms-input-placeholder { /* Edge 12 -18 */
   height: 20px;
   flex: 1;
 }
+
+.place_order {
+  text-decoration: none;
+  @apply mt-12 bg-teal-300 w-44 py-3 px-8 text-xl rounded-2xl text-black font-semibold hidden lg:inline-block transform hover:scale-105 transition ease-in-out duration-100
+}

@@ -79,7 +79,7 @@ const Navigation = () => {
     {
       name: 'Create Order',
       categories: [],
-      href: '/order/create',
+      href: '/order/create/proctored-exams-help',
     },
   ])
 
