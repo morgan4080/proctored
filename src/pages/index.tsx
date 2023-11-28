@@ -194,7 +194,7 @@ export default function Home({
                   We pursue quality and excellence in providing academic help.
                 </p>
                 <Link
-                  href="/order/create"
+                  href="/order/create/proctored-exams-help"
                   className="mb-12 bg-teal-300 text-center w-44 py-3 px-8 text-xl rounded-full text-black font-semibold mt-4 transform hover:scale-105 transition ease-in-out duration-100"
                 >
                   Order Now
@@ -869,7 +869,7 @@ export default function Home({
                 </div>
               </div>
               <Link
-                href="/order/create"
+                href="/order/create/proctored-exams-help"
                 className="bg-teal-300 rounded-md text-white py-3 px-12"
               >
                 <span className="font-bold text-black">Order Now</span>
@@ -1252,7 +1252,7 @@ export default function Home({
 
             <div className="flex justify-center align-center pt-16">
               <Link
-                href="/order/create"
+                href="/order/create/proctored-exams-help"
                 className="bg-teal-300 w-44 py-3 px-8 text-xl rounded-2xl text-black font-semibold hidden lg:inline-block mt-4 transform hover:scale-105 transition ease-in-out duration-100"
               >
                 Order Now
