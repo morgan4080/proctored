@@ -145,14 +145,11 @@ const Paper = ({
                   )
                 ) : null}
               </h2>
-              <p className="mt-2 text-sm text-slate-500 hover:text-slate-600 max-w-lg">
-                {paper.excerpt}
-              </p>
             </div>
           </Container>
           <Container
             className="xl:px-0"
-            parentClassName="pt-10 md:pt-20 bg-white w-full pb-32"
+            parentClassName="pt-8 bg-white w-full pb-32"
           >
             <div className="prose prose-slate" style={{ minWidth: '100%' }}>
               <div className={editing ? 'block' : 'hidden'}>
