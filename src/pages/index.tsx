@@ -1249,7 +1249,7 @@ export default function Home({
       </main>
       <Footer />
       <Toaster />
-      <button
+      {/*<button
         onClick={(ev) => {
           window.scrollTo(0, 0)
         }}
@@ -1268,7 +1268,7 @@ export default function Home({
         }}
         type="button"
         className="scroll-top-button"
-      ></button>
+      ></button>*/}
     </div>
   )
 }

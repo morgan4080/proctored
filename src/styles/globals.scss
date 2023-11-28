@@ -134,10 +134,10 @@ textarea::-ms-input-placeholder { /* Edge 12 -18 */
 
 /* SCROLL TOP BUTTON */
 
-.scroll-top-button {
+/*.scroll-top-button {
   position: fixed;
-  right: 20px;
-  bottom: 100px;
+  left: 20px;
+  bottom: 20px;
   z-index: 1000;
   opacity: 0;
   visibility: hidden;
@@ -169,7 +169,7 @@ textarea::-ms-input-placeholder { /* Edge 12 -18 */
   .scroll-top-button {
     right: 10px;
   }
-}
+}*/
 
 .wrap {
   @include typed("Proctored Exam", "Essay Writing", "Nursing School", [.04, null, null, .01], (caret-speed: .75, caret-width: 3px, caret-color: #ffffff));
