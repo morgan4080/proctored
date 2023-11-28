@@ -335,7 +335,10 @@ export default function Home({
                               </div>
                             </div>
                             <Link
-                              href="/"
+                              href={`/order/create/proctored-exams-help?id=${getRandomNumber(
+                                1,
+                                600,
+                              )}`}
                               className="bg-bermuda text-center rounded-full text-white text-sm font-semibold py-3 mt-4"
                             >
                               <span className="">Hire Writer</span>
