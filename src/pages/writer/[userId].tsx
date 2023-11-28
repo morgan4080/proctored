@@ -1,5 +1,5 @@
 const Writer = () => {
-  return <></>
+  return <div></div>
 }
 
 export default Writer

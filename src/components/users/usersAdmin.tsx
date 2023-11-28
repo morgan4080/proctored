@@ -1,4 +1,3 @@
-'use server'
 import { useState } from 'react'
 import { cn, updateRecord } from '@/lib/utils'
 import { Separator } from '@/components/ui/separator'

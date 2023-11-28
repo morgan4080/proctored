@@ -1,4 +1,3 @@
-'use client'
 import classNames from '../utils/ClassNames'
 import { signIn, signOut, useSession } from 'next-auth/react'
 import Link from 'next/link'
