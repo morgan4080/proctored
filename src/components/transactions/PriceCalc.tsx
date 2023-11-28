@@ -4,34 +4,23 @@ import classNames from '../../utils/ClassNames'
 import { StoreDataType } from '@/lib/service_types'
 import { formatMoney } from '@/lib/utils'
 
-const PriceCalc = (): JSX.Element => {
-  const [storedata, setStoreData] = useState<StoreDataType[]>([])
-
+const PriceCalc = ({
+  storedata,
+}: {
+  storedata: StoreDataType[]
+}): JSX.Element => {
   const [totalPrice, setTotalPrice] = useState<number>(0)
 
   const [deadlines, setDeadLines] = useState<any>({})
 
   const [subjects, setSubjects] = useState<any[]>([])
 
-  const fetchData = async () => {
-    const res = await fetch('/api/storedata')
-    const json = await res.json()
-    const data = JSON.parse(json)
-    if (data) {
-      setStoreData(data)
-      return Promise.resolve(data)
-    } else {
-      return Promise.reject('data unavailable')
-    }
-  }
-
   const {
     register,
-    handleSubmit,
     watch,
     getValues,
     setValue,
-    formState: { errors },
+    formState: {},
   } = useForm<{
     level: number
     subject: string
@@ -49,39 +38,32 @@ const PriceCalc = (): JSX.Element => {
   })
 
   useEffect(() => {
-    fetchData()
-      .then((data: StoreDataType[]) => {
-        const filtered = data.find((el) => el.id === 1)
-        const duration = filtered ? filtered.deadline : 0
-        if (filtered) {
-          setSubjects(filtered.subjects)
-          setDeadLines(filtered.deadline)
-        }
-        setTotalPrice(Object.entries(duration)[0][1] * 1)
-      })
-      .catch((error) => console.warn(error))
-  }, [])
+    const filtered = storedata.find((el) => el.id === 1)
+    const duration = filtered ? filtered.deadline : 0
+    if (filtered) {
+      setSubjects(filtered.subjects)
+      setDeadLines(filtered.deadline)
+    }
+    setTotalPrice(Object.entries(duration)[0][1] * 1)
+  }, [storedata])
 
   useEffect(() => {
-    const subscription = watch((value, { name, type }) => {
-      // console.log('watching', value, name)
-      fetchData().then((data: StoreDataType[]) => {
-        if (value && value.duration && value.level) {
-          const academicLevel = data.find(
-            (el) => el.id === parseInt(`${value.level}`),
-          )
+    const subscription = watch((value, {}) => {
+      if (value && value.duration && value.level) {
+        const academicLevel = storedata.find(
+          (el) => el.id === parseInt(`${value.level}`),
+        )
 
-          if (academicLevel) {
-            setValue('price', academicLevel.deadline[value.duration])
-            setTotalPrice(
-              academicLevel.deadline[value.duration] * getValues('pages'),
-            )
-          }
+        if (academicLevel) {
+          setValue('price', academicLevel.deadline[value.duration])
+          setTotalPrice(
+            academicLevel.deadline[value.duration] * getValues('pages'),
+          )
         }
-      })
+      }
     })
     return () => subscription.unsubscribe()
-  }, [getValues, setValue, watch])
+  }, [storedata, getValues, setValue, watch])
 
   return (
     <div
@@ -125,7 +107,7 @@ const PriceCalc = (): JSX.Element => {
           >
             <optgroup label="Deadline">
               {Object.entries(deadlines).map((val, i) => {
-                const [key, value] = val
+                const [key] = val
                 return (
                   <option key={i} value={key}>
                     {key}

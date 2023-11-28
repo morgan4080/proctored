@@ -11,7 +11,7 @@ import { StarIcon } from '@heroicons/react/24/solid'
 import classNames from '../utils/ClassNames'
 import PaymentIcons from '@/components/transactions/PaymentIcons'
 import PriceCalc from '@/components/transactions/PriceCalc'
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import mongoClient from '@/lib/mongodb'
 import type { InferGetServerSidePropsType, GetServerSideProps } from 'next'
 import { useToast } from '@/components/ui/use-toast'
@@ -24,15 +24,34 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion'
 import { Card, CardContent } from '@/components/ui/card'
-import { Service } from '@/lib/service_types'
+import {
+  FaqType,
+  Service,
+  StoreDataType,
+  WriterType,
+} from '@/lib/service_types'
 import { Button } from '@/components/ui/button'
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react'
-import { element } from 'prop-types'
+import { motion, useAnimation } from 'framer-motion'
+import { fetcher } from '@/lib/utils'
+
+const inter = Inter({
+  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
+  subsets: ['latin'],
+})
+
+const lexend = Lexend({
+  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
+  subsets: ['latin'],
+})
 
 const { clientPromise } = mongoClient
 
 export const getServerSideProps = (async () => {
   try {
+    const storedata = await fetcher(process.env.NEXTAUTH_URL + '/api/storedata')
+    const writers = await fetcher(process.env.NEXTAUTH_URL + '/api/writers')
+    const faqs = await fetcher(process.env.NEXTAUTH_URL + '/api/faqs')
     const client = await clientPromise
     const db = client.db('proctor')
     let blogs = await db
@@ -48,34 +67,70 @@ export const getServerSideProps = (async () => {
       }
     })
     return {
-      props: { blogs: blogs, isConnected: true },
+      props: {
+        blogs: blogs,
+        isConnected: true,
+        FAQs: JSON.parse(faqs) as FaqType[],
+        writers: JSON.parse(writers) as WriterType[],
+        storedata: JSON.parse(storedata) as StoreDataType[],
+      },
     }
   } catch (e) {
     console.error(e)
     return {
-      props: { blogs: [], isConnected: false },
+      props: {
+        blogs: [],
+        isConnected: false,
+        FAQs: [] as FaqType[],
+        writers: [] as WriterType[],
+        storedata: [] as StoreDataType[],
+      },
     }
   }
 }) satisfies GetServerSideProps<{
   blogs: Service[]
   isConnected: boolean
+  FAQs: FaqType[]
+  writers: WriterType[]
+  storedata: StoreDataType[]
 }>
-
-const inter = Inter({
-  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
-  subsets: ['latin'],
-})
-
-const lexend = Lexend({
-  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
-  subsets: ['latin'],
-})
 
 export default function Home({
   blogs,
   isConnected,
+  FAQs,
+  writers,
+  storedata,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const { toast } = useToast()
+  const containerRef = useRef(null)
+  const controls = useAnimation()
+
+  const scrollCarousel = () => {
+    controls.start({
+      x: -10000, // calculate width of scroll area
+      transition: {
+        duration: 1000, // Adjust the duration as needed
+        ease: 'linear',
+        repeat: Infinity, // Repeat the animation infinitely
+      },
+    })
+  }
+
+  useEffect(() => {
+    const container = containerRef.current
+    if (!container) return
+
+    scrollCarousel()
+  }, []) // Trigger the scrolling animation on component mount
+
+  const handleHoverStart = () => {
+    controls.stop() // Stop the animation on mouse enter
+  }
+
+  const handleHoverEnd = () => {
+    scrollCarousel() // Resume the animation on mouse leave
+  }
 
   useEffect(() => {
     if (!isConnected) {
@@ -88,131 +143,6 @@ export default function Home({
       })
     }
   }, [isConnected, toast])
-
-  const writers = [
-    {
-      name: 'Dr. Shayla',
-      profile_image: '/person3.png',
-      orders_complete: 400,
-      rating: 4.9,
-      reviewCount: 189,
-      featured_work: [
-        {
-          title: 'Should Juveniles Be Tried As Adults',
-          paper_type: 'Essay (Any Type)',
-          subject: 'Literature',
-          style: 'APA',
-          sources: 1,
-          image: '/img.png',
-        },
-      ],
-    },
-    {
-      name: 'Prof.Jordana K',
-      profile_image: '/person1.png',
-      orders_complete: 500,
-      rating: 4.9,
-      reviewCount: 560,
-      featured_work: [
-        {
-          title: 'Should Juveniles Be Tried As Adults',
-          paper_type: 'Essay (Any Type)',
-          subject: 'Literature',
-          style: 'APA',
-          sources: 1,
-          image: '/img.png',
-        },
-      ],
-    },
-    {
-      name: 'Dr. Calvin',
-      profile_image: '/person2.png',
-      orders_complete: 700,
-      rating: 4.9,
-      reviewCount: 352,
-      featured_work: [
-        {
-          title: 'Should Juveniles Be Tried As Adults',
-          paper_type: 'Essay (Any Type)',
-          subject: 'Literature',
-          style: 'APA',
-          sources: 1,
-          image: '/img.png',
-        },
-      ],
-    },
-    {
-      name: 'Dr. Calvin',
-      profile_image: '/person2.png',
-      orders_complete: 700,
-      rating: 4.9,
-      reviewCount: 352,
-      featured_work: [
-        {
-          title: 'Should Juveniles Be Tried As Adults',
-          paper_type: 'Essay (Any Type)',
-          subject: 'Literature',
-          style: 'APA',
-          sources: 1,
-          image: '/img.png',
-        },
-      ],
-    },
-    {
-      name: 'Dr. Calvin',
-      profile_image: '/person2.png',
-      orders_complete: 700,
-      rating: 4.9,
-      reviewCount: 352,
-      featured_work: [
-        {
-          title: 'Should Juveniles Be Tried As Adults',
-          paper_type: 'Essay (Any Type)',
-          subject: 'Literature',
-          style: 'APA',
-          sources: 1,
-          image: '/img.png',
-        },
-      ],
-    },
-  ]
-
-  const FAQ = [
-    {
-      name: 'Who are essay dons?',
-      description: `
-          In recent years, there has been rising demand among students for online homework help.
-           Owing to this demand, ProctorOwls.com was established with an aim to offer high quality homework help services to anyone that came knocking our door.
-            We are one of those companies that have been of great help to many students for the past eight years. Over time we have built trust among our clients through continuously providing high-quality homework help services.
-             So far we have served over forty thousand clients in different fields of study.
-           The company has recruited over three hundred professional writers to ensure that you always have a writer to personally attend to any of your homework needs.
-      `,
-    },
-    {
-      name: 'About free inquiry?',
-      description: `We're an expert essay writing service that offers a wealth of academic writing experience to students from all over the world. We aim to match the most qualified essay writer to your order, and for that, we hire the most seasoned essay writers from various disciplines.
-Quality is our top priority, so you can rest assured that every order you place via our website will be completed on the highest level possible. To order your first essay with us, simply fill out an order form, pay for the piece, and get in touch with the assigned essay writer.`,
-    },
-    {
-      name: 'Is your service legal?',
-      description: `Quality is our top priority, so you can rest assured that every order you place via our website will be completed on the highest level possible. To order your first essay with us, simply fill out an order form, pay for the piece, and get in touch with the assigned essay writer.
-Make sure to familiarize yourselves with our Guarantees should you have any doubts or questions. And feel free to contact us via our 24/7 chat support: our team is working around-the-clock helping you with any issues you might face.`,
-    },
-    {
-      name: 'Do you have any discounts?',
-      description: `
-      We're an expert essay writing service that offers a wealth of academic writing experience to students from all over the world. We aim to match the most qualified essay writer to your order, and for that, we hire the most seasoned essay writers from various disciplines.
-Make sure to familiarize yourselves with our Guarantees should you have any doubts or questions. And feel free to contact us via our 24/7 chat support: our team is working around-the-clock helping you with any issues you might face.`,
-    },
-    {
-      name: 'Which formats do you provide?',
-      description: `We're an expert essay writing service that offers a wealth of academic writing experience to students from all over the world. We aim to match the most qualified essay writer to your order, and for that, we hire the most seasoned essay writers from various disciplines.`,
-    },
-    {
-      name: 'How will i receive the complete paper?',
-      description: `Expert essay writing service that offers a wealth of academic writing experience to students from all over the world. We aim to match the most qualified essay writer to your order, and for that, we hire the most seasoned essay writers from various disciplines.`,
-    },
-  ]
 
   return (
     <div className="relative overflow-hidden">
@@ -282,115 +212,125 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
           <div className="mt-16 w-full">
             <div className="flex-1 mx-auto">
               <ScrollArea className="sm:mx-auto whitespace-nowrap">
-                <div className="flex space-x-8 p-4">
-                  {writers.map((writer, index) => (
-                    <div
-                      key={index}
-                      className="shrink-0 group rounded-lg max-w-xs border px-5 py-4 border-gray-300 bg-gray-100 dark:border-neutral-700 dark:bg-neutral-800/30 relative"
-                    >
-                      <div className="flex-1 flex relative">
-                        <div className="mr-6">
-                          <Image
-                            src={writer.profile_image}
-                            alt="writer 1"
-                            width={77}
-                            height={77}
-                            priority
-                          />
-                        </div>
-                        <div>
-                          <h4
-                            className={classNames(
-                              lexend.className,
-                              'text-lg font-semibold leading-none',
-                            )}
-                          >
-                            {writer.name}
-                          </h4>
-                          <p className="text-sm leading-tight py-2">
-                            Completed order: {writer.orders_complete}
-                          </p>
-                          <div className="flex items-center">
-                            {[0, 1, 2, 3, 4].map((rating) => (
-                              <StarIcon
-                                key={rating}
-                                className={classNames(
-                                  writer.rating > rating
-                                    ? 'text-yellow-400'
-                                    : 'text-gray-200',
-                                  'flex-shrink-0 h-5 w-5',
-                                )}
-                                aria-hidden="true"
-                              />
-                            ))}
-                            <span className={classNames(lexend.className)}>
-                              {writer.rating} ({writer.reviewCount})
-                            </span>
+                <div ref={containerRef}>
+                  <motion.div
+                    animate={controls}
+                    onHoverStart={handleHoverStart}
+                    onHoverEnd={handleHoverEnd}
+                    className="flex space-x-8 p-4"
+                  >
+                    {writers.map((writer, index) => (
+                      <motion.div
+                        key={index}
+                        className="shrink-0 group rounded-lg max-w-xs border px-5 py-4 border-gray-300 bg-gray-100 dark:border-neutral-700 dark:bg-neutral-800/30 relative"
+                      >
+                        <div className="flex-1 flex relative">
+                          <div className="mr-6">
+                            <Image
+                              src={writer.profile_image}
+                              alt={writer.name}
+                              width={77}
+                              height={77}
+                              priority
+                              className="border-0.5 rounded-md"
+                            />
                           </div>
-                        </div>
-                      </div>
-                      {writer.featured_work.map((work, i) => (
-                        <div key={i} className="flex flex-col">
-                          <h5
-                            className={classNames(
-                              lexend.className,
-                              'font-semibold text-slate-700 text-sm leading-tight text-center pt-3',
-                            )}
-                          >
-                            {work.title}
-                          </h5>
-                          <div className="grid grid-cols-2 pt-5">
-                            <div className="flex flex-col space-y-5">
-                              <div className="">
-                                <p className="text-xs capitalize">
-                                  paper type:
-                                </p>
-                                <p className="text-xs font-semibold text-black capitalize">
-                                  {work.paper_type}
-                                </p>
-                              </div>
-                              <div className="">
-                                <p className="text-xs capitalize">subject:</p>
-                                <p className="text-xs font-semibold text-black capitalize">
-                                  {work.subject}
-                                </p>
-                              </div>
-                              <div className="grid grid-cols-2">
-                                <div>
-                                  <p className="text-xs capitalize">style:</p>
-                                  <p className="text-xs font-semibold text-black capitalize">
-                                    {work.style}
-                                  </p>
-                                </div>
-                                <div>
-                                  <p className="text-xs capitalize">sources:</p>
-                                  <p className="text-xs font-semibold text-black capitalize">
-                                    {work.sources}
-                                  </p>
-                                </div>
-                              </div>
-                            </div>
-                            <div>
-                              <Image
-                                className="ml-auto"
-                                src={work.image}
-                                alt="essay"
-                                width={107}
-                                height={151}
-                                priority
-                              />
+                          <div>
+                            <h4
+                              className={classNames(
+                                lexend.className,
+                                'text-lg font-semibold leading-none',
+                              )}
+                            >
+                              {writer.name}
+                            </h4>
+                            <p className="text-sm leading-tight py-2">
+                              Completed order: {writer.orders_complete}
+                            </p>
+                            <div className="flex items-center">
+                              {[0, 1, 2, 3, 4].map((rating) => (
+                                <StarIcon
+                                  key={rating}
+                                  className={classNames(
+                                    writer.rating > rating
+                                      ? 'text-yellow-400'
+                                      : 'text-gray-200',
+                                    'flex-shrink-0 h-5 w-5',
+                                  )}
+                                  aria-hidden="true"
+                                />
+                              ))}
+                              <span className={classNames(lexend.className)}>
+                                {writer.rating} ({writer.reviewCount})
+                              </span>
                             </div>
                           </div>
-                          <Link
-                            href="/"
-                            className="bg-bermuda text-center rounded-full text-white text-sm font-semibold py-3 mt-4"
-                          >
-                            <span className="">Hire Writer</span>
-                          </Link>
                         </div>
-                      ))}
-                    </div>
-                  ))}
+                        {writer.featured_work.map((work, i) => (
+                          <div key={i} className="flex flex-col">
+                            <h5
+                              className={classNames(
+                                lexend.className,
+                                'font-semibold text-slate-700 text-sm leading-tight pt-3 text-left',
+                              )}
+                            >
+                              {work.title}
+                            </h5>
+                            <div className="grid grid-cols-2 pt-5">
+                              <div className="flex flex-col space-y-5">
+                                <div className="">
+                                  <p className="text-xs capitalize">
+                                    paper type:
+                                  </p>
+                                  <p className="text-xs font-semibold text-black capitalize">
+                                    {work.paper_type}
+                                  </p>
+                                </div>
+                                <div className="">
+                                  <p className="text-xs capitalize">subject:</p>
+                                  <p className="text-xs font-semibold text-black capitalize">
+                                    {work.subject}
+                                  </p>
+                                </div>
+                                <div className="grid grid-cols-2">
+                                  <div>
+                                    <p className="text-xs capitalize">style:</p>
+                                    <p className="text-xs font-semibold text-black capitalize">
+                                      {work.style}
+                                    </p>
+                                  </div>
+                                  <div>
+                                    <p className="text-xs capitalize">
+                                      sources:
+                                    </p>
+                                    <p className="text-xs font-semibold text-black capitalize">
+                                      {work.sources}
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                              <div>
+                                <Image
+                                  className="ml-auto"
+                                  src={work.image}
+                                  alt="essay"
+                                  width={107}
+                                  height={151}
+                                  priority
+                                />
+                              </div>
+                            </div>
+                            <Link
+                              href="/"
+                              className="bg-bermuda text-center rounded-full text-white text-sm font-semibold py-3 mt-4"
+                            >
+                              <span className="">Hire Writer</span>
+                            </Link>
+                          </div>
+                        ))}
+                      </motion.div>
+                    ))}
+                  </motion.div>
                 </div>
                 <ScrollBar orientation="horizontal" />
               </ScrollArea>
@@ -638,7 +578,7 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
                 </ul>
               </div>
               <div className="col-span-1 flex justify-center lg:justify-end">
-                <PriceCalc />
+                <PriceCalc storedata={storedata} />
               </div>
             </div>
           </Container>
@@ -939,7 +879,7 @@ Make sure to familiarize yourselves with our Guarantees should you have any doub
             </p>
           </div>
           <Accordion type="single" collapsible className="max-w-2xl">
-            {FAQ.map((faq, faqIdx) => (
+            {FAQs.map((faq, faqIdx) => (
               <AccordionItem key={faqIdx} value={faqIdx + faq.name}>
                 <AccordionTrigger>
                   <div className="prose">

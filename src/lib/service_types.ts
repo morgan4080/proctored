@@ -175,3 +175,21 @@ export interface Service {
   subcategory: string
   updated: string
 }
+
+export type WriterType = {
+  name: string
+  profile_image: string
+  orders_complete: number
+  rating: number
+  reviewCount: number
+  featured_work: {
+    title: string
+    paper_type: string
+    subject: string
+    style: string
+    sources: number
+    image: string
+  }[]
+}
+
+export type FaqType = { name: string; description: string }
