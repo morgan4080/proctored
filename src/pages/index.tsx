@@ -11,7 +11,7 @@ import { StarIcon } from '@heroicons/react/24/solid'
 import classNames from '../utils/ClassNames'
 import PaymentIcons from '@/components/transactions/PaymentIcons'
 import PriceCalc from '@/components/transactions/PriceCalc'
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import mongoClient from '@/lib/mongodb'
 import type { InferGetServerSidePropsType, GetServerSideProps } from 'next'
 import { useToast } from '@/components/ui/use-toast'
@@ -102,6 +102,11 @@ export default function Home({
   writers,
   storedata,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  const [completedOrders, setCompletedOrders] = useState(0)
+  const [professionalWriters, setProfessionalWriters] = useState(0)
+  const [writersOnline, setWritersOnline] = useState(0)
+  const [supportStaffOnline, setSupportStaffOnline] = useState(0)
+  const [averageScore, setAverageScore] = useState('')
   const { toast } = useToast()
   const containerRef = useRef(null)
   const controls = useAnimation()
@@ -110,7 +115,7 @@ export default function Home({
     controls.start({
       x: -10000, // calculate width of scroll area
       transition: {
-        duration: 1000, // Adjust the duration as needed
+        duration: 200, // Adjust the duration as needed
         ease: 'linear',
         repeat: Infinity, // Repeat the animation infinitely
       },
@@ -118,6 +123,11 @@ export default function Home({
   }
 
   useEffect(() => {
+    setCompletedOrders(getRandomNumber(80000, 100000))
+    setProfessionalWriters(450)
+    setWritersOnline(getRandomNumber(40, 80))
+    setSupportStaffOnline(getRandomNumber(8, 20))
+    setAverageScore(`${getRandomNumber(40, 49) / 10}/5`)
     const container = containerRef.current
     if (!container) return
 
@@ -143,6 +153,10 @@ export default function Home({
       })
     }
   }, [isConnected, toast])
+
+  const getRandomNumber = (min: number, max: number) => {
+    return Math.floor(Math.random() * (max - min + 1)) + min
+  }
 
   return (
     <div className="relative overflow-hidden">
@@ -480,7 +494,7 @@ export default function Home({
               Proctor Owl Activity
             </h2>
           </div>
-          <div className="mt-16 grid gap-12 space-y-16 lg:space-y-0 lg:grid-cols-2 mx-auto">
+          <div className="mt-16 grid gap-16 md:gap-24 lg:gap-48 space-y-16 lg:space-y-0 lg:grid-cols-2 mx-auto">
             <div className="flex items-center justify-center">
               <div className="space-y-3">
                 <h1
@@ -489,13 +503,13 @@ export default function Home({
                     'font-semibold text-8xl text-bermuda',
                   )}
                 >
-                  95,000
+                  {completedOrders.toLocaleString()}
                 </h1>
                 <p>completed orders</p>
               </div>
             </div>
             <div className="flex flex-col space-y-6">
-              <div className="grid gap-4 grid-cols-2">
+              <div className="grid gap-8 grid-cols-2">
                 <div>
                   <h1
                     className={classNames(
@@ -503,7 +517,7 @@ export default function Home({
                       'font-bold text-6xl text-bermuda',
                     )}
                   >
-                    512
+                    {professionalWriters}
                   </h1>
                   <p>Professional Writers</p>
                 </div>
@@ -514,12 +528,12 @@ export default function Home({
                       'font-bold text-6xl text-bermuda',
                     )}
                   >
-                    60
+                    {writersOnline}
                   </h1>
                   <p>Writers Online</p>
                 </div>
               </div>
-              <div className="grid gap-4 grid-cols-2">
+              <div className="grid gap-8 grid-cols-2">
                 <div>
                   <h1
                     className={classNames(
@@ -527,7 +541,7 @@ export default function Home({
                       'font-bold text-6xl text-bermuda',
                     )}
                   >
-                    12
+                    {supportStaffOnline}
                   </h1>
                   <p>Support Staff Online</p>
                 </div>
@@ -538,7 +552,7 @@ export default function Home({
                       'font-bold text-6xl text-bermuda',
                     )}
                   >
-                    4.9/5
+                    {averageScore}
                   </h1>
                   <p>Average Writer’s Score</p>
                 </div>
