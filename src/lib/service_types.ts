@@ -193,3 +193,19 @@ export type WriterType = {
 }
 
 export type FaqType = { name: string; description: string }
+
+export type MenuType = {
+  name: string
+  categories: {
+    _id: string
+    title: string
+    slug: string
+    subcategories: {
+      _id: string
+      title: string
+      slug: string
+      services: { _id: string; title: string; slug: string }[]
+    }[]
+  }[]
+  href: string | null
+}

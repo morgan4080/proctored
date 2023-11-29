@@ -659,50 +659,6 @@ export default function Home({
                   </figcaption>
                 </div>
               </figure>
-              <figure className="md:flex rounded-xl p-8 md:p-0 bg-reef">
-                <div className="p-6">
-                  <Image
-                    className="w-24 h-24 md:w-56 md:h-auto md:rounded-none rounded-full mx-auto"
-                    src="/img_2.png"
-                    alt=""
-                    width="384"
-                    height="512"
-                  />
-                </div>
-                <div className="pt-6 md:p-8 text-center md:text-left space-y-4">
-                  <blockquote>
-                    <span className="flex items-center justify-center md:justify-start">
-                      {[0, 1, 2, 3, 4].map((rating) => (
-                        <StarIcon
-                          key={rating}
-                          className={classNames(
-                            4.9 > rating ? 'text-yellow-400' : 'text-gray-200',
-                            'flex-shrink-0 h-5 w-5',
-                          )}
-                          aria-hidden="true"
-                        />
-                      ))}
-                    </span>
-                    <h5 className="text-lg font-semibold text-black">
-                      Paper was written before the deadline.
-                    </h5>
-                    <p className="text-lg font-medium pt-2">
-                      “Prof. Alicia is very professional and I am happy about
-                      her work. She helped me a lot and saved me a huge amount
-                      of time. I will be very happy to contact her for future
-                      academic work again”
-                    </p>
-                  </blockquote>
-                  <figcaption className="font-medium">
-                    <div className="text-sky-500 dark:text-sky-400">
-                      Callie D.
-                    </div>
-                    <div className="text-slate-700 dark:text-slate-500">
-                      January 5, 2023
-                    </div>
-                  </figcaption>
-                </div>
-              </figure>
             </div>
           </div>
           <div className="flex justify-center py-4">
@@ -927,7 +883,7 @@ export default function Home({
               <p className="mt-6 text-lg tracking-tight text-slate-600 text-center">
                 What to expect in this virtual service?
               </p>
-              <p className="prose max-w-5xl mx-auto mt-6 text-center text-slate-600 pt-6">
+              <p className="prose max-w-7xl mx-auto mt-6 text-center text-slate-600 pt-6">
                 Can’t remember the last time you went out with your friends for
                 a cup of tea? Do you feel like your tutors are completely
                 oblivious of the fact that you have a life outside of college?
@@ -946,7 +902,7 @@ export default function Home({
                 covered.
               </p>
             </div>
-            <div className="space-y-6 mx-auto max-w-5xl prose">
+            <div className="space-y-6 mx-auto max-w-7xl prose">
               <div className="flex flex-col">
                 <h5 className="text-center md:text-left font-bold text-2xl text-bermuda">
                   Our Unique Features
@@ -964,7 +920,7 @@ export default function Home({
                 <h5 className="text-center md:text-left font-bold text-2xl text-bermuda">
                   A massive team of online essay writers.
                 </h5>
-                <p className="text-center md:text-left pt-4">
+                <p className="text-center md:text-left">
                   We do our best to hire as many talents on our as possible. We
                   scan each resume that comes our way to ensure that not one
                   excellent essay writer is left unnoticed. Our team consists of
@@ -977,7 +933,7 @@ export default function Home({
                 <h5 className="text-center md:text-left font-bold text-2xl text-bermuda">
                   Reasonable prices.
                 </h5>
-                <p className="text-center md:text-left pt-4">
+                <p className="text-center md:text-left">
                   We aim to establish prices that will both motivate the essay
                   writers and not leave our customers wanting. Affordability is
                   at the core of our principles, so be sure you will not have to
@@ -988,7 +944,7 @@ export default function Home({
                 <h5 className="text-center md:text-left font-bold text-2xl text-bermuda">
                   100% originality.
                 </h5>
-                <p className="text-center md:text-left pt-4">
+                <p className="text-center md:text-left">
                   Yes, we do have a substantial base of ready-made essays. But
                   rest assured: we craft each new essay from scratch. Knowing
                   how bad plagiarism is to your good name at school, we avoid it
@@ -999,7 +955,7 @@ export default function Home({
                 <h5 className="text-center md:text-left font-bold text-2xl text-bermuda">
                   Excellent quality-price ratio.
                 </h5>
-                <p className="text-center md:text-left pt-4">
+                <p className="text-center md:text-left">
                   When you pay us to write your essay, you are practically
                   investing fair money into top college grades. With our help,
                   you get to stretch a buck and meet every single deadline at
@@ -1010,7 +966,7 @@ export default function Home({
                 <h5 className="text-center md:text-left font-bold text-2xl text-bermuda">
                   How It Works
                 </h5>
-                <p className="text-center md:text-left pt-4">
+                <p className="text-center md:text-left">
                   By now, you might probably be looking for ways to place your
                   first order. If so, then we’ve got fantastic news for you! It
                   will only take a couple of minutes.
@@ -1020,7 +976,7 @@ export default function Home({
                 <h5 className="text-center md:text-left font-bold text-2xl text-bermuda">
                   Why Choose us
                 </h5>
-                <p className="text-center md:text-left pt-4">
+                <p className="text-center md:text-left">
                   Well, there are multiple reasons for it. The most important
                   among them include but are not limited to:
                 </p>
@@ -1029,7 +985,7 @@ export default function Home({
                 <h5 className="text-center md:text-left font-bold text-2xl text-bermuda">
                   Plagiarism Free Assignments.
                 </h5>
-                <p className="text-center md:text-left pt-4">
+                <p className="text-center md:text-left">
                   All our services are 100% original content, expect no trace of
                   plagiarism in any of your assignments handled by our competent
                   homework writers. The company has clear guidelines and rules
@@ -1048,7 +1004,7 @@ export default function Home({
                 <h5 className="text-center md:text-left font-bold text-2xl text-bermuda">
                   Professional writing team.
                 </h5>
-                <p className="text-center md:text-left pt-4">
+                <p className="text-center md:text-left">
                   Our team of writers has been hired after a thorough
                   recruitment exercise conducted after every two years. We want
                   to ensure consistency, and for this reason, we like to train
@@ -1061,7 +1017,7 @@ export default function Home({
                 <h5 className="text-center md:text-left font-bold text-2xl text-bermuda">
                   Timely delivery.
                 </h5>
-                <p className="text-center md:text-left pt-4">
+                <p className="text-center md:text-left">
                   Your assignment will be delivered on time. We know the
                   implications late assignment submission could have on your
                   academic life, for this reason, we will ensure that you get to
@@ -1079,7 +1035,7 @@ export default function Home({
                 <h5 className="text-center md:text-left font-bold text-2xl text-bermuda">
                   High quality.
                 </h5>
-                <p className="text-center md:text-left pt-4">
+                <p className="text-center md:text-left">
                   Our writers have gained industry experience in their various
                   fields of expertise. Therefore, they not only apply academic
                   knowledge to your homework but also add a professional touch
@@ -1094,7 +1050,7 @@ export default function Home({
                 <h5 className="text-center md:text-left font-bold text-2xl text-bermuda">
                   Round-the-clock support.
                 </h5>
-                <p className="text-center md:text-left pt-4">
+                <p className="text-center md:text-left">
                   You can always get your homework needs tended to 24/7
                   regardless of your location. ProctorOwls.com has hired enough
                   writers and support personnel to ensure that you do not have
@@ -1125,8 +1081,8 @@ export default function Home({
             <p className="text-2xl lg:max-w-lg mx-auto text-center text-bermuda">
               We get you quality grades.
             </p>
-            <div className="max-w-5xl mx-auto md:grid md:grid-cols-2 md:gap-12 pt-6">
-              <p className="text-center md:text-left text-slate-600 pt-6">
+            <div className="max-w-7xl mx-auto md:grid md:grid-cols-12 md:gap-12 pt-6">
+              <p className="text-center md:text-left text-slate-600 col-span-9 prose-lg">
                 Wondering why you should order an essay at our essay writing
                 service? “What’s in it for me?” you might wonder. It’s a fair
                 question! Here are several results of choosing to order a piece
@@ -1134,23 +1090,23 @@ export default function Home({
                 words:
               </p>
 
-              <div className="flex justify-center items-center pt-12 md:pt-0">
+              <div className="flex justify-center items-center pt-12 md:pt-0 col-span-3">
                 <Image
-                  src="/illustrations1.png"
+                  src="/heroart.svg"
                   alt="writer 1"
-                  width={548}
-                  height={247}
+                  width={114}
+                  height={80}
                   priority
                 />
               </div>
             </div>
           </div>
-          <div className="space-y-6 mx-auto max-w-5xl">
+          <div className="space-y-6 mx-auto prose max-w-7xl">
             <div className="flex flex-col">
               <h5 className="text-center md:text-left font-bold text-2xl text-bermuda">
                 Top Grades.
               </h5>
-              <p className="text-center md:text-left pt-4">
+              <p className="text-center md:text-left">
                 They are important. After all, we are all striving to achieve
                 the highest grades. They have the potential to directly
                 influence what jobs we get in the future. That is why it is in
@@ -1163,7 +1119,7 @@ export default function Home({
               <h5 className="text-center md:text-left font-bold text-2xl text-bermuda">
                 A happy professor.
               </h5>
-              <p className="text-center md:text-left pt-4">
+              <p className="text-center md:text-left">
                 Don&apos;t look surprised! Earning a good reputation in the eyes
                 of your college professor is vital, since in many cases your
                 reputation will work for you even when you&apos;re far from
@@ -1175,7 +1131,7 @@ export default function Home({
               <h5 className="text-center md:text-left font-bold text-2xl text-bermuda">
                 Top-notch paper.
               </h5>
-              <p className="text-center md:text-left pt-4">
+              <p className="text-center md:text-left">
                 A decent paper can help you get into a college of your dream,
                 improve your GPA, or even get you a scholarship. No matter which
                 of these you&apos;re pursuing, it&apos;s always a good idea to
@@ -1187,7 +1143,7 @@ export default function Home({
               <h5 className="text-center md:text-left font-bold text-2xl text-bermuda">
                 Good social and academic life balance.
               </h5>
-              <p className="text-center md:text-left pt-4">
+              <p className="text-center md:text-left">
                 It is often essential for students to hire essay writing
                 services to craft pieces for them because otherwise, students
                 will have no personal life with all the overwhelming academic

@@ -1,7 +1,7 @@
 import classNames from '../utils/ClassNames'
 import { signIn, signOut, useSession } from 'next-auth/react'
 import Link from 'next/link'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Inter } from 'next/font/google'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { cn, getInitials } from '@/lib/utils'
@@ -34,14 +34,9 @@ import {
   LogOutIcon,
 } from 'lucide-react'
 import {
-  ArchiveBoxArrowDownIcon,
-  AcademicCapIcon,
-  NewspaperIcon,
-  ShoppingCartIcon,
-} from '@heroicons/react/20/solid'
-import { CategoryWithSubCategoryAndService } from '@/lib/service_types'
-import { motion, useCycle } from 'framer-motion'
-import { useDimensions } from '@/hooks/use-dimensions'
+  CategoryWithSubCategoryAndService,
+  MenuType,
+} from '@/lib/service_types'
 
 const inter = Inter({
   weight: ['100', '300', '400', '500', '700', '900'],
@@ -82,8 +77,6 @@ const Navigation = () => {
     },
   ])
 
-  const [openMenu, setOpenMenu] = useState('')
-
   const addLinks = useCallback(() => {
     getLinks().then((links) => {
       setMenu((men) => {
@@ -104,47 +97,8 @@ const Navigation = () => {
     addLinks()
   }, [])
 
-  const [isOpen, toggleOpen] = useCycle(false, true)
-  const containerRef = useRef(null)
-  const { height } = useDimensions(containerRef)
-
-  const sidebar = {
-    open: (height = 200) => ({
-      clipPath: `circle(${height * 2 + 200}px at 40px 40px)`,
-      transition: {
-        type: 'spring',
-        stiffness: 20,
-        restDelta: 2,
-      },
-    }),
-    closed: {
-      clipPath: 'circle(25px at 40px 40px)',
-      transition: {
-        delay: 0.5,
-        type: 'spring',
-        stiffness: 400,
-        damping: 40,
-      },
-    },
-  }
-
   return (
     <div className="flex items-center w-full">
-      <motion.nav
-        initial={false}
-        animate={isOpen ? 'open' : 'closed'}
-        custom={height}
-        ref={containerRef}
-        className="absolute top-0 left-0 bottom-0 md:hidden"
-      >
-        <MenuToggle toggle={() => toggleOpen()} />
-        <motion.div
-          className="absolute top-0 left-0 bottom-0 w-screen bg-white z-10"
-          variants={sidebar}
-        />
-        <Nav menu={menu} className={cn(isOpen && 'z-10')} />
-      </motion.nav>
-
       <div className="w-full px-0 xl:px-0 z-10">
         <div
           className={classNames(
@@ -319,137 +273,3 @@ const ListItem = React.forwardRef<
   )
 })
 ListItem.displayName = 'ListItem'
-
-const variantsN = {
-  open: {
-    transition: { staggerChildren: 0.07, delayChildren: 0.2 },
-  },
-  closed: {
-    transition: { staggerChildren: 0.05, staggerDirection: -1 },
-  },
-}
-
-type MenuType = {
-  name: string
-  categories: {
-    _id: string
-    title: string
-    slug: string
-    subcategories: {
-      _id: string
-      title: string
-      slug: string
-      services: { _id: string; title: string; slug: string }[]
-    }[]
-  }[]
-  href: string | null
-}
-
-export const Nav = React.forwardRef<
-  React.ElementRef<'ul'>,
-  React.ComponentPropsWithoutRef<'a'> & { menu: MenuType[] }
->(({ className, menu }, ref) => {
-  return (
-    <motion.ul
-      ref={ref}
-      variants={variantsN}
-      className={cn('absolute top-[80px] w-screen p-[25px]', className)}
-    >
-      {menu.map((item, index) => (
-        <MenuI item={item} key={index} />
-      ))}
-    </motion.ul>
-  )
-})
-
-Nav.displayName = 'CustomNav'
-
-const variantsM = {
-  open: {
-    y: 0,
-    opacity: 1,
-    transition: {
-      y: { stiffness: 1000, velocity: -100 },
-    },
-  },
-  closed: {
-    y: 50,
-    opacity: 0,
-    transition: {
-      y: { stiffness: 1000 },
-    },
-  },
-}
-
-const IconMenu = ({ name }: { name: string }) => {
-  return (
-    <>
-      {name == 'Papers' && (
-        <ArchiveBoxArrowDownIcon className="w-6 h-6 text-slate-700" />
-      )}
-      {name == 'Services' && (
-        <AcademicCapIcon className="w-6 h-6 text-slate-700" />
-      )}
-      {name == 'Blogs' && <NewspaperIcon className="w-6 h-6 text-slate-700" />}
-      {name == 'Create Order' && (
-        <ShoppingCartIcon className="w-6 h-6 text-slate-700" />
-      )}
-    </>
-  )
-}
-
-export const MenuI = ({ item }: { item: MenuType }) => {
-  return (
-    <motion.li
-      variants={variantsM}
-      whileHover={{ scale: 1.1 }}
-      whileTap={{ scale: 0.95 }}
-      className="listItem"
-    >
-      <div className="icon-placeholder flex items-center justify-center">
-        <IconMenu name={item.name} />
-      </div>
-      <div className="text-placeholder">{item.name}</div>
-    </motion.li>
-  )
-}
-
-const Path = (props: any) => (
-  <motion.path
-    fill="transparent"
-    strokeWidth="3"
-    stroke="hsl(0, 0%, 18%)"
-    strokeLinecap="round"
-    {...props}
-  />
-)
-
-const MenuToggle = ({ toggle }: any) => (
-  <button
-    onClick={toggle}
-    className="menuBtn flex flex-col justify-center z-50"
-  >
-    <svg className="z-10 mx-auto" width="23" height="23" viewBox="0 0 23 23">
-      <Path
-        variants={{
-          closed: { d: 'M 2 2.5 L 20 2.5' },
-          open: { d: 'M 3 16.5 L 17 2.5' },
-        }}
-      />
-      <Path
-        d="M 2 9.423 L 20 9.423"
-        variants={{
-          closed: { opacity: 1 },
-          open: { opacity: 0 },
-        }}
-        transition={{ duration: 0.1 }}
-      />
-      <Path
-        variants={{
-          closed: { d: 'M 2 16.346 L 20 16.346' },
-          open: { d: 'M 3 2.5 L 17 16.346' },
-        }}
-      />
-    </svg>
-  </button>
-)
