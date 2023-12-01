@@ -4,7 +4,7 @@ import { Separator } from '@/components/ui/separator'
 import { Blog } from '@/lib/service_types'
 import { toast } from '@/components/ui/use-toast'
 import useSWR from 'swr'
-const Toaster = dynamic(() => import('../components/ui/toaster'), {
+const Toaster = dynamic(() => import('@/components/ui/toaster'), {
   ssr: false,
 })
 import { Dialog, DialogOverlay, DialogPortal } from '@/components/ui/dialog'
