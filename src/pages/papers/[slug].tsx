@@ -5,9 +5,11 @@ import Navigation from '@/components/Navigation'
 import Head from 'next/head'
 import classNames from '../../utils/ClassNames'
 import { Inter, Lexend } from 'next/font/google'
-import { Container } from '@/components/Container'
+const Container = dynamic(() => import('@/components/Container'), {
+  ssr: true,
+})
 import Footer from '@/components/Footer'
-import { Toaster } from '@/components/ui/toaster'
+const Toaster = dynamic(() => import('@/components/ui/toaster'), { ssr: false })
 import { EditorProvider, useCurrentEditor } from '@tiptap/react'
 import { Color } from '@tiptap/extension-color'
 import ListItem from '@tiptap/extension-list-item'
@@ -25,6 +27,7 @@ import mongoClient from '@/lib/mongodb'
 import useSWR from 'swr'
 import { fetcher, updateRecord } from '@/lib/utils'
 import Link from '@tiptap/extension-link'
+import dynamic from 'next/dynamic'
 
 const inter = Inter({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],

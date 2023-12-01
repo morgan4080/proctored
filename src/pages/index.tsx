@@ -1,47 +1,99 @@
+import React, { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
-import { Toaster } from '@/components/ui/toaster'
+import dynamic from 'next/dynamic'
+const Toaster = dynamic(() => import('@/components/ui/toaster'), { ssr: false })
 import { Inter, Lexend } from 'next/font/google'
 import Head from 'next/head'
 import Footer from '@/components/Footer'
 import Link from 'next/link'
-import Navigation from '@/components/Navigation'
-import { Container } from '@/components/Container'
-import HeroArt from '@/components/HeroArt'
-import { StarIcon } from '@heroicons/react/24/solid'
+const Navigation = dynamic(() => import('@/components/Navigation'), {
+  ssr: true,
+})
+const Container = dynamic(() => import('@/components/Container'), {
+  ssr: true,
+})
+const HeroArt = dynamic(() => import('@/components/HeroArt'), {
+  ssr: true,
+})
 import classNames from '../utils/ClassNames'
-import PaymentIcons from '@/components/transactions/PaymentIcons'
-import PriceCalc from '@/components/transactions/PriceCalc'
-import React, { useEffect, useRef, useState } from 'react'
+const PaymentIcons = dynamic(
+  () => import('@/components/transactions/PaymentIcons'),
+  {
+    ssr: true,
+  },
+)
+const PriceCalc = dynamic(() => import('@/components/transactions/PriceCalc'), {
+  ssr: true,
+})
 import mongoClient from '@/lib/mongodb'
 import type { InferGetServerSidePropsType, GetServerSideProps } from 'next'
 import { useToast } from '@/components/ui/use-toast'
 import { ToastAction } from '@/components/ui/toast'
-import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion'
-import { Card, CardContent } from '@/components/ui/card'
+const ScrollArea = dynamic(
+  () => import('@/components/ui/scroll-area').then((mod) => mod.ScrollArea),
+  {
+    ssr: false,
+  },
+)
+const ScrollBar = dynamic(
+  () => import('@/components/ui/scroll-area').then((mod) => mod.ScrollBar),
+  {
+    ssr: false,
+  },
+)
+const Accordion = dynamic(
+  () => import('@/components/ui/accordion').then((mod) => mod.Accordion),
+  {
+    ssr: false,
+  },
+)
+const AccordionContent = dynamic(
+  () => import('@/components/ui/accordion').then((mod) => mod.AccordionContent),
+  {
+    ssr: false,
+  },
+)
+const AccordionItem = dynamic(
+  () => import('@/components/ui/accordion').then((mod) => mod.AccordionItem),
+  {
+    ssr: false,
+  },
+)
+const AccordionTrigger = dynamic(
+  () => import('@/components/ui/accordion').then((mod) => mod.AccordionTrigger),
+  {
+    ssr: false,
+  },
+)
+const Card = dynamic(
+  () => import('@/components/ui/card').then((mod) => mod.Card),
+  {
+    ssr: true,
+  },
+)
+const CardContent = dynamic(
+  () => import('@/components/ui/card').then((mod) => mod.CardContent),
+  {
+    ssr: true,
+  },
+)
 import {
   FaqType,
   Service,
   StoreDataType,
   WriterType,
 } from '@/lib/service_types'
-import { Button } from '@/components/ui/button'
-import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react'
+import { StarIcon } from 'lucide-react'
 import { motion, useAnimation } from 'framer-motion'
 import { fetcher } from '@/lib/utils'
 
 const inter = Inter({
-  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
+  weight: ['100', '200', '300', '400', '500'],
   subsets: ['latin'],
 })
 
 const lexend = Lexend({
-  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
+  weight: ['600', '700', '800', '900'],
   subsets: ['latin'],
 })
 
@@ -109,13 +161,33 @@ export default function Home({
   const [averageScore, setAverageScore] = useState('')
   const { toast } = useToast()
   const containerRef = useRef(null)
+  const containerRef1 = useRef(null)
+  const containerRef2 = useRef(null)
   const controls = useAnimation()
+  const controls1 = useAnimation()
+  const controls2 = useAnimation()
 
   const scrollCarousel = () => {
     controls.start({
       x: -10000, // calculate width of scroll area
       transition: {
-        duration: 200, // Adjust the duration as needed
+        duration: 2000, // Adjust the duration as needed
+        ease: 'linear',
+        repeat: Infinity, // Repeat the animation infinitely
+      },
+    })
+    controls1.start({
+      x: 10000, // calculate width of scroll area
+      transition: {
+        duration: 2000, // Adjust the duration as needed
+        ease: 'linear',
+        repeat: Infinity, // Repeat the animation infinitely
+      },
+    })
+    controls2.start({
+      x: -10000, // calculate width of scroll area
+      transition: {
+        duration: 2000, // Adjust the duration as needed
         ease: 'linear',
         repeat: Infinity, // Repeat the animation infinitely
       },
@@ -123,19 +195,31 @@ export default function Home({
   }
 
   useEffect(() => {
-    setCompletedOrders(getRandomNumber(80000, 100000))
+    setCompletedOrders(getRandomNumber(95000, 100000))
     setProfessionalWriters(450)
     setWritersOnline(getRandomNumber(40, 80))
     setSupportStaffOnline(getRandomNumber(8, 20))
     setAverageScore(`${getRandomNumber(40, 49) / 10}/5`)
     const container = containerRef.current
     if (!container) return
+    const container1 = containerRef1.current
+    if (!container1) return
+    const container2 = containerRef2.current
+    if (!container2) return
 
     scrollCarousel()
-  }, []) // Trigger the scrolling animation on component mount
+
+    return () => {
+      controls.stop() // Stop the animation on mouse enter
+      controls1.stop() // Stop the animation on mouse enter
+      controls2.stop() // Stop the animation on mouse enter
+    }
+  }, [controls, controls1, controls2]) // Trigger the scrolling animation on component mount
 
   const handleHoverStart = () => {
     controls.stop() // Stop the animation on mouse enter
+    controls1.stop() // Stop the animation on mouse enter
+    controls2.stop() // Stop the animation on mouse enter
   }
 
   const handleHoverEnd = () => {
@@ -152,7 +236,7 @@ export default function Home({
         ),
       })
     }
-  }, [isConnected, toast])
+  }, [isConnected])
 
   const getRandomNumber = (min: number, max: number) => {
     return Math.floor(Math.random() * (max - min + 1)) + min
@@ -218,9 +302,8 @@ export default function Home({
               Choose Your Writer
             </h2>
             <p className="mt-6 text-lg tracking-tight text-slate-600 text-center">
-              EssayDon expert writers are online and available for hire. Read
-              through their profiles, and sample assignments to find your
-              perfect match.
+              Expert writers available for hire. Read through their profiles,
+              and sample assignments to find your perfect match.
             </p>
           </div>
           <div className="mt-16 w-full">
@@ -335,10 +418,7 @@ export default function Home({
                               </div>
                             </div>
                             <Link
-                              href={`/order/create/proctored-exams-help?id=${getRandomNumber(
-                                1,
-                                600,
-                              )}`}
+                              href={`/order/create/proctored-exams-help`}
                               className="bg-bermuda text-center rounded-full text-white text-sm font-semibold py-3 mt-4"
                             >
                               <span className="">Hire Writer</span>
@@ -601,73 +681,143 @@ export default function Home({
           </Container>
         </div>
 
-        <Container className="xl:px-0 pb-20">
-          <div className="space-y-2 pt-20 pb-16">
+        <Container className="xl:px-0 pb-32 space-y-16 relative">
+          <div className="pt-20">
             <h2
               className={classNames(
                 lexend.className,
-                'text-4xl max-w-xl mx-auto font-bold leading-none text-gray-900 text-center capitalize',
+                'text-4xl max-w-sm sm:max-w-3xl mx-auto font-bold leading-none text-gray-900 text-center capitalize',
               )}
             >
               Reviews, comments, and love from papers owl customers and
               community
             </h2>
           </div>
-          <div className="grid space-y-16 lg:space-y-0 lg:grid-cols-1 max-w-5xl mx-auto">
-            <div className="flex items-center justify-center gap-4">
-              <figure className="md:flex rounded-xl p-8 md:p-0 bg-reef">
-                <div className="p-6">
-                  <Image
-                    className="w-24 h-24 md:w-56 md:h-auto md:rounded-none rounded-full mx-auto"
-                    src="/img_2.png"
-                    alt=""
-                    width="384"
-                    height="512"
-                  />
+          <div ref={containerRef1}>
+            <motion.div
+              animate={controls1}
+              onHoverStart={handleHoverStart}
+              onHoverEnd={handleHoverEnd}
+              className="flex gap-4 overscroll-x-scroll -mx-16"
+            >
+              {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((item, i) => (
+                <div
+                  key={i}
+                  className="shrink relative max-w-sm min-w-fit sm:min-w-[350px] rounded-t-md rounded-r-md drop-shadow-2xl shadow-2xl px-6 pt-6 pb-4"
+                >
+                  <figure className="prose">
+                    <blockquote>
+                      <span className="flex items-center justify-start">
+                        {[0, 1, 2, 3, 4].map((rating) => (
+                          <StarIcon
+                            key={rating}
+                            className={classNames(
+                              4.9 > rating
+                                ? 'text-yellow-400'
+                                : 'text-gray-200',
+                              'flex-shrink-0 h-3 w-3',
+                            )}
+                            aria-hidden="true"
+                          />
+                        ))}
+                      </span>
+                      <h5 className="font-semibold text-black text-sm">
+                        Paper was written before the deadline.
+                      </h5>
+                      <p className="text-xs max-w-xs">
+                        “Prof. Alicia is very professional and I am happy about
+                        her work. She helped me a lot and saved me a huge amount
+                        of time. I will be very happy to contact her for future
+                        academic work again”
+                      </p>
+                    </blockquote>
+                    <figcaption>
+                      <div className="pl-2 sm:pl-0 flex items-center text-sky-500 dark:text-sky-400 text-sm font-medium">
+                        <span>
+                          <Image
+                            className="rounded-full my-0"
+                            src="/img_2.png"
+                            alt=""
+                            width="20"
+                            height="20"
+                          />
+                        </span>
+                        <div className="pl-2">
+                          <span className="text-xs">Callie D.</span>
+                          <div className="text-slate-400 text-xs">
+                            January 5, 2023
+                          </div>
+                        </div>
+                      </div>
+                    </figcaption>
+                  </figure>
+                  <div className="triangle-bottomleft absolute -bottom-4 left-0"></div>
                 </div>
-                <div className="pt-6 md:p-8 text-center md:text-left space-y-4">
-                  <blockquote>
-                    <span className="flex items-center justify-center md:justify-start">
-                      {[0, 1, 2, 3, 4].map((rating) => (
-                        <StarIcon
-                          key={rating}
-                          className={classNames(
-                            4.9 > rating ? 'text-yellow-400' : 'text-gray-200',
-                            'flex-shrink-0 h-5 w-5',
-                          )}
-                          aria-hidden="true"
-                        />
-                      ))}
-                    </span>
-                    <h5 className="text-lg font-semibold text-black">
-                      Paper was written before the deadline.
-                    </h5>
-                    <p className="text-lg font-medium pt-2">
-                      “Prof. Alicia is very professional and I am happy about
-                      her work. She helped me a lot and saved me a huge amount
-                      of time. I will be very happy to contact her for future
-                      academic work again”
-                    </p>
-                  </blockquote>
-                  <figcaption className="font-medium">
-                    <div className="text-sky-500 dark:text-sky-400">
-                      Callie D.
-                    </div>
-                    <div className="text-slate-700 dark:text-slate-500">
-                      January 5, 2023
-                    </div>
-                  </figcaption>
-                </div>
-              </figure>
-            </div>
+              ))}
+            </motion.div>
           </div>
-          <div className="flex justify-center py-4">
-            <Button variant="outline" size="icon" className="border-0">
-              <ChevronLeftIcon className="h-4 w-4" />
-            </Button>
-            <Button variant="outline" size="icon" className="border-0">
-              <ChevronRightIcon className="h-4 w-4" />
-            </Button>
+          <div ref={containerRef2}>
+            <motion.div
+              animate={controls2}
+              onHoverStart={handleHoverStart}
+              onHoverEnd={handleHoverEnd}
+              className="flex gap-4 overscroll-x-scroll -mx-16"
+            >
+              {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((item, i) => (
+                <div
+                  key={i}
+                  className="shrink relative max-w-sm min-w-fit sm:min-w-[350px] rounded-t-md rounded-r-md drop-shadow-2xl shadow-2xl px-6 pt-6 pb-4"
+                >
+                  <figure className="prose">
+                    <blockquote>
+                      <span className="flex items-center justify-start">
+                        {[0, 1, 2, 3, 4].map((rating) => (
+                          <StarIcon
+                            key={rating}
+                            className={classNames(
+                              4.9 > rating
+                                ? 'text-yellow-400'
+                                : 'text-gray-200',
+                              'flex-shrink-0 h-3 w-3',
+                            )}
+                            aria-hidden="true"
+                          />
+                        ))}
+                      </span>
+                      <h5 className="font-semibold text-black text-sm">
+                        Paper was written before the deadline.
+                      </h5>
+                      <p className="text-xs max-w-xs">
+                        “Prof. Alicia is very professional and I am happy about
+                        her work. She helped me a lot and saved me a huge amount
+                        of time. I will be very happy to contact her for future
+                        academic work again”
+                      </p>
+                    </blockquote>
+                    <figcaption>
+                      <div className="pl-2 sm:pl-0 flex items-center text-sky-500 dark:text-sky-400 text-sm font-medium">
+                        <span>
+                          <Image
+                            className="rounded-full my-0"
+                            src="/img_2.png"
+                            alt=""
+                            width="20"
+                            height="20"
+                          />
+                        </span>
+                        <div className="pl-2">
+                          <span className="text-xs">Callie D.</span>
+                          <div className="text-slate-400 text-xs">
+                            January 5, 2023
+                          </div>
+                        </div>
+                      </div>
+                    </figcaption>
+                  </figure>
+                  <div className="triangle-bottomleft absolute -bottom-4 left-0"></div>
+                </div>
+              ))}
+            </motion.div>
           </div>
         </Container>
 

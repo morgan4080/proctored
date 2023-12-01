@@ -5,15 +5,18 @@ import Head from 'next/head'
 import classNames from '../../utils/ClassNames'
 import Navigation from '@/components/Navigation'
 import { Inter, Lexend } from 'next/font/google'
-import { Container } from '@/components/Container'
+const Container = dynamic(() => import('@/components/Container'), {
+  ssr: true,
+})
 import { Service } from '@/lib/service_types'
 import Footer from '@/components/Footer'
 import mongoClient from '@/lib/mongodb'
 import { useToast } from '@/components/ui/use-toast'
 import { ToastAction } from '@/components/ui/toast'
-import { Toaster } from '@/components/ui/toaster'
+const Toaster = dynamic(() => import('@/components/ui/toaster'), { ssr: false })
 import { Card, CardContent } from '@/components/ui/card'
 import { format } from 'date-fns'
+import dynamic from 'next/dynamic'
 
 const inter = Inter({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],

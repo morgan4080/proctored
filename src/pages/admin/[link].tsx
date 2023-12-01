@@ -2,7 +2,9 @@ import React from 'react'
 import Head from 'next/head'
 import classNames from '@/utils/ClassNames'
 import Navigation from '@/components/Navigation'
-import { Container } from '@/components/Container'
+const Container = dynamic(() => import('@/components/Container'), {
+  ssr: true,
+})
 import { Inter, Lexend } from 'next/font/google'
 import { cn } from '@/lib/utils'
 import UsersAdmin from '@/components/users/usersAdmin'
@@ -26,6 +28,7 @@ import TransactionsAdmin from '@/components/transactions/TransactionsAdmin'
 import ServicesAdmin from '@/components/services/ServicesAdmin'
 import BlogsAdmin from '@/components/blogs/BlogsAdmin'
 import PapersAdmin from '@/components/papers/PapersAdmin'
+import dynamic from 'next/dynamic'
 
 const inter = Inter({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],

@@ -1,16 +1,15 @@
 import React, { useEffect } from 'react'
 import { cn, createRecord, fetcher, updateRecord } from '@/lib/utils'
 import { Separator } from '@/components/ui/separator'
-import { Blog, Paper } from '@/lib/service_types'
-import ServiceDialogue from '@/components/services/ServiceDialogue'
+import { Paper } from '@/lib/service_types'
 import { toast } from '@/components/ui/use-toast'
 import useSWR from 'swr'
-import { Toaster } from '@/components/ui/toaster'
+const Toaster = dynamic(() => import('@/components/ui/toaster'), { ssr: false })
 import { Dialog, DialogOverlay, DialogPortal } from '@/components/ui/dialog'
 import { Loader2 } from 'lucide-react'
-import BlogsTable from '@/components/blogs/BlogsTable'
 import PapersTable from '@/components/papers/PapersTable'
 import PaperDialogue from '@/components/papers/PaperDialogue'
+import dynamic from 'next/dynamic'
 
 const PapersAdmin = ({
   current,

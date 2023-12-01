@@ -9,8 +9,9 @@ import ChangePermissionDialogue from '@/components/users/ChangePermissionDialogu
 import MakeWriterDialogue from '@/components/users/MakeWriterDialogue'
 import { Loader2 } from 'lucide-react'
 import { toast } from '@/components/ui/use-toast'
-import { Toaster } from '@/components/ui/toaster'
+const Toaster = dynamic(() => import('@/components/ui/toaster'), { ssr: false })
 import { useRouter } from 'next/router'
+import dynamic from 'next/dynamic'
 
 const UsersAdmin = ({
   current,

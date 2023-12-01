@@ -2,7 +2,9 @@ import React, { useCallback, useEffect, useState } from 'react'
 import Head from 'next/head'
 import classNames from '../../../utils/ClassNames'
 import { Separator } from '@/components/ui/separator'
-import { Container } from '@/components/Container'
+const Container = dynamic(() => import('@/components/Container'), {
+  ssr: true,
+})
 import Navigation from '@/components/Navigation'
 import { Inter, Lexend } from 'next/font/google'
 import OrderSummary from '@/components/orders/OrderSummary'
@@ -10,7 +12,7 @@ import OrderDetailsForm, {
   ReportingValues,
 } from '@/components/orders/OrderDetailsForm'
 import Footer from '@/components/Footer'
-import { Toaster } from '@/components/ui/toaster'
+const Toaster = dynamic(() => import('@/components/ui/toaster'), { ssr: false })
 import { toast } from '@/components/ui/use-toast'
 import { differenceInDays, differenceInHours, format } from 'date-fns'
 import {
@@ -46,6 +48,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import Link from 'next/link'
 import SpecialisedExamOrder from '@/components/orders/SpecialisedExamOrder'
 import serviceCategory from '@/pages/order/create/[serviceCategory]'
+import dynamic from 'next/dynamic'
 const inter = Inter({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
   subsets: ['latin'],

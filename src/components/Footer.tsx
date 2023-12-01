@@ -1,4 +1,8 @@
-import { Container } from '@/components/Container'
+import dynamic from 'next/dynamic'
+
+const Container = dynamic(() => import('@/components/Container'), {
+  ssr: true,
+})
 import { Inter } from 'next/font/google'
 import classNames from '../utils/ClassNames'
 import Link from 'next/link'

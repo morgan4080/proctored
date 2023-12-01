@@ -10,7 +10,7 @@ import ServicesTable from '@/components/services/ServicesTable'
 import ServiceDialogue from '@/components/services/ServiceDialogue'
 import { toast } from '@/components/ui/use-toast'
 import useSWR from 'swr'
-import { Toaster } from '@/components/ui/toaster'
+const Toaster = dynamic(() => import('@/components/ui/toaster'), { ssr: false })
 import {
   Dialog,
   DialogContent,
@@ -56,6 +56,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import CodeEditor from '@/components/JSONEDIT/CodeEditor'
 import { ViewUpdate } from '@codemirror/view'
+import dynamic from 'next/dynamic'
 
 const formSchemaCategories = z.object({
   title: z.string().min(3, {

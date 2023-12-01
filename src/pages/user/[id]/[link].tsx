@@ -3,7 +3,9 @@ import Head from 'next/head'
 import Navigation from '@/components/Navigation'
 import { Inter, Lexend } from 'next/font/google'
 import Footer from '@/components/Footer'
-import { Container } from '@/components/Container'
+const Container = dynamic(() => import('@/components/Container'), {
+  ssr: true,
+})
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import {
   OrderWithOwnerAndTransactionAndWriter,
@@ -17,6 +19,7 @@ import Link from 'next/link'
 import OrdersAdmin from '@/components/orders/OrdersAdmin'
 import TransactionsAdmin from '@/components/transactions/TransactionsAdmin'
 import { ObjectId } from 'mongodb'
+import dynamic from 'next/dynamic'
 const inter = Inter({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
   subsets: ['latin'],

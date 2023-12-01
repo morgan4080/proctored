@@ -5,9 +5,11 @@ import Navigation from '@/components/Navigation'
 import Head from 'next/head'
 import classNames from '../../../../utils/ClassNames'
 import { Inter, Lexend } from 'next/font/google'
-import { Container } from '@/components/Container'
+const Container = dynamic(() => import('@/components/Container'), {
+  ssr: true,
+})
 import Footer from '@/components/Footer'
-import { Toaster } from '@/components/ui/toaster'
+const Toaster = dynamic(() => import('@/components/ui/toaster'), { ssr: false })
 import { EditorProvider, useCurrentEditor } from '@tiptap/react'
 import Link from '@tiptap/extension-link'
 import { Color } from '@tiptap/extension-color'
@@ -25,6 +27,7 @@ import { useRouter } from 'next/router'
 import { cn, fetcher, updateRecord } from '@/lib/utils'
 import { Service } from '@/lib/service_types'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+import dynamic from 'next/dynamic'
 
 const inter = Inter({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
