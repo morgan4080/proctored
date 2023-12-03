@@ -1,11 +1,17 @@
 import React, { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import dynamic from 'next/dynamic'
-const Toaster = dynamic(() => import('@/components/ui/toaster'), { ssr: false })
+import mongoClient from '@/lib/mongodb'
 import { Inter, Lexend } from 'next/font/google'
 import Head from 'next/head'
 import Footer from '@/components/Footer'
 import Link from 'next/link'
+import { useToast } from '@/components/ui/use-toast'
+import { ToastAction } from '@/components/ui/toast'
+import { StarIcon } from 'lucide-react'
+import { scroll, motion, useAnimation, useInView } from 'framer-motion'
+import { fetcher } from '@/lib/utils'
+const Toaster = dynamic(() => import('@/components/ui/toaster'), { ssr: false })
 const Navigation = dynamic(() => import('@/components/Navigation'), {
   ssr: true,
 })
@@ -25,10 +31,6 @@ const PaymentIcons = dynamic(
 const PriceCalc = dynamic(() => import('@/components/transactions/PriceCalc'), {
   ssr: true,
 })
-import mongoClient from '@/lib/mongodb'
-import type { InferGetServerSidePropsType, GetServerSideProps } from 'next'
-import { useToast } from '@/components/ui/use-toast'
-import { ToastAction } from '@/components/ui/toast'
 const ScrollArea = dynamic(
   () => import('@/components/ui/scroll-area').then((mod) => mod.ScrollArea),
   {
@@ -77,15 +79,14 @@ const CardContent = dynamic(
     ssr: true,
   },
 )
+
+import type { InferGetServerSidePropsType, GetServerSideProps } from 'next'
 import {
   FaqType,
   Service,
   StoreDataType,
   WriterType,
 } from '@/lib/service_types'
-import { StarIcon } from 'lucide-react'
-import { motion, useAnimation } from 'framer-motion'
-import { fetcher } from '@/lib/utils'
 
 const inter = Inter({
   weight: ['100', '200', '300', '400', '500'],
@@ -154,6 +155,12 @@ export default function Home({
   writers,
   storedata,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  const ref = useRef(null)
+  const line = useRef(null)
+  const chooseWriterView = useRef(null)
+  const isInView = useInView(ref, { once: false })
+  const chooseWriterInView = useInView(chooseWriterView, { once: false })
+  const isLineInView = useInView(line, { once: false })
   const [completedOrders, setCompletedOrders] = useState(0)
   const [professionalWriters, setProfessionalWriters] = useState(0)
   const [writersOnline, setWritersOnline] = useState(0)
@@ -163,18 +170,14 @@ export default function Home({
   const containerRef = useRef(null)
   const containerRef1 = useRef(null)
   const containerRef2 = useRef(null)
+  const progressWheel = useRef(null)
   const controls = useAnimation()
   const controls1 = useAnimation()
   const controls2 = useAnimation()
 
   const scrollCarousel = () => {
     controls.start({
-      x: -10000, // calculate width of scroll area
-      transition: {
-        duration: 2000, // Adjust the duration as needed
-        ease: 'linear',
-        repeat: Infinity, // Repeat the animation infinitely
-      },
+      scrollBehavior: 'smooth',
     })
     controls1.start({
       x: 10000, // calculate width of scroll area
@@ -208,6 +211,19 @@ export default function Home({
     if (!container2) return
 
     scrollCarousel()
+
+    if (progressWheel && progressWheel.current) {
+      const progWheel: HTMLElement = progressWheel.current
+      scroll(
+        (progress) => {
+          progWheel.style.strokeDasharray = `${progress}, 1`
+        },
+        {
+          source: container,
+          axis: 'x',
+        },
+      )
+    }
 
     return () => {
       controls.stop() // Stop the animation on mouse enter
@@ -267,16 +283,17 @@ export default function Home({
                     'text-4xl text-center lg:text-left md:text-6xl lg:text-7xl text-white font-medium leading-tight tracking-tight py-2 lg:py-0',
                   )}
                 >
-                  Professional
+                  <span>Professional</span>
                   <br />
                   <span className="wrap transition duration-150 ease-in-out"></span>
                   <br />
-                  Help
+                  <span>Help</span>
                 </h1>
                 <p className="py-6 max-w-2xl text-lg tracking-tight text-white/80 text-center lg:text-left">
                   We are reliable professional writers & academic researchers.
                   We pursue quality and excellence in providing academic help.
                 </p>
+
                 <Link
                   href="/order/create/proctored-exams-help"
                   className="mb-12 bg-teal-300 text-center w-44 py-3 px-8 text-xl rounded-full text-black font-semibold mt-4 transform hover:scale-105 transition ease-in-out duration-100"
@@ -285,152 +302,192 @@ export default function Home({
                 </Link>
               </div>
               <div className="flex justify-center lg:justify-end">
-                <HeroArt className="h-1/2 lg:w-full lg:h-full" />
+                <HeroArt className="h-1/2 lg:w-full lg:h-full md:translate-x-12" />
               </div>
             </div>
           </Container>
         </div>
 
         <div className="mx-auto w-full px-4 sm:px-6 lg:px-8 xl:px-0 pb-28 pt-20 sm:py-32">
-          <div className="px-4 mx-auto text-center max-w-sm md:max-w-4xl">
-            <h2
+          <div
+            ref={chooseWriterView}
+            className="px-4 mx-auto text-center max-w-sm md:max-w-4xl"
+          >
+            <motion.h2
               className={classNames(
                 lexend.className,
                 'text-3xl tracking-tight sm:text-4xl md:text-5xl text-bermuda text-center',
               )}
+              initial="hidden"
+              animate={chooseWriterInView ? 'visible' : 'hidden'}
+              variants={{
+                hidden: { clipPath: 'inset(100% 0% 0% 0%)' },
+                visible: {
+                  clipPath: 'inset(0% 0% 0% 0%)',
+                  transition: { duration: 0.5 },
+                },
+              }}
             >
               Choose Your Writer
-            </h2>
-            <p className="mt-6 text-lg tracking-tight text-slate-600 text-center">
+            </motion.h2>
+            <motion.p
+              initial="hidden"
+              animate={chooseWriterInView ? 'visible' : 'hidden'}
+              variants={{
+                hidden: { clipPath: 'inset(100% 0% 0% 0%)' },
+                visible: {
+                  clipPath: 'inset(0% 0% 0% 0%)',
+                  transition: { duration: 0.8 },
+                },
+              }}
+              className="mt-6 text-lg tracking-tight text-slate-600 text-center"
+            >
               Expert writers available for hire. Read through their profiles,
               and sample assignments to find your perfect match.
-            </p>
+            </motion.p>
           </div>
-          <div className="mt-16 w-full">
+          <div className="mt-16 w-full relative">
+            <svg
+              id="progress"
+              width="100"
+              height="100"
+              viewBox="0 0 100 100"
+              className="-bottom-24 right-0 -z-10"
+            >
+              <circle cx="50" cy="50" r="30" pathLength="1" className="bg" />
+              <circle
+                ref={progressWheel}
+                cx="50"
+                cy="50"
+                r="30"
+                pathLength="1"
+                className="indicator"
+              />
+            </svg>
             <div className="flex-1 mx-auto">
-              <ScrollArea className="sm:mx-auto whitespace-nowrap">
-                <div ref={containerRef}>
+              <motion.div
+                ref={containerRef}
+                className="flex gap-8 px-8 sm:mx-auto whitespace-nowrap overflow-x-scroll horizontalScroll"
+                onScroll={(e) => {
+                  const target = (e as any).target
+                  if (progressWheel && progressWheel.current) {
+                    const elem: HTMLElement = progressWheel.current
+                    // elem.style.strokeDasharray = `${progress}, 1`
+                  }
+                  console.log(target.scrollLeft)
+                }}
+                animate={controls}
+                onHoverStart={handleHoverStart}
+                onHoverEnd={handleHoverEnd}
+              >
+                {writers.map((writer, index) => (
                   <motion.div
-                    animate={controls}
-                    onHoverStart={handleHoverStart}
-                    onHoverEnd={handleHoverEnd}
-                    className="flex space-x-8 p-4"
+                    key={index}
+                    className="shrink-0 group rounded-lg max-w-xs border px-5 py-4 border-gray-300 bg-gray-100 dark:border-neutral-700 dark:bg-neutral-800/30 relative shadow-lg"
                   >
-                    {writers.map((writer, index) => (
-                      <motion.div
-                        key={index}
-                        className="shrink-0 group rounded-lg max-w-xs border px-5 py-4 border-gray-300 bg-gray-100 dark:border-neutral-700 dark:bg-neutral-800/30 relative"
-                      >
-                        <div className="flex-1 flex relative">
-                          <div className="mr-6">
-                            <Image
-                              src={writer.profile_image}
-                              alt={writer.name}
-                              width={77}
-                              height={77}
-                              priority
-                              className="border-0.5 rounded-md"
+                    <div className="flex-1 flex relative">
+                      <div className="mr-6">
+                        <Image
+                          src={writer.profile_image}
+                          alt={writer.name}
+                          width={77}
+                          height={77}
+                          priority
+                          className="border-0.5 rounded-md"
+                        />
+                      </div>
+                      <div>
+                        <h4
+                          className={classNames(
+                            lexend.className,
+                            'text-lg font-semibold leading-none',
+                          )}
+                        >
+                          {writer.name}
+                        </h4>
+                        <p className="text-sm leading-tight py-2">
+                          Completed order: {writer.orders_complete}
+                        </p>
+                        <div className="flex items-center">
+                          {[0, 1, 2, 3, 4].map((rating) => (
+                            <StarIcon
+                              key={rating}
+                              className={classNames(
+                                writer.rating > rating
+                                  ? 'text-yellow-400'
+                                  : 'text-gray-200',
+                                'flex-shrink-0 h-5 w-5',
+                              )}
+                              aria-hidden="true"
                             />
-                          </div>
-                          <div>
-                            <h4
-                              className={classNames(
-                                lexend.className,
-                                'text-lg font-semibold leading-none',
-                              )}
-                            >
-                              {writer.name}
-                            </h4>
-                            <p className="text-sm leading-tight py-2">
-                              Completed order: {writer.orders_complete}
-                            </p>
-                            <div className="flex items-center">
-                              {[0, 1, 2, 3, 4].map((rating) => (
-                                <StarIcon
-                                  key={rating}
-                                  className={classNames(
-                                    writer.rating > rating
-                                      ? 'text-yellow-400'
-                                      : 'text-gray-200',
-                                    'flex-shrink-0 h-5 w-5',
-                                  )}
-                                  aria-hidden="true"
-                                />
-                              ))}
-                              <span className={classNames(lexend.className)}>
-                                {writer.rating} ({writer.reviewCount})
-                              </span>
-                            </div>
-                          </div>
+                          ))}
+                          <span className={classNames(lexend.className)}>
+                            {writer.rating} ({writer.reviewCount})
+                          </span>
                         </div>
-                        {writer.featured_work.map((work, i) => (
-                          <div key={i} className="flex flex-col">
-                            <h5
-                              className={classNames(
-                                lexend.className,
-                                'font-semibold text-slate-700 text-sm leading-tight pt-3 text-left',
-                              )}
-                            >
-                              {work.title}
-                            </h5>
-                            <div className="grid grid-cols-2 pt-5">
-                              <div className="flex flex-col space-y-5">
-                                <div className="">
-                                  <p className="text-xs capitalize">
-                                    paper type:
-                                  </p>
-                                  <p className="text-xs font-semibold text-black capitalize">
-                                    {work.paper_type}
-                                  </p>
-                                </div>
-                                <div className="">
-                                  <p className="text-xs capitalize">subject:</p>
-                                  <p className="text-xs font-semibold text-black capitalize">
-                                    {work.subject}
-                                  </p>
-                                </div>
-                                <div className="grid grid-cols-2">
-                                  <div>
-                                    <p className="text-xs capitalize">style:</p>
-                                    <p className="text-xs font-semibold text-black capitalize">
-                                      {work.style}
-                                    </p>
-                                  </div>
-                                  <div>
-                                    <p className="text-xs capitalize">
-                                      sources:
-                                    </p>
-                                    <p className="text-xs font-semibold text-black capitalize">
-                                      {work.sources}
-                                    </p>
-                                  </div>
-                                </div>
+                      </div>
+                    </div>
+                    {writer.featured_work.map((work, i) => (
+                      <div key={i} className="flex flex-col">
+                        <h5
+                          className={classNames(
+                            lexend.className,
+                            'font-semibold text-slate-700 text-sm leading-tight pt-3 text-left',
+                          )}
+                        >
+                          {work.title}
+                        </h5>
+                        <div className="grid grid-cols-2 pt-5">
+                          <div className="flex flex-col space-y-5">
+                            <div className="">
+                              <p className="text-xs capitalize">paper type:</p>
+                              <p className="text-xs font-semibold text-black capitalize">
+                                {work.paper_type}
+                              </p>
+                            </div>
+                            <div className="">
+                              <p className="text-xs capitalize">subject:</p>
+                              <p className="text-xs font-semibold text-black capitalize">
+                                {work.subject}
+                              </p>
+                            </div>
+                            <div className="grid grid-cols-2">
+                              <div>
+                                <p className="text-xs capitalize">style:</p>
+                                <p className="text-xs font-semibold text-black capitalize">
+                                  {work.style}
+                                </p>
                               </div>
                               <div>
-                                <Image
-                                  className="ml-auto"
-                                  src={work.image}
-                                  alt="essay"
-                                  width={107}
-                                  height={151}
-                                  priority
-                                />
+                                <p className="text-xs capitalize">sources:</p>
+                                <p className="text-xs font-semibold text-black capitalize">
+                                  {work.sources}
+                                </p>
                               </div>
                             </div>
-                            <Link
-                              href={`/order/create/proctored-exams-help`}
-                              className="bg-bermuda text-center rounded-full text-white text-sm font-semibold py-3 mt-4"
-                            >
-                              <span className="">Hire Writer</span>
-                            </Link>
                           </div>
-                        ))}
-                      </motion.div>
+                          <div>
+                            <Image
+                              className="ml-auto"
+                              src={work.image}
+                              alt="essay"
+                              width={107}
+                              height={151}
+                              priority
+                            />
+                          </div>
+                        </div>
+                        <Link
+                          href={`/order/create/proctored-exams-help`}
+                          className="bg-bermuda text-center rounded-full text-white text-sm font-semibold py-3 mt-4"
+                        >
+                          <span className="">Hire Writer</span>
+                        </Link>
+                      </div>
                     ))}
                   </motion.div>
-                </div>
-                <ScrollBar orientation="horizontal" />
-              </ScrollArea>
+                ))}
+              </motion.div>
             </div>
           </div>
         </div>
@@ -447,7 +504,10 @@ export default function Home({
                 How To Place An Order
               </h2>
             </div>
-            <div className="mt-32 mb-20 grid lg:gap-8 lg:grid-cols-4 space-y-16 lg:space-y-0 mx-auto relative">
+            <div
+              ref={line}
+              className="mt-32 mb-20 grid lg:gap-8 lg:grid-cols-4 space-y-16 lg:space-y-0 mx-auto relative"
+            >
               <div className="flex flex-col">
                 <div className="flex-1 flex items-center justify-center pb-11">
                   <Image
@@ -552,16 +612,49 @@ export default function Home({
                   />
                 </div>
               </div>
-              <div className="absolute w-full h-full hidden lg:flex items-center justify-center">
+
+              <motion.div
+                initial="hidden"
+                animate={isLineInView ? 'visible' : 'hidden'}
+                variants={{
+                  hidden: { clipPath: 'inset(0% 100% 0% 0%)' },
+                  visible: {
+                    clipPath: 'inset(0% 0% 0% 0%)',
+                    transition: { duration: 2 },
+                  },
+                }}
+                className="absolute w-full h-full hidden lg:flex items-center justify-center"
+              >
                 <Image
-                  className="w-2/3"
+                  className="w-2/3 -translate-x-4"
                   src={'/img_1.png'}
                   alt="how to place your order 1"
                   width={868.5}
                   height={192.74}
                   priority
                 />
-              </div>
+              </motion.div>
+              <motion.div
+                initial="hidden"
+                animate={isLineInView ? 'visible' : 'hidden'}
+                variants={{
+                  hidden: { clipPath: 'inset(0% 100% 0% 0%)' },
+                  visible: {
+                    clipPath: 'inset(0% 0% 0% 0%)',
+                    transition: { duration: 2 },
+                  },
+                }}
+                className="absolute h-full flex lg:hidden items-center justify-center z-0"
+              >
+                <Image
+                  className="scale-[3] translate-x-8 translate-y-1 rotate-45"
+                  src={'/img_1.png'}
+                  alt="how to place your order 1"
+                  width={868.5}
+                  height={192.74}
+                  priority
+                />
+              </motion.div>
             </div>
           </Container>
         </div>
@@ -580,64 +673,224 @@ export default function Home({
           <div className="mt-16 grid gap-16 md:gap-24 lg:gap-48 space-y-16 lg:space-y-0 lg:grid-cols-2 mx-auto">
             <div className="flex items-center justify-center">
               <div className="space-y-3">
-                <h1
+                <motion.h1
                   className={classNames(
                     lexend.className,
                     'font-semibold text-8xl text-bermuda',
                   )}
+                  initial="hidden"
+                  animate={isInView ? 'visible' : 'hidden'}
+                  variants={{
+                    hidden: {
+                      opacity: 0,
+                      scale: 0.96,
+                      translateY: 40,
+                      clipPath: 'inset(100% 0% 0% 0%)',
+                    },
+                    visible: {
+                      clipPath: 'inset(0% 0% 0% 0%)',
+                      opacity: 1,
+                      scale: 1,
+                      translateY: 0,
+                      transition: { duration: 0.5 },
+                    },
+                  }}
                 >
                   {completedOrders.toLocaleString()}
-                </h1>
-                <p>completed orders</p>
+                </motion.h1>
+                <motion.p
+                  className="text-sm capitalize py-2"
+                  initial="hidden"
+                  animate={isInView ? 'visible' : 'hidden'}
+                  variants={{
+                    hidden: { opacity: 0, scale: 0.96, translateX: 40 },
+                    visible: {
+                      opacity: 1,
+                      scale: 1,
+                      translateX: 0,
+                      transition: { duration: 0.5, delay: 0.1 },
+                    },
+                  }}
+                >
+                  completed orders
+                </motion.p>
               </div>
             </div>
-            <div className="flex flex-col space-y-6">
+            <div ref={ref} className="flex flex-col space-y-6">
               <div className="grid gap-8 grid-cols-2">
                 <div>
-                  <h1
+                  <motion.h1
                     className={classNames(
                       lexend.className,
                       'font-bold text-6xl text-bermuda',
                     )}
+                    initial="hidden"
+                    animate={isInView ? 'visible' : 'hidden'}
+                    variants={{
+                      hidden: {
+                        opacity: 0,
+                        scale: 0.96,
+                        translateY: 40,
+                        clipPath: 'inset(100% 0% 0% 0%)',
+                      },
+                      visible: {
+                        clipPath: 'inset(0% 0% 0% 0%)',
+                        opacity: 1,
+                        scale: 1,
+                        translateY: 0,
+                        transition: { duration: 0.5, delay: 0.2 },
+                      },
+                    }}
                   >
                     {professionalWriters}
-                  </h1>
-                  <p>Professional Writers</p>
+                  </motion.h1>
+                  <motion.p
+                    className="text-sm capitalize py-2"
+                    initial="hidden"
+                    animate={isInView ? 'visible' : 'hidden'}
+                    variants={{
+                      hidden: { opacity: 0, scale: 0.96, translateX: 40 },
+                      visible: {
+                        opacity: 1,
+                        scale: 1,
+                        translateX: 0,
+                        transition: { duration: 0.5, delay: 0.3 },
+                      },
+                    }}
+                  >
+                    Professional Writers
+                  </motion.p>
                 </div>
                 <div>
-                  <h1
+                  <motion.h1
                     className={classNames(
                       lexend.className,
                       'font-bold text-6xl text-bermuda',
                     )}
+                    initial="hidden"
+                    animate={isInView ? 'visible' : 'hidden'}
+                    variants={{
+                      hidden: {
+                        opacity: 0,
+                        scale: 0.96,
+                        translateY: 40,
+                        clipPath: 'inset(100% 0% 0% 0%)',
+                      },
+                      visible: {
+                        clipPath: 'inset(0% 0% 0% 0%)',
+                        opacity: 1,
+                        scale: 1,
+                        translateY: 0,
+                        transition: { duration: 0.5, delay: 0.4 },
+                      },
+                    }}
                   >
                     {writersOnline}
-                  </h1>
-                  <p>Writers Online</p>
+                  </motion.h1>
+                  <motion.p
+                    className="text-sm capitalize py-2"
+                    initial="hidden"
+                    animate={isInView ? 'visible' : 'hidden'}
+                    variants={{
+                      hidden: { opacity: 0, scale: 0.96, translateX: 40 },
+                      visible: {
+                        opacity: 1,
+                        scale: 1,
+                        translateX: 0,
+                        transition: { duration: 0.5, delay: 0.5 },
+                      },
+                    }}
+                  >
+                    Writers Online
+                  </motion.p>
                 </div>
               </div>
               <div className="grid gap-8 grid-cols-2">
                 <div>
-                  <h1
+                  <motion.h1
                     className={classNames(
                       lexend.className,
                       'font-bold text-6xl text-bermuda',
                     )}
+                    initial="hidden"
+                    animate={isInView ? 'visible' : 'hidden'}
+                    variants={{
+                      hidden: {
+                        opacity: 0,
+                        scale: 0.96,
+                        translateY: 40,
+                        clipPath: 'inset(100% 0% 0% 0%)',
+                      },
+                      visible: {
+                        clipPath: 'inset(0% 0% 0% 0%)',
+                        opacity: 1,
+                        scale: 1,
+                        translateY: 0,
+                        transition: { duration: 0.5, delay: 0.6 },
+                      },
+                    }}
                   >
                     {supportStaffOnline}
-                  </h1>
-                  <p>Support Staff Online</p>
+                  </motion.h1>
+                  <motion.p
+                    className="text-sm capitalize py-2"
+                    initial="hidden"
+                    animate={isInView ? 'visible' : 'hidden'}
+                    variants={{
+                      hidden: { opacity: 0, scale: 0.96, translateX: 40 },
+                      visible: {
+                        opacity: 1,
+                        scale: 1,
+                        translateX: 0,
+                        transition: { duration: 0.5, delay: 0.7 },
+                      },
+                    }}
+                  >
+                    Support Staff Online
+                  </motion.p>
                 </div>
                 <div>
-                  <h1
+                  <motion.h1
                     className={classNames(
                       lexend.className,
                       'font-bold text-6xl text-bermuda',
                     )}
+                    initial="hidden"
+                    animate={isInView ? 'visible' : 'hidden'}
+                    variants={{
+                      hidden: {
+                        opacity: 0,
+                        scale: 0.96,
+                        translateY: 40,
+                        clipPath: 'inset(100% 0% 0% 0%)',
+                      },
+                      visible: {
+                        clipPath: 'inset(0% 0% 0% 0%)',
+                        opacity: 1,
+                        scale: 1,
+                        translateY: 0,
+                        transition: { duration: 0.5, delay: 0.8 },
+                      },
+                    }}
                   >
                     {averageScore}
-                  </h1>
-                  <p>Average Writer’s Score</p>
+                  </motion.h1>
+                  <motion.p
+                    className="text-sm capitalize py-2"
+                    initial="hidden"
+                    animate={isInView ? 'visible' : 'hidden'}
+                    variants={{
+                      hidden: { opacity: 0, scale: 0.96, translateX: 40 },
+                      visible: {
+                        opacity: 1,
+                        scale: 1,
+                        translateX: 0,
+                        transition: { duration: 0.5, delay: 0.9 },
+                      },
+                    }}
+                  >
+                    Average Writer’s Score
+                  </motion.p>
                 </div>
               </div>
             </div>
@@ -674,7 +927,7 @@ export default function Home({
                   </li>
                 </ul>
               </div>
-              <div className="col-span-1 flex justify-center lg:justify-end">
+              <div className="col-span-1 scale-125 flex items-center justify-center lg:justify-end">
                 <PriceCalc storedata={storedata} />
               </div>
             </div>
@@ -698,7 +951,7 @@ export default function Home({
               animate={controls1}
               onHoverStart={handleHoverStart}
               onHoverEnd={handleHoverEnd}
-              className="flex gap-4 overscroll-x-scroll -mx-16"
+              className="flex flex-wrap sm:flex-nowrap gap-4 overscroll-x-scroll -mx-16"
             >
               {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((item, i) => (
                 <div
@@ -761,7 +1014,7 @@ export default function Home({
               animate={controls2}
               onHoverStart={handleHoverStart}
               onHoverEnd={handleHoverEnd}
-              className="flex gap-4 overscroll-x-scroll -mx-16"
+              className="flex flex-wrap sm:flex-nowrap gap-4 overscroll-x-scroll -mx-16"
             >
               {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((item, i) => (
                 <div

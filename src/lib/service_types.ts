@@ -204,8 +204,8 @@ export type MenuType = {
       _id: string
       title: string
       slug: string
-      services: { _id: string; title: string; slug: string }[]
+      items: { _id: string; title: string; slug: string }[]
     }[]
   }[]
-  href: string | null
+  link: string
 }
