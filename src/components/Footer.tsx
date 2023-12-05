@@ -1,35 +1,33 @@
 import dynamic from 'next/dynamic'
+import { Inter } from 'next/font/google'
+import classNames from '../utils/ClassNames'
+import Link from 'next/link'
+import Image from 'next/image'
 
 const Container = dynamic(() => import('@/components/Container'), {
   ssr: true,
 })
-import { Inter } from 'next/font/google'
-import classNames from '../utils/ClassNames'
-import Link from 'next/link'
-import Logo from '@/components/Logo'
-import { useRouter } from 'next/router'
-import Image from 'next/image'
+
 const inter = Inter({
   weight: ['300', '400', '500', '600', '700'],
   subsets: ['latin'],
 })
 const Footer = () => {
-  const router = useRouter()
-  const backToTop = () => {
-    if (document) {
-      document.body.scrollTop = 0
-      document.documentElement.scrollTop = 0
-    }
-  }
-
   return (
     <>
-      <Container className="py-10 min-w-full bg-gray-200 text-sm">
+      <Container className="py-10 min-w-full bg-[#f3faff] text-sm">
         <div className="sm:grid sm:grid-cols-2 sm:gap-8 xl:col-span-3 text-center lg:text-left">
           <div className="md:grid md:grid-cols-2 md:gap-8">
             <div className="hidden lg:block">
               <ul role="list" className={classNames(inter.className, 'mt-6')}>
-                <Logo className="w-52 md:mx-auto text-bermuda" />
+                <Image
+                    loading="lazy"
+                    src="/logo.svg"
+                    width={50}
+                    height={50}
+                    className="md:mx-auto"
+                    alt="logo"
+                />
               </ul>
             </div>
             <div className="mt-10 md:mt-0">
@@ -75,8 +73,8 @@ const Footer = () => {
               <div role="list" className="mt-2">
                 <Image
                   src="/secure-payment.svg"
-                  width={190}
-                  height={26}
+                  width={250}
+                  height={50}
                   alt="Secure payments"
                   className="mx-auto sm:mx-0"
                 />
@@ -85,7 +83,7 @@ const Footer = () => {
           </div>
         </div>
       </Container>
-      <div className="pb-2 bg-gray-200 px-4 sm:px-6 lg:px-8">
+      <div className="pb-6 bg-[#f3faff] px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-4xl space-y-2">
           <p
             className={classNames(

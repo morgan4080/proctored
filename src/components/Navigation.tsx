@@ -6,6 +6,8 @@ import {
   MenuType,
 } from '@/lib/service_types'
 import clsx from 'clsx'
+import {useSession} from "next-auth/react";
+import SubMenu from "@/components/SubMenu";
 
 const getLinks = async (): Promise<CategoryWithSubCategoryAndService[]> => {
   const res = await fetch('/api/services?links=true')
@@ -42,9 +44,12 @@ const INITIALMENU = [
 ]
 
 const Navigation = () => {
+  const {data: session, status} = useSession()
+
   let [menu, setMenu] = useState<MenuType[]>(INITIALMENU)
   const mobileMenu = useRef<HTMLUListElement | null>(null)
   const [isOpen, setOpen] = useState(false)
+  const [currentMenu, setCurrentMenu] = useState<MenuType | undefined>(undefined)
   const [hovering, setHovering] = useState<number | null>(null)
   const [popoverLeft, setPopoverLeft] = useState<number | null>(null)
   const [popoverHeight, setPopoverHeight] = useState<number | null>(null)
@@ -83,20 +88,184 @@ const Navigation = () => {
     getLinks().then((links) => {
       setMenu((menuItems) => {
         return menuItems.map((m) => {
-          if (m.name == 'Services' && m.categories.length == 0) {
-            m.categories = links
-            return m
-          } else {
-            return m
+          switch (m.name) {
+            case 'Services':
+              if (m.categories.length == 0) {
+                m.categories = links.map(link => {
+                  const {_id, title, slug, subcategories} = link
+                  return {
+                    _id,
+                    title,
+                    slug,
+                    subcategories: subcategories.map(subcategory => {
+                      return {
+                        _id: subcategory._id,
+                        title: subcategory.title,
+                        slug: subcategory.slug,
+                        items: subcategory.services
+                      }
+                    })
+                  }
+                })
+              }
+              break
+            case 'Account':
+              switch (status) {
+                case "authenticated":
+                  const { user } = session
+                  if (user) {
+                    switch (user.userRole) {
+                      case "user":
+                        m.categories = [
+                          {
+                            _id: 'me-' + Math.random().toString(36).slice(2, 18),
+                            title: "My Profile",
+                            slug: "me",
+                            subcategories: [
+                              {
+                                _id: 'orders-' + Math.random().toString(36).slice(2, 18),
+                                title: "Orders",
+                                slug: "orders",
+                                items: []
+                              },
+                              {
+                                _id: 'transactions-' + Math.random().toString(36).slice(2, 18),
+                                title: "Transactions",
+                                slug: "transactions",
+                                items: []
+                              }
+                            ]
+                          }
+                        ]
+                        break
+                      case "admin":
+                        m.categories = [
+                          {
+                            _id: 'me-' + Math.random().toString(36).slice(2, 18),
+                            title: "My Profile",
+                            slug: "me",
+                            subcategories: [
+                              {
+                                _id: 'orders-' + Math.random().toString(36).slice(2, 18),
+                                title: "Orders",
+                                slug: "orders",
+                                items: []
+                              },
+                              {
+                                _id: 'transactions-' + Math.random().toString(36).slice(2, 18),
+                                title: "Transactions",
+                                slug: "transactions",
+                                items: []
+                              }
+                            ]
+                          }
+                        ]
+                        break
+                      case "superuser":
+                        m.categories = [
+                          {
+                            _id: 'me-' + Math.random().toString(36).slice(2, 18),
+                            title: "My Profile",
+                            slug: "me",
+                            subcategories: [
+                              {
+                                _id: 'orders-' + Math.random().toString(36).slice(2, 18),
+                                title: "Orders",
+                                slug: "orders",
+                                items: []
+                              },
+                              {
+                                _id: 'transactions-' + Math.random().toString(36).slice(2, 18),
+                                title: "Transactions",
+                                slug: "transactions",
+                                items: []
+                              }
+                            ]
+                          },
+                          {
+                            _id: 'admin-' + Math.random().toString(36).slice(2, 18),
+                            title: "Admin Dashboard",
+                            slug: "admin",
+                            subcategories: [
+                              {
+                                _id: 'users-' + Math.random().toString(36).slice(2, 18),
+                                title: "Users",
+                                slug: "users",
+                                items: []
+                              },
+                              {
+                                _id: 'orders-' + Math.random().toString(36).slice(2, 18),
+                                title: "Orders",
+                                slug: "orders",
+                                items: []
+                              },
+                              {
+                                _id: 'transactions-' + Math.random().toString(36).slice(2, 18),
+                                title: "Transactions",
+                                slug: "transactions",
+                                items: []
+                              },
+                              {
+                                _id: 'services-' + Math.random().toString(36).slice(2, 18),
+                                title: "Services",
+                                slug: "services",
+                                items: []
+                              },
+                              {
+                                _id: 'papers-' + Math.random().toString(36).slice(2, 18),
+                                title: "Papers",
+                                slug: "papers",
+                                items: []
+                              },
+                              {
+                                _id: 'blogs-' + Math.random().toString(36).slice(2, 18),
+                                title: "Blogs",
+                                slug: "blogs",
+                                items: []
+                              }
+                            ]
+                          }
+                        ]
+                        break
+                    }
+                  }
+                  break
+                case "unauthenticated":
+                  m.categories = [
+                    {
+                      _id: 'login-' + Math.random().toString(36).slice(2, 18),
+                      title: "Login",
+                      slug: "login",
+                      subcategories: []
+                    },
+                    {
+                      _id: 'signup-' + Math.random().toString(36).slice(2, 18),
+                      title: "Sign Up",
+                      slug: "sign",
+                      subcategories: []
+                    }
+                  ]
+                  break
+              }
+              break
           }
+          return m
         })
       })
+
     })
-  }, [])
+  }, [session, status])
 
   useEffect(() => {
     setMenus()
-  }, [setMenus])
+  }, [setMenus, session, status])
+
+  useEffect(() => {
+    const current = menu.find((menuItem, index) => hovering == index)
+    if (current) {
+      setCurrentMenu(current)
+    }
+  }, [menu, hovering])
 
   return (
     <>
@@ -104,7 +273,7 @@ const Navigation = () => {
         onMouseLeave={() => {
           setHovering(null)
         }}
-        className="flex items-center justify-between w-full z-10 max-w-7xl mx-auto"
+        className="flex items-center justify-between w-full z-10 max-w-7xl mx-auto relative"
       >
         <Link
           href="/"
@@ -172,6 +341,7 @@ const Navigation = () => {
               </button>
             </li>
           ) : null}
+
           {menu.map((item, index) => (
             <li
               key={index}
@@ -213,14 +383,6 @@ const Navigation = () => {
             </li>
           ))}
         </ul>
-        {hovering && (
-          <div
-            style={{
-              left: popoverLeft || 0,
-            }}
-            className="absolute top-12 pt-6 -ml-24 w-[600px] bg-white overflow-hidden transform-gpu rounded shadow-lg transition-all duration-300"
-          ></div>
-        )}
         <div
           role="mobile-menu-toggle-collapsed"
           aria-expanded={isOpen}
@@ -271,7 +433,7 @@ const Navigation = () => {
         </div>
         <Link
           role="CTA"
-          href="/order/create/proctored-exams-help"
+          href="/order/create"
           className="self-stretch flex justify-between items-center gap-4 px-4 lg:px-0"
         >
           <div className="text-white text-base font-bold ">ORDER NOW</div>
@@ -310,6 +472,50 @@ const Navigation = () => {
             />
           </div>
         </Link>
+
+        <>
+          <span
+              style={{
+                left: popoverLeft || 0,
+              }}
+              className={
+                clsx(
+                    "absolute w-[12px] h-[12px] bottom-[10px] ml-[28px] rounded-tl-sm border-white z-[2] shadow-custom bg-white origin-center rotate-45 transform-gpu transition-all duration-300",
+                    hovering ? "translate-y-0 opacity-100 z-[2]" : "translate-y-1.5 opacity-0 -z-[2]"
+                )}
+          ></span>
+          <div
+              style={{
+                left: popoverLeft || 0,
+              }}
+              className={
+                clsx(
+                    "absolute bottom-[8.5px] -ml-24 w-[600px] bg-white overflow-hidden transform-gpu rounded shadow-lg transition-all duration-300",
+                    hovering ? "translate-y-0 opacity-100 z-[2]" : "translate-y-1.5 opacity-0 -z-[2]"
+                )}
+          >
+            <SubMenu className="bg-[#f6f6f6]">
+              <div className="p-1 flex">
+                <div className="w-1/3 space-y-1">
+                  {
+                    currentMenu ?
+                      currentMenu.categories.map((category, i) => (
+                        <div key={i} className="flex flex-col bg-white rounded-sm">
+                          <div className="mt-4 col-span-2 text-sm leading-6 text-slate-700 dark:text-slate-400">
+                            <dt className="sr-only">{category.title}</dt>
+                            <dd>
+                              {category.title}
+                            </dd>
+                          </div>
+                        </div>
+                      )) : null
+                  }
+                </div>
+                <div className="w-2/3"></div>
+              </div>
+            </SubMenu>
+          </div>
+        </>
       </nav>
     </>
   )

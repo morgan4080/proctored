@@ -1,7 +1,8 @@
 import React, { ForwardedRef, forwardRef } from 'react'
+import {cn} from "@/lib/utils"
 
-interface MenuContainerProps {
-  categories: {
+
+/* categories: {
     _id: string
     title: string
     slug: string
@@ -11,13 +12,16 @@ interface MenuContainerProps {
       slug: string
       items: { _id: string; title: string; slug: string }[]
     }[]
-  }[]
+  }[]*/
+
+interface MenuContainerProps {
   children: React.ReactNode
+  className: string
 }
 
-const SubMenu = React.forwardRef<HTMLDivElement, MenuContainerProps>(
+const SubMenu = forwardRef<HTMLDivElement, MenuContainerProps>(
   (props, ref) => {
-    return <div ref={ref as ForwardedRef<HTMLDivElement>}>{props.children}</div>
+    return <div ref={ref as ForwardedRef<HTMLDivElement>} className={cn(props.className)}>{props.children}</div>
   },
 )
 

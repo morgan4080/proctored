@@ -289,13 +289,13 @@ export default function Home({
                   <br />
                   <span>Help</span>
                 </h1>
-                <p className="py-6 max-w-2xl text-lg tracking-tight text-white/80 text-center lg:text-left">
+                <p className="py-6 max-w-2xl text-lg tracking-wider text-white text-center lg:text-left">
                   We are reliable professional writers & academic researchers.
                   We pursue quality and excellence in providing academic help.
                 </p>
 
                 <Link
-                  href="/order/create/proctored-exams-help"
+                  href="/order/create"
                   className="mb-12 bg-teal-300 text-center w-44 py-3 px-8 text-xl rounded-full text-black font-semibold mt-4 transform hover:scale-105 transition ease-in-out duration-100"
                 >
                   Order Now
@@ -478,7 +478,7 @@ export default function Home({
                           </div>
                         </div>
                         <Link
-                          href={`/order/create/proctored-exams-help`}
+                          href={`/order/create`}
                           className="bg-bermuda text-center rounded-full text-white text-sm font-semibold py-3 mt-4"
                         >
                           <span className="">Hire Writer</span>
@@ -1231,7 +1231,7 @@ export default function Home({
                 </div>
               </div>
               <Link
-                href="/order/create/proctored-exams-help"
+                href="/order/create"
                 className="bg-teal-300 rounded-md text-white py-3 px-12"
               >
                 <span className="font-bold text-black">Order Now</span>
@@ -1614,7 +1614,7 @@ export default function Home({
 
             <div className="flex justify-center align-center pt-16">
               <Link
-                href="/order/create/proctored-exams-help"
+                href="/order/create"
                 className="bg-teal-300 w-44 py-3 px-8 text-xl rounded-2xl text-black font-semibold hidden lg:inline-block mt-4 transform hover:scale-105 transition ease-in-out duration-100"
               >
                 Order Now

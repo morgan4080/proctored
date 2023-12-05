@@ -16,6 +16,9 @@ module.exports = {
       },
     },
     extend: {
+      boxShadow: {
+        custom: '-3px -3px 5px rgba(82,95,127,.04)'
+      },
       colors: {
         bermuda: '#005398', // 394c67
         plumes: '#2c3e50',
