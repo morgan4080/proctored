@@ -16,6 +16,9 @@ module.exports = {
       },
     },
     extend: {
+      transitionDuration: {
+        '350': '350ms',
+      },
       boxShadow: {
         custom: '-3px -3px 5px rgba(82,95,127,.04)'
       },

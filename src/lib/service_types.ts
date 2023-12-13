@@ -196,16 +196,20 @@ export type FaqType = { name: string; description: string }
 
 export type MenuType = {
   name: string
-  categories: {
+  categories: MenuCategory[]
+  link: string
+}
+
+export type MenuCategory = {
+  _id: string
+  title: string
+  slug: string
+  description: string
+  subcategories: {
     _id: string
     title: string
     slug: string
-    subcategories: {
-      _id: string
-      title: string
-      slug: string
-      items: { _id: string; title: string; slug: string }[]
-    }[]
+    description: string
+    items: { _id: string; title: string; slug: string }[]
   }[]
-  link: string
 }

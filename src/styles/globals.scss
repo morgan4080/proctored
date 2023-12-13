@@ -8,6 +8,10 @@ html {
   scroll-behavior: smooth;
 }
 
+body {
+  font-size: 1rem !important;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

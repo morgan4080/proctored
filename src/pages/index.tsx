@@ -89,7 +89,7 @@ import {
 } from '@/lib/service_types'
 
 const inter = Inter({
-  weight: ['100', '200', '300', '400', '500'],
+  weight: ['100', '200', '300', '400', '500', '600'],
   subsets: ['latin'],
 })
 

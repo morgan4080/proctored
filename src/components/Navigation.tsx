@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import {
@@ -8,6 +8,7 @@ import {
 import clsx from 'clsx'
 import {useSession} from "next-auth/react";
 import SubMenu from "@/components/SubMenu";
+import {SlideWrapper} from "@/components/SlideWrapper";
 
 const getLinks = async (): Promise<CategoryWithSubCategoryAndService[]> => {
   const res = await fetch('/api/services?links=true')
@@ -19,7 +20,7 @@ const INITIALMENU = [
   {
     name: 'Home',
     categories: [],
-    link: '#',
+    link: '/',
   },
   {
     name: 'Services',
@@ -49,11 +50,11 @@ const Navigation = () => {
   let [menu, setMenu] = useState<MenuType[]>(INITIALMENU)
   const mobileMenu = useRef<HTMLUListElement | null>(null)
   const [isOpen, setOpen] = useState(false)
-  const [currentMenu, setCurrentMenu] = useState<MenuType | undefined>(undefined)
   const [hovering, setHovering] = useState<number | null>(null)
   const [popoverLeft, setPopoverLeft] = useState<number | null>(null)
   const [popoverHeight, setPopoverHeight] = useState<number | null>(null)
 
+  // keep a reference for absolute menu to keep a reference for the content height
   const refs = useRef<(HTMLElement | null)[]>([])
 
   function onHover(index: number, el: HTMLElement) {
@@ -92,16 +93,18 @@ const Navigation = () => {
             case 'Services':
               if (m.categories.length == 0) {
                 m.categories = links.map(link => {
-                  const {_id, title, slug, subcategories} = link
+                  const {_id, title, slug, description, subcategories} = link
                   return {
                     _id,
                     title,
                     slug,
+                    description,
                     subcategories: subcategories.map(subcategory => {
                       return {
                         _id: subcategory._id,
                         title: subcategory.title,
                         slug: subcategory.slug,
+                        description: subcategory.description,
                         items: subcategory.services
                       }
                     })
@@ -121,17 +124,20 @@ const Navigation = () => {
                             _id: 'me-' + Math.random().toString(36).slice(2, 18),
                             title: "My Profile",
                             slug: "me",
+                            description: "me",
                             subcategories: [
                               {
                                 _id: 'orders-' + Math.random().toString(36).slice(2, 18),
                                 title: "Orders",
                                 slug: "orders",
+                                description: "orders",
                                 items: []
                               },
                               {
                                 _id: 'transactions-' + Math.random().toString(36).slice(2, 18),
                                 title: "Transactions",
                                 slug: "transactions",
+                                description: "transactions",
                                 items: []
                               }
                             ]
@@ -144,17 +150,20 @@ const Navigation = () => {
                             _id: 'me-' + Math.random().toString(36).slice(2, 18),
                             title: "My Profile",
                             slug: "me",
+                            description: "me",
                             subcategories: [
                               {
                                 _id: 'orders-' + Math.random().toString(36).slice(2, 18),
                                 title: "Orders",
                                 slug: "orders",
+                                description: "orders",
                                 items: []
                               },
                               {
                                 _id: 'transactions-' + Math.random().toString(36).slice(2, 18),
                                 title: "Transactions",
                                 slug: "transactions",
+                                description: "transactions",
                                 items: []
                               }
                             ]
@@ -167,17 +176,20 @@ const Navigation = () => {
                             _id: 'me-' + Math.random().toString(36).slice(2, 18),
                             title: "My Profile",
                             slug: "me",
+                            description: "me",
                             subcategories: [
                               {
                                 _id: 'orders-' + Math.random().toString(36).slice(2, 18),
                                 title: "Orders",
                                 slug: "orders",
+                                description: "orders",
                                 items: []
                               },
                               {
                                 _id: 'transactions-' + Math.random().toString(36).slice(2, 18),
                                 title: "Transactions",
                                 slug: "transactions",
+                                description: "transactions",
                                 items: []
                               }
                             ]
@@ -186,41 +198,48 @@ const Navigation = () => {
                             _id: 'admin-' + Math.random().toString(36).slice(2, 18),
                             title: "Admin Dashboard",
                             slug: "admin",
+                            description: "admin",
                             subcategories: [
                               {
                                 _id: 'users-' + Math.random().toString(36).slice(2, 18),
                                 title: "Users",
                                 slug: "users",
+                                description: "users",
                                 items: []
                               },
                               {
                                 _id: 'orders-' + Math.random().toString(36).slice(2, 18),
                                 title: "Orders",
                                 slug: "orders",
+                                description: "orders",
                                 items: []
                               },
                               {
                                 _id: 'transactions-' + Math.random().toString(36).slice(2, 18),
                                 title: "Transactions",
                                 slug: "transactions",
+                                description: "transactions",
                                 items: []
                               },
                               {
                                 _id: 'services-' + Math.random().toString(36).slice(2, 18),
                                 title: "Services",
                                 slug: "services",
+                                description: "services",
                                 items: []
                               },
                               {
                                 _id: 'papers-' + Math.random().toString(36).slice(2, 18),
                                 title: "Papers",
                                 slug: "papers",
+                                description: "papers",
                                 items: []
                               },
                               {
                                 _id: 'blogs-' + Math.random().toString(36).slice(2, 18),
                                 title: "Blogs",
                                 slug: "blogs",
+                                description: "blogs",
                                 items: []
                               }
                             ]
@@ -236,12 +255,14 @@ const Navigation = () => {
                       _id: 'login-' + Math.random().toString(36).slice(2, 18),
                       title: "Login",
                       slug: "login",
+                      description: "login",
                       subcategories: []
                     },
                     {
                       _id: 'signup-' + Math.random().toString(36).slice(2, 18),
                       title: "Sign Up",
                       slug: "sign",
+                      description: "sign",
                       subcategories: []
                     }
                   ]
@@ -260,24 +281,17 @@ const Navigation = () => {
     setMenus()
   }, [setMenus, session, status])
 
-  useEffect(() => {
-    const current = menu.find((menuItem, index) => hovering == index)
-    if (current) {
-      setCurrentMenu(current)
-    }
-  }, [menu, hovering])
-
   return (
     <>
       <nav
         onMouseLeave={() => {
           setHovering(null)
         }}
-        className="flex items-center justify-between w-full z-10 max-w-7xl mx-auto relative"
+        className="flex items-center justify-between w-full z-10 max-w-7xl mx-auto relative my-2"
       >
         <Link
           href="/"
-          className="text-neutral-50 text-lg font-bold self-stretch p-4 relative"
+          className="text-neutral-50 text-lg font-bold self-stretch py-4 pr-4 relative"
         >
           <Image
             loading="lazy"
@@ -348,8 +362,7 @@ const Navigation = () => {
               role="menuitem"
               onMouseEnter={(event) => {
                 if (item.categories.length > 0) {
-                  setHovering(index)
-                  setPopoverLeft(event.currentTarget.offsetLeft)
+                  onHover(index, event.currentTarget)
                 }
               }}
             >
@@ -358,16 +371,16 @@ const Navigation = () => {
                 href={item.link}
                 className="self-stretch flex flex-col"
               >
-                <span className="flex items-center space-x-2 text-white text-base font-semibold">
+                <span className="flex items-center space-x-1 text-white text-base font-semibold">
                   <span>{item.name}</span>
                   <svg
                     className={clsx(
-                      'text-white w-2 h-2',
+                      'text-white w-3 h-3',
                       item.categories.length > 0 ? 'block' : 'hidden',
                     )}
                     fill="none"
                     stroke="currentColor"
-                    strokeWidth="1.5"
+                    strokeWidth="2"
                     viewBox="0 0 24 24"
                     xmlns="http://www.w3.org/2000/svg"
                     aria-hidden="true"
@@ -443,7 +456,7 @@ const Navigation = () => {
               src="/Path%206.svg"
               width={10}
               height={10}
-              className="aspect-[0.6] object-contain object-center w-[9px] stroke-[2px] stroke-neutral-50 opacity-25 overflow-hidden shrink-0 max-w-full"
+              className="animate-pulse aspect-[0.6] object-contain object-center w-[9px] stroke-[2px] stroke-neutral-50 opacity-25 overflow-hidden shrink-0 max-w-full"
               alt={''}
             />
             <Image
@@ -451,7 +464,7 @@ const Navigation = () => {
               src="/Path%207.svg"
               width={10}
               height={10}
-              className="aspect-[0.6] object-contain object-center w-[9px] stroke-[2px] stroke-neutral-50 opacity-50 overflow-hidden shrink-0 max-w-full"
+              className="animate-pulse aspect-[0.6] object-contain object-center w-[9px] stroke-[2px] stroke-neutral-50 opacity-50 overflow-hidden shrink-0 max-w-full"
               alt={''}
             />
             <Image
@@ -459,7 +472,7 @@ const Navigation = () => {
               src="/Path%208.svg"
               width={10}
               height={10}
-              className="aspect-[0.6] object-contain object-center w-[9px] stroke-[2px] stroke-neutral-50 opacity-75 overflow-hidden shrink-0 max-w-full"
+              className="animate-pulse aspect-[0.6] object-contain object-center w-[9px] stroke-[2px] stroke-neutral-50 opacity-75 overflow-hidden shrink-0 max-w-full"
               alt={''}
             />
             <Image
@@ -467,55 +480,39 @@ const Navigation = () => {
               src="/Path%209.svg"
               width={10}
               height={10}
-              className="aspect-[0.6] object-contain object-center w-[9px] stroke-[2px] stroke-neutral-50 overflow-hidden shrink-0 max-w-full"
+              className="animate-pulse aspect-[0.6] object-contain object-center w-[9px] stroke-[2px] stroke-neutral-50 overflow-hidden shrink-0 max-w-full"
               alt={''}
             />
           </div>
         </Link>
 
-        <>
-          <span
-              style={{
-                left: popoverLeft || 0,
-              }}
-              className={
-                clsx(
-                    "absolute w-[12px] h-[12px] bottom-[10px] ml-[28px] rounded-tl-sm border-white z-[2] shadow-custom bg-white origin-center rotate-45 transform-gpu transition-all duration-300",
-                    hovering ? "translate-y-0 opacity-100 z-[2]" : "translate-y-1.5 opacity-0 -z-[2]"
-                )}
-          ></span>
-          <div
-              style={{
-                left: popoverLeft || 0,
-              }}
-              className={
-                clsx(
-                    "absolute bottom-[8.5px] -ml-24 w-[600px] bg-white overflow-hidden transform-gpu rounded shadow-lg transition-all duration-300",
-                    hovering ? "translate-y-0 opacity-100 z-[2]" : "translate-y-1.5 opacity-0 -z-[2]"
-                )}
-          >
-            <SubMenu className="bg-[#f6f6f6]">
-              <div className="p-1 flex">
-                <div className="w-1/3 space-y-1">
-                  {
-                    currentMenu ?
-                      currentMenu.categories.map((category, i) => (
-                        <div key={i} className="flex flex-col bg-white rounded-sm">
-                          <div className="mt-4 col-span-2 text-sm leading-6 text-slate-700 dark:text-slate-400">
-                            <dt className="sr-only">{category.title}</dt>
-                            <dd>
-                              {category.title}
-                            </dd>
-                          </div>
-                        </div>
-                      )) : null
-                  }
-                </div>
-                <div className="w-2/3"></div>
-              </div>
-            </SubMenu>
+        <div
+            className={clsx(
+                "absolute ml-[30px] w-[12px] h-[12px] bottom-2 rounded-tl-sm bg-[#eff3f9] origin-center rotate-45",
+                hovering !== null ? "transition-all -translate-y-2 delay-100" : "opacity-0 translate-y-0 pointer-events-none"
+            )}
+            style={{
+              left: popoverLeft || 0
+            }}
+        />
+        <div
+          className={clsx(
+              "absolute top-16 -ml-24 w-[600px] duration-300",
+              hovering !== null ? "transition-all" : "opacity-0 pointer-events-none"
+          )}
+          style={{
+            left: popoverLeft || 0
+          }}
+        >
+          <div style={{height: popoverHeight || 0}} className="bg-[#eff3f9] overflow-hidden transform-gpu rounded shadow">
+            <SlideWrapper index={1} hovering={hovering}>
+              <SubMenu ref={ref => refs.current[1] = ref} categories={menu[1].categories} className="" />
+            </SlideWrapper>
+            <SlideWrapper index={4} hovering={hovering}>
+              <SubMenu ref={ref => refs.current[4] = ref} categories={menu[4].categories} className="" />
+            </SlideWrapper>
           </div>
-        </>
+        </div>
       </nav>
     </>
   )
