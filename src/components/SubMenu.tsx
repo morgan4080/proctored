@@ -1,9 +1,9 @@
 import React, {ForwardedRef, forwardRef, useState} from 'react';
-import {motion} from 'framer-motion'
 import {cn} from "@/lib/utils";
 import {MenuCategory} from "@/lib/service_types";
 import {clsx} from "clsx";
 import Link from "next/link";
+import { signIn, signOut, useSession } from 'next-auth/react'
 
 type MenuContainerProps = {
   categories: MenuCategory[]
@@ -22,10 +22,10 @@ const SubMenu = forwardRef<HTMLDivElement, MenuContainerProps>(
                             <button onMouseEnter={(event) => {
                                 setHoveredCat(i)
                             }} onMouseLeave={(event) => {
-                                setHoveredCat(0)
+                                // setHoveredCat(0)
                             }} className={
                                 clsx(
-                                "w-full text-left text-[13px] cursor-pointer rounded-md p-4 relative z-[2]"
+                                "w-full text-left text-[14px] cursor-pointer rounded-md p-4 relative z-[2]"
                                 )
                             } aria-expanded={hoveredCat ? "true" : "false"}>
                                 <dl className="grid sm:block lg:grid xl:block grid-cols-2 grid-rows-2 items-center z-[3] relative">
@@ -49,7 +49,7 @@ const SubMenu = forwardRef<HTMLDivElement, MenuContainerProps>(
                             <div
                                 style={{outlineStyle: "solid", outlineWidth: 3, outlineColor: "#eff3f9"}}
                                 className={clsx(
-                                    "z-[1] transition-all duration-300 opacity-0 group-hover:opacity-100 border-1 border-[#eff3f9] absolute w-[12px] h-[12px] bottom-[44%] -right-1.5 rounded-tl-sm bg-white origin-center rotate-[135deg]",
+                                    "z-[1] transition-all duration-300 opacity-0 group-hover:opacity-100 border-1 border-[#eff3f9] absolute w-[14px] h-[14px] bottom-[44%] -right-1.5 rounded-tl-sm bg-white origin-center rotate-[135deg]",
                                     hoveredCat === i ? "opacity-100 translate-y-0" : i === 0 ? "opacity-0 translate-y-6" : "opacity-0 -translate-y-6"
                                 )}
                             />
@@ -57,42 +57,56 @@ const SubMenu = forwardRef<HTMLDivElement, MenuContainerProps>(
                     ))
                 }
             </div>
-            <div className="w-2/3 grid grid-cols-2 gap-4 text-[13px] rounded-md bg-white p-4 -ml-1">
+            <div className="w-2/3 grid grid-cols-2 gap-4 text-[14px] rounded-md bg-white p-4 -ml-1 h-full pb-16">
                 {props.categories[hoveredCat] ? props.categories[hoveredCat].subcategories.map((sub, index) => (
-                    sub.items.length > 0 ?
-                        <motion.div
-                            key={index}
-                            className="flex flex-col group"
-                            initial="hidden"
-                            animate={index === hoveredCat ? 'visible' : 'hidden'}
-                            variants={{
-                                hidden: {
-                                    opacity: 0,
-                                    translateY: 40,
-                                },
-                                visible: {
-                                    opacity: 1,
-                                    translateY: 0,
-                                    transition: { duration: 10 },
-                                }
-                            }}
-                        >
-                            <h4 className="text-slate-400 text-[13px] pb-0.5 font-[600]">
-                                {sub.title}
-                            </h4>
-                            <span className="sr-only">
-                                {sub.description}
-                            </span>
-                           <div className="space-y-1.5">
-                               {
-                                   sub.items.map((item, i) => (
-                                       <Link key={i} href={`/services/${props.categories[hoveredCat].slug}/${sub.slug}/${item.slug}`}>
-                                           <p className="tracking-wide text-slate-500 hover:text-slate-800">{'🔗' + item.title}</p>
-                                       </Link>
-                                   ))
-                               }
-                           </div>
-                        </motion.div>
+                        sub.items.length > 0
+                    ?
+
+                    <div
+                        key={index}
+                        className="flex flex-col group pb-8 h-full"
+                    >
+                        <h4 className="text-zinc-800/60 text-[12px] pb-1.5 font-[600]">
+                            {sub.title}
+                        </h4>
+                        <span className="sr-only">
+                            {sub.description}
+                        </span>
+                        <div className="space-y-1.5">
+                            {
+                                sub.items.map((item, i) => (
+                                    item._id.includes("login") ?
+
+                                    <button key={i} type="button" onClick={() => signIn()} className="cursor-pointer text-left">
+                                        <p className="tracking-normal font-semibold text-slate-400 hover:text-slate-800">{ item.title}</p>
+                                    </button>
+
+                                    :
+
+                                    item._id.includes("signup") ?
+
+                                    <button key={i} type="button" onClick={() => signIn()}
+                                            className="cursor-pointer text-left">
+                                        <p className="tracking-normal font-semibold text-slate-600 hover:text-slate-800">{item.title}</p>
+                                    </button>
+                                    :
+
+                                    item._id.includes("admin")  || item._id.includes("me") ?
+
+                                    <Link key={i}
+                                          href={`/${props.categories[hoveredCat].slug}/${sub.slug}/${item.slug}`}>
+                                        <p className="tracking-normal font-semibold text-slate-600 hover:text-slate-800 underline">{ item.title}</p>
+                                    </Link>
+                                    :
+                                    <Link key={i}
+                                          href={`/services/${props.categories[hoveredCat].slug}/${sub.slug}/${item.slug}`}>
+                                        <p className="tracking-normal font-semibold text-slate-600 hover:text-slate-800 underline">{ item.title}</p>
+                                    </Link>
+                                ))
+                            }
+                        </div>
+                    </div>
+
                     : null
                 ))
                 : null}

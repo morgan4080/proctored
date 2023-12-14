@@ -5,9 +5,7 @@ import Navigation from '@/components/Navigation'
 import Head from 'next/head'
 import classNames from '../../../../utils/ClassNames'
 import { Inter, Lexend } from 'next/font/google'
-const Container = dynamic(() => import('@/components/Container'), {
-  ssr: true,
-})
+import Container from '@/components/Container'
 import Footer from '@/components/Footer'
 const Toaster = dynamic(() => import('@/components/ui/toaster'), { ssr: false })
 import { EditorProvider, useCurrentEditor } from '@tiptap/react'

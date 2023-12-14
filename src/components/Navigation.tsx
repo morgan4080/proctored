@@ -122,19 +122,19 @@ const Navigation = () => {
                         m.categories = [
                           {
                             _id: 'me-' + Math.random().toString(36).slice(2, 18),
-                            title: "My Profile",
+                            title: "Profile",
                             slug: "me",
-                            description: "me",
+                            description: "Your account details",
                             subcategories: [
                               {
-                                _id: 'orders-' + Math.random().toString(36).slice(2, 18),
+                                _id: 'me-orders-' + Math.random().toString(36).slice(2, 18),
                                 title: "Orders",
                                 slug: "orders",
                                 description: "orders",
                                 items: []
                               },
                               {
-                                _id: 'transactions-' + Math.random().toString(36).slice(2, 18),
+                                _id: 'me-transactions-' + Math.random().toString(36).slice(2, 18),
                                 title: "Transactions",
                                 slug: "transactions",
                                 description: "transactions",
@@ -148,19 +148,19 @@ const Navigation = () => {
                         m.categories = [
                           {
                             _id: 'me-' + Math.random().toString(36).slice(2, 18),
-                            title: "My Profile",
+                            title: "Profile",
                             slug: "me",
-                            description: "me",
+                            description: "Your account details",
                             subcategories: [
                               {
-                                _id: 'orders-' + Math.random().toString(36).slice(2, 18),
+                                _id: 'me-orders-' + Math.random().toString(36).slice(2, 18),
                                 title: "Orders",
                                 slug: "orders",
                                 description: "orders",
                                 items: []
                               },
                               {
-                                _id: 'transactions-' + Math.random().toString(36).slice(2, 18),
+                                _id: 'me-transactions-' + Math.random().toString(36).slice(2, 18),
                                 title: "Transactions",
                                 slug: "transactions",
                                 description: "transactions",
@@ -174,19 +174,19 @@ const Navigation = () => {
                         m.categories = [
                           {
                             _id: 'me-' + Math.random().toString(36).slice(2, 18),
-                            title: "My Profile",
+                            title: "Profile",
                             slug: "me",
-                            description: "me",
+                            description: "Your account details",
                             subcategories: [
                               {
-                                _id: 'orders-' + Math.random().toString(36).slice(2, 18),
+                                _id: 'me-orders-' + Math.random().toString(36).slice(2, 18),
                                 title: "Orders",
                                 slug: "orders",
                                 description: "orders",
                                 items: []
                               },
                               {
-                                _id: 'transactions-' + Math.random().toString(36).slice(2, 18),
+                                _id: 'me-transactions-' + Math.random().toString(36).slice(2, 18),
                                 title: "Transactions",
                                 slug: "transactions",
                                 description: "transactions",
@@ -198,49 +198,85 @@ const Navigation = () => {
                             _id: 'admin-' + Math.random().toString(36).slice(2, 18),
                             title: "Admin Dashboard",
                             slug: "admin",
-                            description: "admin",
+                            description: "Admin account pages",
                             subcategories: [
                               {
-                                _id: 'users-' + Math.random().toString(36).slice(2, 18),
-                                title: "Users",
+                                _id: 'admin-users-' + Math.random().toString(36).slice(2, 18),
+                                title: "All Users",
                                 slug: "users",
                                 description: "users",
-                                items: []
+                                items: [
+                                  {
+                                    _id: 'admin-users-' + Math.random().toString(36).slice(2, 18),
+                                    title: "Users",
+                                    slug: "",
+                                  }
+                                ]
                               },
                               {
-                                _id: 'orders-' + Math.random().toString(36).slice(2, 18),
-                                title: "Orders",
+                                _id: 'admin-orders-' + Math.random().toString(36).slice(2, 18),
+                                title: "All Orders",
                                 slug: "orders",
                                 description: "orders",
-                                items: []
+                                items: [
+                                  {
+                                    _id: 'admin-orders-' + Math.random().toString(36).slice(2, 18),
+                                    title: "Orders",
+                                    slug: "",
+                                  }
+                                ]
                               },
                               {
-                                _id: 'transactions-' + Math.random().toString(36).slice(2, 18),
-                                title: "Transactions",
+                                _id: 'admin-transactions-' + Math.random().toString(36).slice(2, 18),
+                                title: "All Transactions",
                                 slug: "transactions",
                                 description: "transactions",
-                                items: []
+                                items: [
+                                  {
+                                    _id: 'admin-transactions-' + Math.random().toString(36).slice(2, 18),
+                                    title: "Transactions",
+                                    slug: "",
+                                  }
+                                ]
                               },
                               {
-                                _id: 'services-' + Math.random().toString(36).slice(2, 18),
-                                title: "Services",
+                                _id: 'admin-services-' + Math.random().toString(36).slice(2, 18),
+                                title: "All Services",
                                 slug: "services",
                                 description: "services",
-                                items: []
+                                items: [
+                                  {
+                                    _id: 'admin-services-' + Math.random().toString(36).slice(2, 18),
+                                    title: "Services",
+                                    slug: "",
+                                  }
+                                ]
                               },
                               {
-                                _id: 'papers-' + Math.random().toString(36).slice(2, 18),
-                                title: "Papers",
+                                _id: 'admin-papers-' + Math.random().toString(36).slice(2, 18),
+                                title: "All Papers",
                                 slug: "papers",
                                 description: "papers",
-                                items: []
+                                items: [
+                                  {
+                                    _id: 'admin-papers-' + Math.random().toString(36).slice(2, 18),
+                                    title: "Papers",
+                                    slug: "",
+                                  }
+                                ]
                               },
                               {
-                                _id: 'blogs-' + Math.random().toString(36).slice(2, 18),
-                                title: "Blogs",
+                                _id: 'admin-blogs-' + Math.random().toString(36).slice(2, 18),
+                                title: "All Blogs",
                                 slug: "blogs",
                                 description: "blogs",
-                                items: []
+                                items: [
+                                  {
+                                    _id: 'admin-blogs-' + Math.random().toString(36).slice(2, 18),
+                                    title: "Blogs",
+                                    slug: "",
+                                  }
+                                ]
                               }
                             ]
                           }
@@ -254,16 +290,44 @@ const Navigation = () => {
                     {
                       _id: 'login-' + Math.random().toString(36).slice(2, 18),
                       title: "Login",
-                      slug: "login",
-                      description: "login",
-                      subcategories: []
+                      slug: "",
+                      description: "signin   to account",
+                      subcategories: [
+                        {
+                          _id: 'login-' + Math.random().toString(36).slice(2, 18),
+                          title: "User Login",
+                          slug: "",
+                          description: "login",
+                          items: [
+                            {
+                              _id: 'login-' + Math.random().toString(36).slice(2, 18),
+                              title: "Login",
+                              slug: "",
+                            }
+                          ]
+                        },
+                      ]
                     },
                     {
                       _id: 'signup-' + Math.random().toString(36).slice(2, 18),
                       title: "Sign Up",
-                      slug: "sign",
-                      description: "sign",
-                      subcategories: []
+                      slug: "",
+                      description: "create an account",
+                      subcategories: [
+                        {
+                          _id: 'signup-' + Math.random().toString(36).slice(2, 18),
+                          title: "User Signup",
+                          slug: "",
+                          description: "signup",
+                          items: [
+                            {
+                              _id: 'signup-' + Math.random().toString(36).slice(2, 18),
+                              title: "Signup",
+                              slug: "",
+                            }
+                          ]
+                        },
+                      ]
                     }
                   ]
                   break
@@ -504,7 +568,7 @@ const Navigation = () => {
             left: popoverLeft || 0
           }}
         >
-          <div style={{height: popoverHeight || 0}} className="bg-[#eff3f9] overflow-hidden transform-gpu rounded shadow">
+          <div style={{height: popoverHeight || 0, minHeight: 250}} className="bg-[#eff3f9] overflow-hidden transform-gpu rounded shadow">
             <SlideWrapper index={1} hovering={hovering}>
               <SubMenu ref={ref => refs.current[1] = ref} categories={menu[1].categories} className="" />
             </SlideWrapper>

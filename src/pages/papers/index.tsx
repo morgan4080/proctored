@@ -1,24 +1,16 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import Link from 'next/link'
 import Head from 'next/head'
 import classNames from '../../utils/ClassNames'
 import Navigation from '@/components/Navigation'
 import { Inter, Lexend } from 'next/font/google'
-const Container = dynamic(() => import('@/components/Container'), {
-  ssr: true,
-})
 import { Service } from '@/lib/service_types'
 import Footer from '@/components/Footer'
 import mongoClient from '@/lib/mongodb'
-import { useToast } from '@/components/ui/use-toast'
-import { ToastAction } from '@/components/ui/toast'
-const Toaster = dynamic(() => import('@/components/ui/toaster'), {
-  ssr: false,
-})
 import { Card, CardContent } from '@/components/ui/card'
+import Container from '@/components/Container'
 import { format } from 'date-fns'
-import dynamic from 'next/dynamic'
 
 const inter = Inter({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
@@ -44,7 +36,7 @@ export const getServerSideProps = (async ({ query }) => {
         }
       }
     }
-    const pageSize = 20 // Number of items per page
+    const pageSize = 18 // Number of items per page
     const skip = (page - 1) * pageSize
 
     // Mongodb client and document information
@@ -74,8 +66,7 @@ export const getServerSideProps = (async ({ query }) => {
     return {
       props: {
         pagination: { from, to, totalRecords, totalPages, currentPage: page },
-        papers: papers,
-        isConnected: true,
+        papers: papers
       },
     }
   } catch (e) {
@@ -89,8 +80,7 @@ export const getServerSideProps = (async ({ query }) => {
           totalPages: 0,
           currentPage: 0,
         },
-        papers: [],
-        isConnected: false,
+        papers: []
       },
     }
   }
@@ -103,26 +93,11 @@ export const getServerSideProps = (async ({ query }) => {
     currentPage: number
   }
   papers: Service[]
-  isConnected: boolean
 }>
 const Papers = ({
   pagination,
   papers,
-  isConnected,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  const { toast } = useToast()
-
-  useEffect(() => {
-    if (!isConnected) {
-      toast({
-        title: 'Heads Up!',
-        description: 'You are NOT connected to the database.',
-        action: (
-          <ToastAction altText="Goto schedule to undo">Clear</ToastAction>
-        ),
-      })
-    }
-  }, [isConnected, toast])
 
   return (
     <div className="relative">
@@ -315,7 +290,6 @@ const Papers = ({
         </Container>
       </main>
       <Footer />
-      <Toaster />
     </div>
   )
 }

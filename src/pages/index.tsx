@@ -15,9 +15,7 @@ const Toaster = dynamic(() => import('@/components/ui/toaster'), { ssr: false })
 const Navigation = dynamic(() => import('@/components/Navigation'), {
   ssr: true,
 })
-const Container = dynamic(() => import('@/components/Container'), {
-  ssr: true,
-})
+import Container from '@/components/Container'
 const HeroArt = dynamic(() => import('@/components/HeroArt'), {
   ssr: true,
 })
@@ -31,18 +29,18 @@ const PaymentIcons = dynamic(
 const PriceCalc = dynamic(() => import('@/components/transactions/PriceCalc'), {
   ssr: true,
 })
-const ScrollArea = dynamic(
+/*const ScrollArea = dynamic(
   () => import('@/components/ui/scroll-area').then((mod) => mod.ScrollArea),
   {
     ssr: false,
   },
-)
-const ScrollBar = dynamic(
+)*/
+/*const ScrollBar = dynamic(
   () => import('@/components/ui/scroll-area').then((mod) => mod.ScrollBar),
   {
     ssr: false,
   },
-)
+)*/
 const Accordion = dynamic(
   () => import('@/components/ui/accordion').then((mod) => mod.Accordion),
   {
