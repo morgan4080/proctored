@@ -5,7 +5,6 @@ import Navigation from '@/components/Navigation'
 const Container = dynamic(() => import('@/components/Container'), {
   ssr: true,
 })
-import { Inter, Lexend } from 'next/font/google'
 import { cn } from '@/lib/utils'
 import UsersAdmin from '@/components/users/usersAdmin'
 import {
@@ -13,7 +12,6 @@ import {
   OrderWithOwnerAndTransactionAndWriter,
   Paper,
   Service,
-  ServiceCategories,
   ServiceCategoriesWithSubCategories,
   ServiceSubCategories,
   TransactionWithOwnerAndOrder,
@@ -29,15 +27,6 @@ import ServicesAdmin from '@/components/services/ServicesAdmin'
 import BlogsAdmin from '@/components/blogs/BlogsAdmin'
 import PapersAdmin from '@/components/papers/PapersAdmin'
 import dynamic from 'next/dynamic'
-
-const inter = Inter({
-  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
-  subsets: ['latin'],
-})
-const lexend = Lexend({
-  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
-  subsets: ['latin'],
-})
 
 type Tabs =
   | 'users'
@@ -451,7 +440,7 @@ const Admin = ({
         </Head>
         <main
           className={classNames(
-            inter.className,
+            "font-serif",
             'flex min-h-screen flex-col relative',
           )}
         >
@@ -466,7 +455,7 @@ const Admin = ({
             <div className="lg:flex lg:items-center lg:justify-between">
               <div className="min-w-0 flex-1">
                 <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl flex gap-4 items-center">
-                  <span className={classNames(lexend.className)}>
+                  <span className={classNames("font-sans")}>
                     Admin Dashboard{' '}
                   </span>
                 </h2>

@@ -180,17 +180,29 @@ const Navigation = () => {
                             subcategories: [
                               {
                                 _id: 'me-orders-' + Math.random().toString(36).slice(2, 18),
-                                title: "Orders",
+                                title: "Your Orders",
                                 slug: "orders",
                                 description: "orders",
-                                items: []
+                                items: [
+                                  {
+                                    _id: 'me-orders-' + Math.random().toString(36).slice(2, 18),
+                                    title: "Orders",
+                                    slug: "",
+                                  }
+                                ]
                               },
                               {
                                 _id: 'me-transactions-' + Math.random().toString(36).slice(2, 18),
-                                title: "Transactions",
+                                title: "Your Transactions",
                                 slug: "transactions",
                                 description: "transactions",
-                                items: []
+                                items: [
+                                  {
+                                    _id: 'me-transactions-' + Math.random().toString(36).slice(2, 18),
+                                    title: "Transaction",
+                                    slug: "",
+                                  }
+                                ]
                               }
                             ]
                           },
@@ -351,7 +363,7 @@ const Navigation = () => {
         onMouseLeave={() => {
           setHovering(null)
         }}
-        className="flex items-center justify-between w-full z-10 max-w-7xl mx-auto relative my-2"
+        className="flex items-center justify-between w-full z-10 max-w-7xl mx-auto px-4 sm:px-0 relative"
       >
         <Link
           href="/"
@@ -360,12 +372,12 @@ const Navigation = () => {
           <Image
             loading="lazy"
             src="/logo.svg"
-            width={10}
-            height={10}
-            className="object-contain object-center w-12 overflow-hidden self-center"
+            width={14}
+            height={14}
+            className="object-contain object-center w-16 overflow-hidden self-center"
             alt="logo"
           />
-          <span className="absolute top-7 -right-14 hidden md:flex flex-wrap text-xs text-left">
+          <span className="absolute top-10 -right-14 hidden md:flex flex-wrap text-xs text-left">
             PROCTOR <br /> OWLS ™
           </span>
         </Link>
@@ -383,9 +395,9 @@ const Navigation = () => {
                   <Image
                     loading="lazy"
                     src="/logo.svg"
-                    width={10}
-                    height={10}
-                    className="object-contain object-center w-12 overflow-hidden self-center"
+                    width={14}
+                    height={14}
+                    className="object-contain object-center w-16 overflow-hidden self-center"
                     alt="logo"
                   />
                 </span>
@@ -561,14 +573,14 @@ const Navigation = () => {
         />
         <div
           className={clsx(
-              "absolute top-16 -ml-24 w-[600px] duration-300",
+              "absolute top-20 -ml-24 w-[600px] duration-300",
               hovering !== null ? "transition-all" : "opacity-0 pointer-events-none"
           )}
           style={{
             left: popoverLeft || 0
           }}
         >
-          <div style={{height: popoverHeight || 0, minHeight: 250}} className="bg-[#eff3f9] overflow-hidden transform-gpu rounded shadow">
+          <div style={{height: popoverHeight || 0}} className="bg-[#eff3f9] overflow-hidden transform-gpu rounded shadow">
             <SlideWrapper index={1} hovering={hovering}>
               <SubMenu ref={ref => refs.current[1] = ref} categories={menu[1].categories} className="" />
             </SlideWrapper>

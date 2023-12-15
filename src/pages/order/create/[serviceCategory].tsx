@@ -5,7 +5,6 @@ const Container = dynamic(() => import('@/components/Container'), {
   ssr: true,
 })
 import Navigation from '@/components/Navigation'
-import { Inter, Lexend } from 'next/font/google'
 import OrderSummary from '@/components/orders/OrderSummary'
 import OrderDetailsForm from '@/components/orders/OrderDetailsForm'
 import Footer from '@/components/Footer'
@@ -45,14 +44,6 @@ import mongoClient from '@/lib/mongodb'
 import Link from 'next/link'
 import SpecialisedExamOrder from '@/components/orders/SpecialisedExamOrder'
 import dynamic from 'next/dynamic'
-const inter = Inter({
-  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
-  subsets: ['latin'],
-})
-const lexend = Lexend({
-  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
-  subsets: ['latin'],
-})
 
 const { clientPromise } = mongoClient
 export const getServerSideProps = (async ({ params }) => {
@@ -356,7 +347,7 @@ const CreateOrder = ({
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main
-        className={cn(inter.className, 'flex min-h-screen flex-col relative')}
+        className={cn("font-serif", 'flex min-h-screen flex-col relative')}
       >
         <div className="bg-bermuda/95 w-full">
           <Navigation />
@@ -394,7 +385,7 @@ const CreateOrder = ({
                         key={sc._id}
                         value={sc.slug}
                         className={cn(
-                          lexend.className,
+                          "font-sans",
                           'data-[state=active]:ring-teal-500 data-[state=active]:ring-1 data-[state=active]:text-plumes data-[state=active]:shadow-lg data-[state=active]:bg-teal-300 data-[state=active]:shadow-green-200 p-3',
                         )}
                       >

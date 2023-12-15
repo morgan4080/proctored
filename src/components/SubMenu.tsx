@@ -4,6 +4,7 @@ import {MenuCategory} from "@/lib/service_types";
 import {clsx} from "clsx";
 import Link from "next/link";
 import { signIn, signOut, useSession } from 'next-auth/react'
+import {ScrollArea} from "@/components/ui/scroll-area";
 
 type MenuContainerProps = {
   categories: MenuCategory[]
@@ -57,59 +58,63 @@ const SubMenu = forwardRef<HTMLDivElement, MenuContainerProps>(
                     ))
                 }
             </div>
-            <div className="w-2/3 grid grid-cols-2 gap-4 text-[14px] rounded-md bg-white p-4 -ml-1 h-full pb-16">
-                {props.categories[hoveredCat] ? props.categories[hoveredCat].subcategories.map((sub, index) => (
-                        sub.items.length > 0
-                    ?
+            <div className="w-2/3 text-[14px] rounded-md bg-white -ml-1">
+                <ScrollArea className="h-72 w-full bg-transparent p-4">
+                    <div className="grid grid-cols-2 gap-4 pb-16">
+                        {props.categories[hoveredCat] ? props.categories[hoveredCat].subcategories.map((sub, index) => (
+                            sub.items.length > 0
+                                ?
 
-                    <div
-                        key={index}
-                        className="flex flex-col group pb-8 h-full"
-                    >
-                        <h4 className="text-zinc-800/60 text-[12px] pb-1.5 font-[600]">
-                            {sub.title}
-                        </h4>
-                        <span className="sr-only">
-                            {sub.description}
-                        </span>
-                        <div className="space-y-1.5">
-                            {
-                                sub.items.map((item, i) => (
-                                    item._id.includes("login") ?
+                                <div
+                                    key={index}
+                                    className="flex flex-col group h-full"
+                                >
+                                    <h4 className="text-zinc-800/50 text-[12px] pb-1.5 font-[600]">
+                                        {sub.title}
+                                    </h4>
+                                    <span className="sr-only">
+                                        {sub.description}
+                                    </span>
+                                    <div className="flex flex-col gap-1.5 pb-4">
+                                        {
+                                            sub.items.map((item, i) => (
+                                                item._id.includes("login") ?
 
-                                    <button key={i} type="button" onClick={() => signIn()} className="cursor-pointer text-left">
-                                        <p className="tracking-normal font-semibold text-slate-400 hover:text-slate-800">{ item.title}</p>
-                                    </button>
+                                                    <button key={i} type="button" onClick={() => signIn()} className="cursor-pointer text-left">
+                                                        <p className="tracking-normal font-semibold text-slate-600 hover:text-slate-800">{ item.title}</p>
+                                                    </button>
 
-                                    :
+                                                    :
 
-                                    item._id.includes("signup") ?
+                                                    item._id.includes("signup") ?
 
-                                    <button key={i} type="button" onClick={() => signIn()}
-                                            className="cursor-pointer text-left">
-                                        <p className="tracking-normal font-semibold text-slate-600 hover:text-slate-800">{item.title}</p>
-                                    </button>
-                                    :
+                                                        <button key={i} type="button" onClick={() => signIn()}
+                                                                className="cursor-pointer text-left">
+                                                            <p className="tracking-normal font-semibold text-slate-600 hover:text-slate-800">{item.title}</p>
+                                                        </button>
 
-                                    item._id.includes("admin")  || item._id.includes("me") ?
+                                                        :
 
-                                    <Link key={i}
-                                          href={`/${props.categories[hoveredCat].slug}/${sub.slug}/${item.slug}`}>
-                                        <p className="tracking-normal font-semibold text-slate-600 hover:text-slate-800 underline">{ item.title}</p>
-                                    </Link>
-                                    :
-                                    <Link key={i}
-                                          href={`/services/${props.categories[hoveredCat].slug}/${sub.slug}/${item.slug}`}>
-                                        <p className="tracking-normal font-semibold text-slate-600 hover:text-slate-800 underline">{ item.title}</p>
-                                    </Link>
-                                ))
-                            }
-                        </div>
+                                                        item._id.includes("admin")  || item._id.includes("me") ?
+
+                                                            <Link key={i} href={`/${props.categories[hoveredCat].slug}/${sub.slug}/${item.slug}`}>
+                                                                <p className="tracking-normal font-semibold text-slate-600 hover:text-slate-800">{ item.title}</p>
+                                                            </Link>
+                                                            :
+                                                            <Link key={i} href={`/services/${props.categories[hoveredCat].slug}/${sub.slug}/${item.slug}`}>
+                                                                <p className="tracking-normal font-semibold text-slate-600 hover:text-slate-800">{ item.title}</p>
+                                                            </Link>
+                                            ))
+                                        }
+                                    </div>
+                                </div>
+
+                                : null
+                            )
+                        )
+                        : null}
                     </div>
-
-                    : null
-                ))
-                : null}
+                </ScrollArea>
             </div>
         </div>
     </nav>

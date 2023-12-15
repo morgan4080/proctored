@@ -5,7 +5,6 @@ const Container = dynamic(() => import('@/components/Container'), {
   ssr: true,
 })
 import Navigation from '@/components/Navigation'
-import { Inter, Lexend } from 'next/font/google'
 import Footer from '@/components/Footer'
 import Link from 'next/link'
 import { calculateOrderPrice, fetcher, formatMoney } from '@/lib/utils'
@@ -19,14 +18,6 @@ import {
 import ErrorPage from 'next/error'
 import { format } from 'date-fns'
 import dynamic from 'next/dynamic'
-const inter = Inter({
-  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
-  subsets: ['latin'],
-})
-const lexend = Lexend({
-  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
-  subsets: ['latin'],
-})
 
 const { clientPromise } = mongoClient
 
@@ -173,7 +164,7 @@ const Order = ({
         </Head>
         <main
           className={classNames(
-            inter.className,
+            "font-serif",
             'flex min-h-screen flex-col relative',
           )}
         >
@@ -192,7 +183,7 @@ const Order = ({
                     'text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl',
                   )}
                 >
-                  <span className={classNames(lexend.className)}>
+                  <span className={classNames("font-sans")}>
                     Order Details
                   </span>
                 </h2>

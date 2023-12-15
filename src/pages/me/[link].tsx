@@ -1,7 +1,6 @@
 import React from 'react'
 import Head from 'next/head'
 import Navigation from '@/components/Navigation'
-import { Inter, Lexend } from 'next/font/google'
 import Footer from '@/components/Footer'
 const Container = dynamic(() => import('@/components/Container'), {
   ssr: true,
@@ -22,15 +21,6 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/pages/api/auth/[...nextauth]'
 import { ObjectId } from 'mongodb'
 import dynamic from 'next/dynamic'
-const inter = Inter({
-  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
-  subsets: ['latin'],
-})
-
-const lexend = Lexend({
-  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
-  subsets: ['latin'],
-})
 
 type Tabs = 'orders' | 'transactions'
 
@@ -257,7 +247,7 @@ function me({
           <link rel="icon" href="/favicon.ico" />
         </Head>
         <main
-          className={cn(inter.className, 'flex min-h-screen flex-col relative')}
+          className={cn("font-serif", 'flex min-h-screen flex-col relative')}
         >
           <div className="bg-bermuda/95 w-full">
             <Navigation />
@@ -270,7 +260,7 @@ function me({
             <div className="lg:flex lg:items-center lg:justify-between">
               <div className="min-w-0 flex-1">
                 <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl flex gap-4 items-center">
-                  <span className={cn(lexend.className)}>{user.name}</span>
+                  <span className={cn("font-sans")}>{user.name}</span>
                 </h2>
                 <div className="mt-2 text-lg leading-8 text-gray-600 space-x-2">
                   User Dashboard

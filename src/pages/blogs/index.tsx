@@ -4,23 +4,12 @@ import Link from 'next/link'
 import Head from 'next/head'
 import classNames from '../../utils/ClassNames'
 import Navigation from '@/components/Navigation'
-import { Inter, Lexend } from 'next/font/google'
 import { Service } from '@/lib/service_types'
 import Footer from '@/components/Footer'
 import mongoClient from '@/lib/mongodb'
 import { Card, CardContent } from '@/components/ui/card'
 import Container from '@/components/Container'
 import { format } from 'date-fns'
-
-const inter = Inter({
-  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
-  subsets: ['latin'],
-})
-
-const lexend = Lexend({
-  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
-  subsets: ['latin'],
-})
 
 const { clientPromise } = mongoClient
 
@@ -108,7 +97,7 @@ const Blogs = ({
       </Head>
       <div
         className={classNames(
-          inter.className,
+          "font-serif",
           'flex min-h-screen flex-col relative',
         )}
       >
@@ -124,7 +113,7 @@ const Blogs = ({
             <div className="mx-auto max-w-2xl lg:mx-0">
               <h2
                 className={classNames(
-                  lexend.className,
+                  "font-sans",
                   'text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl',
                 )}
               >

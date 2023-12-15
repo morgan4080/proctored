@@ -4,7 +4,6 @@ import useSWR from 'swr'
 import Navigation from '@/components/Navigation'
 import Head from 'next/head'
 import classNames from '../../../../utils/ClassNames'
-import { Inter, Lexend } from 'next/font/google'
 import Container from '@/components/Container'
 import Footer from '@/components/Footer'
 const Toaster = dynamic(() => import('@/components/ui/toaster'), { ssr: false })
@@ -26,16 +25,6 @@ import { cn, fetcher, updateRecord } from '@/lib/utils'
 import { Service } from '@/lib/service_types'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import dynamic from 'next/dynamic'
-
-const inter = Inter({
-  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
-  subsets: ['latin'],
-})
-
-const lexend = Lexend({
-  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
-  subsets: ['latin'],
-})
 
 const Service = ({
   sv,
@@ -106,7 +95,7 @@ const Service = ({
         </Head>
         <main
           className={classNames(
-            inter.className,
+            "font-serif",
             'flex min-h-screen flex-col items-center relative',
           )}
         >
@@ -123,7 +112,7 @@ const Service = ({
           >
             <div className="w-full prose">
               <h1
-                className={cn(lexend.className, 'inline-flex relative w-auto')}
+                className={cn("font-sans", 'inline-flex relative w-auto')}
               >
                 {service.title}
                 {session &&

@@ -2,16 +2,12 @@ import React, { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import dynamic from 'next/dynamic'
 import mongoClient from '@/lib/mongodb'
-import { Inter, Lexend } from 'next/font/google'
 import Head from 'next/head'
 import Footer from '@/components/Footer'
 import Link from 'next/link'
-import { useToast } from '@/components/ui/use-toast'
-import { ToastAction } from '@/components/ui/toast'
 import { StarIcon } from 'lucide-react'
 import { scroll, motion, useAnimation, useInView } from 'framer-motion'
 import { fetcher } from '@/lib/utils'
-const Toaster = dynamic(() => import('@/components/ui/toaster'), { ssr: false })
 const Navigation = dynamic(() => import('@/components/Navigation'), {
   ssr: true,
 })
@@ -29,18 +25,6 @@ const PaymentIcons = dynamic(
 const PriceCalc = dynamic(() => import('@/components/transactions/PriceCalc'), {
   ssr: true,
 })
-/*const ScrollArea = dynamic(
-  () => import('@/components/ui/scroll-area').then((mod) => mod.ScrollArea),
-  {
-    ssr: false,
-  },
-)*/
-/*const ScrollBar = dynamic(
-  () => import('@/components/ui/scroll-area').then((mod) => mod.ScrollBar),
-  {
-    ssr: false,
-  },
-)*/
 const Accordion = dynamic(
   () => import('@/components/ui/accordion').then((mod) => mod.Accordion),
   {
@@ -86,16 +70,6 @@ import {
   WriterType,
 } from '@/lib/service_types'
 
-const inter = Inter({
-  weight: ['100', '200', '300', '400', '500', '600'],
-  subsets: ['latin'],
-})
-
-const lexend = Lexend({
-  weight: ['600', '700', '800', '900'],
-  subsets: ['latin'],
-})
-
 const { clientPromise } = mongoClient
 
 export const getServerSideProps = (async () => {
@@ -120,7 +94,6 @@ export const getServerSideProps = (async () => {
     return {
       props: {
         blogs: blogs,
-        isConnected: true,
         FAQs: JSON.parse(faqs) as FaqType[],
         writers: JSON.parse(writers) as WriterType[],
         storedata: JSON.parse(storedata) as StoreDataType[],
@@ -131,7 +104,6 @@ export const getServerSideProps = (async () => {
     return {
       props: {
         blogs: [],
-        isConnected: false,
         FAQs: [] as FaqType[],
         writers: [] as WriterType[],
         storedata: [] as StoreDataType[],
@@ -140,7 +112,6 @@ export const getServerSideProps = (async () => {
   }
 }) satisfies GetServerSideProps<{
   blogs: Service[]
-  isConnected: boolean
   FAQs: FaqType[]
   writers: WriterType[]
   storedata: StoreDataType[]
@@ -148,7 +119,6 @@ export const getServerSideProps = (async () => {
 
 export default function Home({
   blogs,
-  isConnected,
   FAQs,
   writers,
   storedata,
@@ -164,7 +134,6 @@ export default function Home({
   const [writersOnline, setWritersOnline] = useState(0)
   const [supportStaffOnline, setSupportStaffOnline] = useState(0)
   const [averageScore, setAverageScore] = useState('')
-  const { toast } = useToast()
   const containerRef = useRef(null)
   const containerRef1 = useRef(null)
   const containerRef2 = useRef(null)
@@ -240,18 +209,6 @@ export default function Home({
     scrollCarousel() // Resume the animation on mouse leave
   }
 
-  useEffect(() => {
-    if (!isConnected) {
-      toast({
-        title: 'Heads Up!',
-        description: 'You are NOT connected to the database.',
-        action: (
-          <ToastAction altText="Goto schedule to undo">Clear</ToastAction>
-        ),
-      })
-    }
-  }, [isConnected])
-
   const getRandomNumber = (min: number, max: number) => {
     return Math.floor(Math.random() * (max - min + 1)) + min
   }
@@ -265,10 +222,7 @@ export default function Home({
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main
-        className={classNames(
-          inter.className,
-          'flex min-h-screen flex-col items-center justify-between relative',
-        )}
+        className='flex min-h-screen flex-col items-center justify-between relative'
       >
         <Navigation />
         <div className="w-full bg-gradient-to-br from-bermuda to-plumes -mt-44 md:-mt-44 lg:-mt-28">
@@ -276,10 +230,7 @@ export default function Home({
             <div className="lg:grid lg:grid-cols-2">
               <div className="flex flex-col justify-center items-center lg:items-start">
                 <h1
-                  className={classNames(
-                    lexend.className,
-                    'text-4xl text-center lg:text-left md:text-6xl lg:text-7xl text-white font-medium leading-tight tracking-tight py-2 lg:py-0',
-                  )}
+                  className="font-sans text-4xl text-center lg:text-left md:text-6xl lg:text-7xl text-white font-medium leading-tight tracking-tight py-2 lg:py-0"
                 >
                   <span>Professional</span>
                   <br />
@@ -313,7 +264,7 @@ export default function Home({
           >
             <motion.h2
               className={classNames(
-                lexend.className,
+                "font-sans",
                 'text-3xl tracking-tight sm:text-4xl md:text-5xl text-bermuda text-center',
               )}
               initial="hidden"
@@ -397,7 +348,7 @@ export default function Home({
                       <div>
                         <h4
                           className={classNames(
-                            lexend.className,
+                            "font-sans",
                             'text-lg font-semibold leading-none',
                           )}
                         >
@@ -419,7 +370,7 @@ export default function Home({
                               aria-hidden="true"
                             />
                           ))}
-                          <span className={classNames(lexend.className)}>
+                          <span className={classNames("font-sans")}>
                             {writer.rating} ({writer.reviewCount})
                           </span>
                         </div>
@@ -429,7 +380,7 @@ export default function Home({
                       <div key={i} className="flex flex-col">
                         <h5
                           className={classNames(
-                            lexend.className,
+                            "font-sans",
                             'font-semibold text-slate-700 text-sm leading-tight pt-3 text-left',
                           )}
                         >
@@ -495,7 +446,7 @@ export default function Home({
             <div className="max-w-2xl md:mx-auto md:text-center xl:max-w-none">
               <h2
                 className={classNames(
-                  lexend.className,
+                  "font-sans",
                   'text-3xl tracking-tight sm:text-4xl md:text-5xl text-bermuda text-center',
                 )}
               >
@@ -520,7 +471,7 @@ export default function Home({
                 <div className="flex-1 flex flex-col items-center justify-center">
                   <h6
                     className={classNames(
-                      lexend.className,
+                      "font-sans",
                       'text-center font-semibold text-slate-900 text-xl pb-1.5',
                     )}
                   >
@@ -536,7 +487,7 @@ export default function Home({
                 <div className="flex-1 flex flex-col items-center justify-center pb-0 lg:pb-11">
                   <h6
                     className={classNames(
-                      lexend.className,
+                      "font-sans",
                       'text-center font-semibold text-slate-900 text-xl pb-1.5',
                     )}
                   >
@@ -572,7 +523,7 @@ export default function Home({
                 <div className="flex-1 flex flex-col items-center justify-center">
                   <h6
                     className={classNames(
-                      lexend.className,
+                      "font-sans",
                       'text-center font-semibold text-slate-900 text-xl pb-1.5',
                     )}
                   >
@@ -588,7 +539,7 @@ export default function Home({
                 <div className="flex-1 flex flex-col items-center justify-center pb-0 lg:pb-11">
                   <h6
                     className={classNames(
-                      lexend.className,
+                      "font-sans",
                       'text-center font-semibold text-slate-900 text-xl pb-1.5',
                     )}
                   >
@@ -661,7 +612,7 @@ export default function Home({
           <div className="max-w-2xl md:mx-auto md:text-center xl:max-w-none">
             <h2
               className={classNames(
-                lexend.className,
+                "font-sans",
                 'text-3xl tracking-tight sm:text-4xl md:text-5xl text-bermuda text-center',
               )}
             >
@@ -673,7 +624,7 @@ export default function Home({
               <div className="space-y-3">
                 <motion.h1
                   className={classNames(
-                    lexend.className,
+                    "font-sans",
                     'font-semibold text-8xl text-bermuda',
                   )}
                   initial="hidden"
@@ -719,7 +670,7 @@ export default function Home({
                 <div>
                   <motion.h1
                     className={classNames(
-                      lexend.className,
+                      "font-sans",
                       'font-bold text-6xl text-bermuda',
                     )}
                     initial="hidden"
@@ -762,7 +713,7 @@ export default function Home({
                 <div>
                   <motion.h1
                     className={classNames(
-                      lexend.className,
+                      "font-sans",
                       'font-bold text-6xl text-bermuda',
                     )}
                     initial="hidden"
@@ -807,7 +758,7 @@ export default function Home({
                 <div>
                   <motion.h1
                     className={classNames(
-                      lexend.className,
+                      "font-sans",
                       'font-bold text-6xl text-bermuda',
                     )}
                     initial="hidden"
@@ -850,7 +801,7 @@ export default function Home({
                 <div>
                   <motion.h1
                     className={classNames(
-                      lexend.className,
+                      "font-sans",
                       'font-bold text-6xl text-bermuda',
                     )}
                     initial="hidden"
@@ -901,7 +852,7 @@ export default function Home({
               <div className="col-span-1 text-center md:text-left">
                 <h1
                   className={classNames(
-                    lexend.className,
+                    "font-sans",
                     'text-white font-bold text-[52px] tracking-tight leading-[63px] capitalize pb-2',
                   )}
                 >
@@ -936,7 +887,7 @@ export default function Home({
           <div className="pt-20">
             <h2
               className={classNames(
-                lexend.className,
+                "font-sans",
                 'text-4xl max-w-sm sm:max-w-3xl mx-auto font-bold leading-none text-gray-900 text-center capitalize',
               )}
             >
@@ -1077,7 +1028,7 @@ export default function Home({
             <div className="space-y-2 pt-20 pb-16">
               <h2
                 className={classNames(
-                  lexend.className,
+                  "font-sans",
                   'text-5xl font-bold leading-none text-bermuda text-center',
                 )}
               >
@@ -1158,7 +1109,7 @@ export default function Home({
             <div className="space-y-2 pt-20 pb-16">
               <h2
                 className={classNames(
-                  lexend.className,
+                  "font-sans",
                   'text-white font-bold text-[52px] tracking-tight leading-[63px] capitalize text-center',
                 )}
               >
@@ -1242,7 +1193,7 @@ export default function Home({
           <div className="space-y-4 pt-20 pb-8">
             <h2
               className={classNames(
-                lexend.className,
+                "font-sans",
                 'text-5xl max-w-2xl mx-auto font-bold leading-none text-bermuda text-center capitalize',
               )}
             >
@@ -1275,7 +1226,7 @@ export default function Home({
             <div className="space-y-2 pt-20 pb-16">
               <h2
                 className={classNames(
-                  lexend.className,
+                  "font-sans",
                   'text-4xl max-w-xl mx-auto font-bold leading-none tracking-tight text-gray-900 text-center',
                 )}
               >
@@ -1473,7 +1424,7 @@ export default function Home({
           <div className="space-y-2 pt-20 pb-16">
             <h2
               className={classNames(
-                lexend.className,
+                "font-sans",
                 'text-4xl max-w-xl mx-auto font-bold leading-none text-gray-900 text-center',
               )}
             >
@@ -1559,12 +1510,12 @@ export default function Home({
           </div>
         </Container>
 
-        <div className="w-full bg-gradient-to-r from-gray-50 to-zinc-100">
+        <div className="w-full bg-reef">
           <Container className="xl:px-0 pb-20">
             <div className="space-y-2 pt-20 pb-16">
               <h2
                 className={classNames(
-                  lexend.className,
+                  "font-sans",
                   'text-bermuda font-bold text-[52px] tracking-tight leading-[63px] capitalize text-center',
                 )}
               >
@@ -1622,27 +1573,6 @@ export default function Home({
         </div>
       </main>
       <Footer />
-      <Toaster />
-      {/*<button
-        onClick={(ev) => {
-          window.scrollTo(0, 0)
-        }}
-        ref={(element) => {
-          window.addEventListener('scroll', () => {
-            const par = element?.parentElement
-            if (par) {
-              const { y } = par.getBoundingClientRect()
-              if (y == 0) {
-                element?.classList.remove('visible')
-              } else {
-                element?.classList.add('visible')
-              }
-            }
-          })
-        }}
-        type="button"
-        className="scroll-top-button"
-      ></button>*/}
     </div>
   )
 }

@@ -6,7 +6,6 @@ const Container = dynamic(() => import('@/components/Container'), {
   ssr: true,
 })
 import Navigation from '@/components/Navigation'
-import { Inter, Lexend } from 'next/font/google'
 import OrderSummary from '@/components/orders/OrderSummary'
 import OrderDetailsForm, {
   ReportingValues,
@@ -47,16 +46,7 @@ import { ObjectId } from 'mongodb'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import Link from 'next/link'
 import SpecialisedExamOrder from '@/components/orders/SpecialisedExamOrder'
-import serviceCategory from '@/pages/order/create/[serviceCategory]'
 import dynamic from 'next/dynamic'
-const inter = Inter({
-  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
-  subsets: ['latin'],
-})
-const lexend = Lexend({
-  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
-  subsets: ['latin'],
-})
 
 const { clientPromise } = mongoClient
 const EditOrder = ({
@@ -337,7 +327,7 @@ const EditOrder = ({
         </Head>
         <main
           className={classNames(
-            inter.className,
+            "font-serif",
             'flex min-h-screen flex-col relative',
           )}
         >
@@ -353,7 +343,7 @@ const EditOrder = ({
               <div className="lg:flex lg:items-center lg:justify-center">
                 <div className="min-w-0 flex-1">
                   <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl flex gap-4 items-center">
-                    <span className={classNames(lexend.className)}>
+                    <span className={classNames("font-sans")}>
                       Edit Order{' '}
                     </span>
                   </h2>
@@ -365,7 +355,7 @@ const EditOrder = ({
                         key={sc._id}
                         value={sc.slug}
                         className={cn(
-                          lexend.className,
+                          "font-sans",
                           'data-[state=active]:ring-bermuda/20 data-[state=active]:ring-1 data-[state=active]:shadow-lg data-[state=active]:shadow-yellow-200',
                         )}
                       >

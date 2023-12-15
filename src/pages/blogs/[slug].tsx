@@ -4,7 +4,6 @@ import type { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import Navigation from '@/components/Navigation'
 import Head from 'next/head'
 import classNames from '../../utils/ClassNames'
-import { Inter, Lexend } from 'next/font/google'
 const Container = dynamic(() => import('@/components/Container'), {
   ssr: true,
 })
@@ -28,16 +27,6 @@ import useSWR from 'swr'
 import { fetcher, updateRecord } from '@/lib/utils'
 import Link from '@tiptap/extension-link'
 import dynamic from 'next/dynamic'
-
-const inter = Inter({
-  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
-  subsets: ['latin'],
-})
-
-const lexend = Lexend({
-  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
-  subsets: ['latin'],
-})
 
 const Blog = ({
   blg,
@@ -102,7 +91,7 @@ const Blog = ({
         </Head>
         <main
           className={classNames(
-            inter.className,
+            "font-serif",
             'flex min-h-screen flex-col items-center relative',
           )}
         >
@@ -120,7 +109,7 @@ const Blog = ({
             <div className="w-full">
               <h2
                 className={classNames(
-                  lexend.className,
+                  "font-sans",
                   'text-3xl font-bold tracking-tight text-gray-900 capitalise inline-flex relative w-auto',
                 )}
               >
