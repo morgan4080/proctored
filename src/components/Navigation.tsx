@@ -358,7 +358,7 @@ const Navigation = () => {
   }, [setMenus, session, status])
 
   return (
-    <>
+    <header>
       <nav
         onMouseLeave={() => {
           setHovering(null)
@@ -590,7 +590,7 @@ const Navigation = () => {
           </div>
         </div>
       </nav>
-    </>
+    </header>
   )
 }
 

@@ -280,3 +280,10 @@ circle {
 .horizontalScroll::-webkit-scrollbar-thumb:hover {
   display: none;
 }
+
+
+.designHero {
+  backdrop-filter: blur(10px);
+  background: linear-gradient(336deg, rgba(0, 255, 0, 0.27), rgba(0,0,255,0) 70.71%), linear-gradient(217deg, rgb(0, 83, 152), rgba(255,0,0,0) 90.71%),
+  linear-gradient(127deg, rgb(0, 83, 152), rgba(0,255,0,0) 90.71%);
+}

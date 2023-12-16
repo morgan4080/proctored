@@ -29,6 +29,7 @@ module.exports = {
         bermuda: '#005398', // 394c67
         plumes: '#2c3e50',
         reef: '#F3FAFF',
+        algae: "#00FF00FF",
         teal: {
           300: '#92e3a9',
         },

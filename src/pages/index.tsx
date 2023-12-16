@@ -190,12 +190,13 @@ export default function Home({
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      <Navigation />
       <main
         className='flex min-h-screen flex-col items-center justify-between relative'
       >
-        <Navigation />
-        <div className="w-full bg-gradient-to-br from-bermuda to-plumes -mt-44 md:-mt-44 lg:-mt-28">
-          <Container className="xl:px-0 pb-24 pt-56 lg:pt-44 lg:pb-36">
+        <div className="w-full -mt-44 md:-mt-44 lg:-mt-28 relative">
+          <div className="absolute inset-0 w-full h-full designHero"></div>
+          <Container className="xl:px-0 pb-24 pt-56 lg:pt-44 lg:pb-36" parentClassName="relative">
             <div className="lg:grid lg:grid-cols-2">
               <div className="flex flex-col justify-center items-center lg:items-start">
                 <h1
@@ -214,13 +215,13 @@ export default function Home({
 
                 <Link
                   href="/order/create"
-                  className="mb-12 bg-teal-300 text-center w-44 py-3 px-8 text-xl rounded-full text-black font-semibold mt-4 transform hover:scale-105 transition ease-in-out duration-100"
+                  className="group mb-12 text-xl bg-black/25 text-center w-52 drop-shadow-2xl shadow-sm py-3 px-8 rounded-full text-white backdrop-blur font-semibold mt-4 transform hover:scale-105 transition ease-in-out duration-100"
                 >
-                  Order Now
+                  Get Started <span className="opacity-0 transform group-hover:opacity-100 transition ease-in-out duration-100 w-1">→</span>
                 </Link>
               </div>
-              <div className="flex justify-center lg:justify-end">
-                <HeroArt className="h-1/2 lg:w-full lg:h-full md:translate-x-12" />
+              <div className="flex justify-center lg:justify-end relative">
+                <HeroArt className="h-1/2 lg:w-full lg:h-full md:translate-x-12"/>
               </div>
             </div>
           </Container>
@@ -228,37 +229,37 @@ export default function Home({
 
         <div className="mx-auto w-full px-4 sm:px-6 lg:px-8 xl:px-0 pb-28 pt-20 sm:py-32">
           <div
-            ref={chooseWriterView}
-            className="px-4 mx-auto text-center max-w-sm md:max-w-4xl"
+              ref={chooseWriterView}
+              className="px-4 mx-auto text-center max-w-sm md:max-w-4xl"
           >
             <motion.h2
-              className={classNames(
-                "font-sans",
-                'text-3xl tracking-tight sm:text-4xl md:text-5xl text-bermuda text-center',
-              )}
-              initial="hidden"
-              animate={chooseWriterInView ? 'visible' : 'hidden'}
-              variants={{
-                hidden: { clipPath: 'inset(100% 0% 0% 0%)' },
-                visible: {
-                  clipPath: 'inset(0% 0% 0% 0%)',
-                  transition: { duration: 0.5 },
-                },
-              }}
+                className={classNames(
+                    "font-sans",
+                    'text-3xl tracking-tight sm:text-4xl md:text-5xl text-bermuda text-center',
+                )}
+                initial="hidden"
+                animate={chooseWriterInView ? 'visible' : 'hidden'}
+                variants={{
+                  hidden: {clipPath: 'inset(100% 0% 0% 0%)'},
+                  visible: {
+                    clipPath: 'inset(0% 0% 0% 0%)',
+                    transition: {duration: 0.5},
+                  },
+                }}
             >
               Choose Your Writer
             </motion.h2>
             <motion.p
-              initial="hidden"
-              animate={chooseWriterInView ? 'visible' : 'hidden'}
-              variants={{
-                hidden: { clipPath: 'inset(100% 0% 0% 0%)' },
-                visible: {
-                  clipPath: 'inset(0% 0% 0% 0%)',
-                  transition: { duration: 0.8 },
-                },
-              }}
-              className="mt-6 text-lg tracking-tight text-slate-600 text-center"
+                initial="hidden"
+                animate={chooseWriterInView ? 'visible' : 'hidden'}
+                variants={{
+                  hidden: {clipPath: 'inset(100% 0% 0% 0%)'},
+                  visible: {
+                    clipPath: 'inset(0% 0% 0% 0%)',
+                    transition: {duration: 0.8},
+                  },
+                }}
+                className="mt-6 text-lg tracking-tight text-slate-600 text-center"
             >
               Expert writers available for hire. Read through their profiles,
               and sample assignments to find your perfect match.
@@ -1084,7 +1085,7 @@ export default function Home({
           </Container>
         </div>
 
-        <Container className="xl:px-0 pb-20">
+        <Container className="xl:px-0 pb-20" parentClassName="w-full">
           <div className="space-y-4 pt-20 pb-8">
             <h2
               className={classNames(
