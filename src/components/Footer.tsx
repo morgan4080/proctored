@@ -1,12 +1,8 @@
-import dynamic from 'next/dynamic'
 import classNames from '../utils/ClassNames'
 import Link from 'next/link'
 import Image from 'next/image'
-import React from "react";
 
-const Container = dynamic(() => import('@/components/Container'), {
-  ssr: true,
-})
+import Container from "@/components/Container"
 
 const Footer = () => {
   return (

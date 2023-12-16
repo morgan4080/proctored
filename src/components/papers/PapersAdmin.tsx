@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { cn, createRecord, fetcher, updateRecord } from '@/lib/utils'
 import { Separator } from '@/components/ui/separator'
 import { Paper } from '@/lib/service_types'
@@ -18,20 +18,20 @@ const PapersAdmin = ({
   current: boolean
   papers: Paper[]
 }) => {
-  const [context, setContext] = React.useState('Create')
-  const [defaultID, setDefaultID] = React.useState('')
-  const [defaultTitle, setDefaultTitle] = React.useState('')
-  const [defaultSlug, setDefaultSlug] = React.useState('')
-  const [defaultExcerpt, setDefaultExcerpt] = React.useState('')
-  const [defaultDescription, setDefaultDescription] = React.useState('')
-  const [loading, setLoading] = React.useState(false)
-  const [showDialogue, setShowDialogue] = React.useState(false)
+  const [context, setContext] = useState('Create')
+  const [defaultID, setDefaultID] = useState('')
+  const [defaultTitle, setDefaultTitle] = useState('')
+  const [defaultSlug, setDefaultSlug] = useState('')
+  const [defaultExcerpt, setDefaultExcerpt] = useState('')
+  const [defaultDescription, setDefaultDescription] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [showDialogue, setShowDialogue] = useState(false)
 
   const { data: updatedData, mutate } = useSWR('/api/papers', fetcher, {
     initialData: papers,
   } as any)
 
-  const [updatedPapers, setUpdatedPapers] = React.useState(papers)
+  const [updatedPapers, setUpdatedPapers] = useState(papers)
 
   useEffect(() => {
     if (updatedData !== undefined) {

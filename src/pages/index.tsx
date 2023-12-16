@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import dynamic from 'next/dynamic'
 import mongoClient from '@/lib/mongodb'
@@ -136,33 +136,7 @@ export default function Home({
   const [averageScore, setAverageScore] = useState('')
   const containerRef = useRef(null)
   const containerRef1 = useRef(null)
-  const containerRef2 = useRef(null)
   const progressWheel = useRef(null)
-  const controls = useAnimation()
-  const controls1 = useAnimation()
-  const controls2 = useAnimation()
-
-  const scrollCarousel = () => {
-    controls.start({
-      scrollBehavior: 'smooth',
-    })
-    controls1.start({
-      x: 10000, // calculate width of scroll area
-      transition: {
-        duration: 2000, // Adjust the duration as needed
-        ease: 'linear',
-        repeat: Infinity, // Repeat the animation infinitely
-      },
-    })
-    controls2.start({
-      x: -10000, // calculate width of scroll area
-      transition: {
-        duration: 2000, // Adjust the duration as needed
-        ease: 'linear',
-        repeat: Infinity, // Repeat the animation infinitely
-      },
-    })
-  }
 
   useEffect(() => {
     setCompletedOrders(getRandomNumber(95000, 100000))
@@ -174,10 +148,6 @@ export default function Home({
     if (!container) return
     const container1 = containerRef1.current
     if (!container1) return
-    const container2 = containerRef2.current
-    if (!container2) return
-
-    scrollCarousel()
 
     if (progressWheel && progressWheel.current) {
       const progWheel: HTMLElement = progressWheel.current
@@ -191,26 +161,25 @@ export default function Home({
         },
       )
     }
-
-    return () => {
-      controls.stop() // Stop the animation on mouse enter
-      controls1.stop() // Stop the animation on mouse enter
-      controls2.stop() // Stop the animation on mouse enter
-    }
-  }, [controls, controls1, controls2]) // Trigger the scrolling animation on component mount
-
-  const handleHoverStart = () => {
-    controls.stop() // Stop the animation on mouse enter
-    controls1.stop() // Stop the animation on mouse enter
-    controls2.stop() // Stop the animation on mouse enter
-  }
-
-  const handleHoverEnd = () => {
-    scrollCarousel() // Resume the animation on mouse leave
-  }
+  }, []) // Trigger the scrolling animation on component mount
 
   const getRandomNumber = (min: number, max: number) => {
     return Math.floor(Math.random() * (max - min + 1)) + min
+  }
+
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        delayChildren: 0.5
+      }
+    }
+  }
+
+  const item = {
+    hidden: { opacity: 0 },
+    show: { opacity: 1 }
   }
 
   return (
@@ -317,17 +286,6 @@ export default function Home({
               <motion.div
                 ref={containerRef}
                 className="flex gap-8 px-8 sm:mx-auto whitespace-nowrap overflow-x-scroll horizontalScroll"
-                onScroll={(e) => {
-                  const target = (e as any).target
-                  if (progressWheel && progressWheel.current) {
-                    const elem: HTMLElement = progressWheel.current
-                    // elem.style.strokeDasharray = `${progress}, 1`
-                  }
-                  console.log(target.scrollLeft)
-                }}
-                animate={controls}
-                onHoverStart={handleHoverStart}
-                onHoverEnd={handleHoverEnd}
               >
                 {writers.map((writer, index) => (
                   <motion.div
@@ -453,27 +411,27 @@ export default function Home({
                 How To Place An Order
               </h2>
             </div>
-            <div
-              ref={line}
-              className="mt-32 mb-20 grid lg:gap-8 lg:grid-cols-4 space-y-16 lg:space-y-0 mx-auto relative"
+            <motion.div
+                ref={line}
+                className="mt-32 mb-20 grid lg:gap-8 lg:grid-cols-4 space-y-16 lg:space-y-0 mx-auto relative"
             >
-              <div className="flex flex-col">
+              <motion.div className="flex flex-col">
                 <div className="flex-1 flex items-center justify-center pb-11">
                   <Image
-                    className="overflow-hidden z-10"
-                    src={'/image 10.png'}
-                    alt="how to place your order 1"
-                    width={151}
-                    height={151}
-                    priority
+                      className="overflow-hidden z-10"
+                      src={'/image 10.png'}
+                      alt="how to place your order 1"
+                      width={151}
+                      height={151}
+                      priority
                   />
                 </div>
                 <div className="flex-1 flex flex-col items-center justify-center">
                   <h6
-                    className={classNames(
-                      "font-sans",
-                      'text-center font-semibold text-slate-900 text-xl pb-1.5',
-                    )}
+                      className={classNames(
+                          "font-sans",
+                          'text-center font-semibold text-slate-900 text-xl pb-1.5',
+                      )}
                   >
                     1. Submit instructions
                   </h6>
@@ -482,14 +440,14 @@ export default function Home({
                     possible.
                   </p>
                 </div>
-              </div>
-              <div className="flex flex-col-reverse lg:flex-col">
+              </motion.div>
+              <motion.div className="flex flex-col-reverse lg:flex-col">
                 <div className="flex-1 flex flex-col items-center justify-center pb-0 lg:pb-11">
                   <h6
-                    className={classNames(
-                      "font-sans",
-                      'text-center font-semibold text-slate-900 text-xl pb-1.5',
-                    )}
+                      className={classNames(
+                          "font-sans",
+                          'text-center font-semibold text-slate-900 text-xl pb-1.5',
+                      )}
                   >
                     2. Choose writer
                   </h6>
@@ -500,32 +458,32 @@ export default function Home({
                 </div>
                 <div className="flex-1 flex items-center justify-center pb-11 lg:pb-0">
                   <Image
-                    className="overflow-hidden z-10"
-                    src={'/image 11.png'}
-                    alt="how to place your order 2"
-                    width={151}
-                    height={151}
-                    priority
+                      className="overflow-hidden z-10"
+                      src={'/image 11.png'}
+                      alt="how to place your order 2"
+                      width={151}
+                      height={151}
+                      priority
                   />
                 </div>
-              </div>
-              <div className="flex flex-col">
+              </motion.div>
+              <motion.div className="flex flex-col">
                 <div className="flex-1 flex items-center justify-center pb-11">
                   <Image
-                    className="overflow-hidden z-10"
-                    src={'/image 12.png'}
-                    alt="how to place your order 3"
-                    width={151}
-                    height={151}
-                    priority
+                      className="overflow-hidden z-10"
+                      src={'/image 12.png'}
+                      alt="how to place your order 3"
+                      width={151}
+                      height={151}
+                      priority
                   />
                 </div>
                 <div className="flex-1 flex flex-col items-center justify-center">
                   <h6
-                    className={classNames(
-                      "font-sans",
-                      'text-center font-semibold text-slate-900 text-xl pb-1.5',
-                    )}
+                      className={classNames(
+                          "font-sans",
+                          'text-center font-semibold text-slate-900 text-xl pb-1.5',
+                      )}
                   >
                     3. Track order
                   </h6>
@@ -534,14 +492,14 @@ export default function Home({
                     any time.
                   </p>
                 </div>
-              </div>
-              <div className="flex flex-col-reverse lg:flex-col">
+              </motion.div>
+              <motion.div className="flex flex-col-reverse lg:flex-col">
                 <div className="flex-1 flex flex-col items-center justify-center pb-0 lg:pb-11">
                   <h6
-                    className={classNames(
-                      "font-sans",
-                      'text-center font-semibold text-slate-900 text-xl pb-1.5',
-                    )}
+                      className={classNames(
+                          "font-sans",
+                          'text-center font-semibold text-slate-900 text-xl pb-1.5',
+                      )}
                   >
                     4. Check paper
                   </h6>
@@ -552,69 +510,69 @@ export default function Home({
                 </div>
                 <div className="flex-1 flex items-center justify-center pb-11 lg:pb-0">
                   <Image
-                    className="overflow-hidden z-10"
-                    src={'/image 13.png'}
-                    alt="how to place your order 4"
-                    width={151}
-                    height={151}
-                    priority
+                      className="overflow-hidden z-10"
+                      src={'/image 13.png'}
+                      alt="how to place your order 4"
+                      width={151}
+                      height={151}
+                      priority
                   />
                 </div>
-              </div>
+              </motion.div>
 
               <motion.div
-                initial="hidden"
-                animate={isLineInView ? 'visible' : 'hidden'}
-                variants={{
-                  hidden: { clipPath: 'inset(0% 100% 0% 0%)' },
-                  visible: {
-                    clipPath: 'inset(0% 0% 0% 0%)',
-                    transition: { duration: 2 },
-                  },
-                }}
-                className="absolute w-full h-full hidden lg:flex items-center justify-center"
+                  initial="hidden"
+                  animate={isLineInView ? 'visible' : 'hidden'}
+                  variants={{
+                    hidden: {clipPath: 'inset(0% 100% 0% 0%)'},
+                    visible: {
+                      clipPath: 'inset(0% 0% 0% 0%)',
+                      transition: {duration: 2},
+                    },
+                  }}
+                  className="absolute w-full h-full hidden lg:flex items-center justify-center"
               >
                 <Image
-                  className="w-2/3 -translate-x-4"
-                  src={'/img_1.png'}
-                  alt="how to place your order 1"
-                  width={868.5}
-                  height={192.74}
-                  priority
+                    className="w-2/3 -translate-x-4"
+                    src={'/img_1.png'}
+                    alt="how to place your order 1"
+                    width={868.5}
+                    height={192.74}
+                    priority
                 />
               </motion.div>
               <motion.div
-                initial="hidden"
-                animate={isLineInView ? 'visible' : 'hidden'}
-                variants={{
-                  hidden: { clipPath: 'inset(0% 100% 0% 0%)' },
-                  visible: {
-                    clipPath: 'inset(0% 0% 0% 0%)',
-                    transition: { duration: 2 },
-                  },
-                }}
-                className="absolute h-full flex lg:hidden items-center justify-center z-0"
+                  initial="hidden"
+                  animate={isLineInView ? 'visible' : 'hidden'}
+                  variants={{
+                    hidden: {clipPath: 'inset(0% 100% 0% 0%)'},
+                    visible: {
+                      clipPath: 'inset(0% 0% 0% 0%)',
+                      transition: {duration: 2},
+                    },
+                  }}
+                  className="absolute h-full flex lg:hidden items-center justify-center z-0"
               >
                 <Image
-                  className="scale-[3] translate-x-8 translate-y-1 rotate-45"
-                  src={'/img_1.png'}
-                  alt="how to place your order 1"
-                  width={868.5}
-                  height={192.74}
-                  priority
+                    className="scale-[3] translate-x-8 translate-y-1 rotate-45"
+                    src={'/img_1.png'}
+                    alt="how to place your order 1"
+                    width={868.5}
+                    height={192.74}
+                    priority
                 />
               </motion.div>
-            </div>
+            </motion.div>
           </Container>
         </div>
 
         <Container className="xl:px-0 pb-28 pt-20 sm:py-28">
           <div className="max-w-2xl md:mx-auto md:text-center xl:max-w-none">
             <h2
-              className={classNames(
-                "font-sans",
-                'text-3xl tracking-tight sm:text-4xl md:text-5xl text-bermuda text-center',
-              )}
+                className={classNames(
+                    "font-sans",
+                    'text-3xl tracking-tight sm:text-4xl md:text-5xl text-bermuda text-center',
+                )}
             >
               Proctor Owl Activity
             </h2>
@@ -623,55 +581,9 @@ export default function Home({
             <div className="flex items-center justify-center">
               <div className="space-y-3">
                 <motion.h1
-                  className={classNames(
-                    "font-sans",
-                    'font-semibold text-8xl text-bermuda',
-                  )}
-                  initial="hidden"
-                  animate={isInView ? 'visible' : 'hidden'}
-                  variants={{
-                    hidden: {
-                      opacity: 0,
-                      scale: 0.96,
-                      translateY: 40,
-                      clipPath: 'inset(100% 0% 0% 0%)',
-                    },
-                    visible: {
-                      clipPath: 'inset(0% 0% 0% 0%)',
-                      opacity: 1,
-                      scale: 1,
-                      translateY: 0,
-                      transition: { duration: 0.5 },
-                    },
-                  }}
-                >
-                  {completedOrders.toLocaleString()}
-                </motion.h1>
-                <motion.p
-                  className="text-sm capitalize py-2"
-                  initial="hidden"
-                  animate={isInView ? 'visible' : 'hidden'}
-                  variants={{
-                    hidden: { opacity: 0, scale: 0.96, translateX: 40 },
-                    visible: {
-                      opacity: 1,
-                      scale: 1,
-                      translateX: 0,
-                      transition: { duration: 0.5, delay: 0.1 },
-                    },
-                  }}
-                >
-                  completed orders
-                </motion.p>
-              </div>
-            </div>
-            <div ref={ref} className="flex flex-col space-y-6">
-              <div className="grid gap-8 grid-cols-2">
-                <div>
-                  <motion.h1
                     className={classNames(
-                      "font-sans",
-                      'font-bold text-6xl text-bermuda',
+                        "font-sans",
+                        'font-semibold text-8xl text-bermuda',
                     )}
                     initial="hidden"
                     animate={isInView ? 'visible' : 'hidden'}
@@ -687,46 +599,92 @@ export default function Home({
                         opacity: 1,
                         scale: 1,
                         translateY: 0,
-                        transition: { duration: 0.5, delay: 0.2 },
+                        transition: {duration: 0.5},
                       },
                     }}
-                  >
-                    {professionalWriters}
-                  </motion.h1>
-                  <motion.p
+                >
+                  {completedOrders.toLocaleString()}
+                </motion.h1>
+                <motion.p
                     className="text-sm capitalize py-2"
                     initial="hidden"
                     animate={isInView ? 'visible' : 'hidden'}
                     variants={{
-                      hidden: { opacity: 0, scale: 0.96, translateX: 40 },
+                      hidden: {opacity: 0, scale: 0.96, translateX: 40},
                       visible: {
                         opacity: 1,
                         scale: 1,
                         translateX: 0,
-                        transition: { duration: 0.5, delay: 0.3 },
+                        transition: {duration: 0.5, delay: 0.1},
                       },
                     }}
+                >
+                  completed orders
+                </motion.p>
+              </div>
+            </div>
+            <div ref={ref} className="flex flex-col space-y-6">
+              <div className="grid gap-8 grid-cols-2">
+                <div>
+                  <motion.h1
+                      className={classNames(
+                          "font-sans",
+                          'font-bold text-6xl text-bermuda',
+                      )}
+                      initial="hidden"
+                      animate={isInView ? 'visible' : 'hidden'}
+                      variants={{
+                        hidden: {
+                          opacity: 0,
+                          scale: 0.96,
+                          translateY: 40,
+                          clipPath: 'inset(100% 0% 0% 0%)',
+                        },
+                        visible: {
+                          clipPath: 'inset(0% 0% 0% 0%)',
+                          opacity: 1,
+                          scale: 1,
+                          translateY: 0,
+                          transition: {duration: 0.5, delay: 0.2},
+                        },
+                      }}
+                  >
+                    {professionalWriters}
+                  </motion.h1>
+                  <motion.p
+                      className="text-sm capitalize py-2"
+                      initial="hidden"
+                      animate={isInView ? 'visible' : 'hidden'}
+                      variants={{
+                        hidden: {opacity: 0, scale: 0.96, translateX: 40},
+                        visible: {
+                          opacity: 1,
+                          scale: 1,
+                          translateX: 0,
+                          transition: {duration: 0.5, delay: 0.3},
+                        },
+                      }}
                   >
                     Professional Writers
                   </motion.p>
                 </div>
                 <div>
                   <motion.h1
-                    className={classNames(
-                      "font-sans",
-                      'font-bold text-6xl text-bermuda',
-                    )}
-                    initial="hidden"
-                    animate={isInView ? 'visible' : 'hidden'}
-                    variants={{
-                      hidden: {
-                        opacity: 0,
-                        scale: 0.96,
-                        translateY: 40,
-                        clipPath: 'inset(100% 0% 0% 0%)',
-                      },
-                      visible: {
-                        clipPath: 'inset(0% 0% 0% 0%)',
+                      className={classNames(
+                          "font-sans",
+                          'font-bold text-6xl text-bermuda',
+                      )}
+                      initial="hidden"
+                      animate={isInView ? 'visible' : 'hidden'}
+                      variants={{
+                        hidden: {
+                          opacity: 0,
+                          scale: 0.96,
+                          translateY: 40,
+                          clipPath: 'inset(100% 0% 0% 0%)',
+                        },
+                        visible: {
+                          clipPath: 'inset(0% 0% 0% 0%)',
                         opacity: 1,
                         scale: 1,
                         translateY: 0,
@@ -861,20 +819,23 @@ export default function Home({
                 <p className="my-6 text-white/80 font-normal text-xl">
                   Prices start at $13.5 for writing and $8.5 for editing.
                 </p>
-                <ul
+                <motion.ul
                   role="list"
                   className="pt-4 space-x-2 flex items-center justify-center md:justify-start"
+                  variants={container}
+                  initial="hidden"
+                  animate={isInView ? 'show' : 'hidden'}
                 >
-                  <li>
+                  <motion.li variants={item}>
                     <PaymentIcons name={'visa'} />
-                  </li>
-                  <li>
+                  </motion.li>
+                  <motion.li variants={item}>
                     <PaymentIcons name={'master-card'} />
-                  </li>
-                  <li>
+                  </motion.li>
+                  <motion.li variants={item}>
                     <PaymentIcons name={'union'} />
-                  </li>
-                </ul>
+                  </motion.li>
+                </motion.ul>
               </div>
               <div className="col-span-1 scale-125 flex items-center justify-center lg:justify-end">
                 <PriceCalc storedata={storedata} />
@@ -897,72 +858,6 @@ export default function Home({
           </div>
           <div ref={containerRef1}>
             <motion.div
-              animate={controls1}
-              onHoverStart={handleHoverStart}
-              onHoverEnd={handleHoverEnd}
-              className="flex flex-wrap sm:flex-nowrap gap-4 overscroll-x-scroll -mx-16"
-            >
-              {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((item, i) => (
-                <div
-                  key={i}
-                  className="shrink relative max-w-sm min-w-fit sm:min-w-[350px] rounded-t-md rounded-r-md drop-shadow-2xl shadow-2xl px-6 pt-6 pb-4"
-                >
-                  <figure className="prose">
-                    <blockquote>
-                      <span className="flex items-center justify-start">
-                        {[0, 1, 2, 3, 4].map((rating) => (
-                          <StarIcon
-                            key={rating}
-                            className={classNames(
-                              4.9 > rating
-                                ? 'text-yellow-400'
-                                : 'text-gray-200',
-                              'flex-shrink-0 h-3 w-3',
-                            )}
-                            aria-hidden="true"
-                          />
-                        ))}
-                      </span>
-                      <h5 className="font-semibold text-black text-sm">
-                        Paper was written before the deadline.
-                      </h5>
-                      <p className="text-xs max-w-xs">
-                        “Prof. Alicia is very professional and I am happy about
-                        her work. She helped me a lot and saved me a huge amount
-                        of time. I will be very happy to contact her for future
-                        academic work again”
-                      </p>
-                    </blockquote>
-                    <figcaption>
-                      <div className="pl-2 sm:pl-0 flex items-center text-sky-500 dark:text-sky-400 text-sm font-medium">
-                        <span>
-                          <Image
-                            className="rounded-full my-0"
-                            src="/img_2.png"
-                            alt=""
-                            width="20"
-                            height="20"
-                          />
-                        </span>
-                        <div className="pl-2">
-                          <span className="text-xs">Callie D.</span>
-                          <div className="text-slate-400 text-xs">
-                            January 5, 2023
-                          </div>
-                        </div>
-                      </div>
-                    </figcaption>
-                  </figure>
-                  <div className="triangle-bottomleft absolute -bottom-4 left-0"></div>
-                </div>
-              ))}
-            </motion.div>
-          </div>
-          <div ref={containerRef2}>
-            <motion.div
-              animate={controls2}
-              onHoverStart={handleHoverStart}
-              onHoverEnd={handleHoverEnd}
               className="flex flex-wrap sm:flex-nowrap gap-4 overscroll-x-scroll -mx-16"
             >
               {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((item, i) => (
@@ -1203,7 +1098,7 @@ export default function Home({
               What to expect in this virtual service?
             </p>
           </div>
-          <Accordion type="single" collapsible className="max-w-2xl">
+          <Accordion type="single" collapsible className="max-w-7xl">
             {FAQs.map((faq, faqIdx) => (
               <AccordionItem key={faqIdx} value={faqIdx + faq.name}>
                 <AccordionTrigger>

@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { cn, updateRecord } from '@/lib/utils'
 import { Separator } from '@/components/ui/separator'
-import React from 'react'
 import UsersTable from '@/components/users/usersTable'
 import { User } from '@/lib/service_types'
 import { Dialog, DialogOverlay, DialogPortal } from '@/components/ui/dialog'

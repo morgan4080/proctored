@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import ErrorPage from 'next/error'
 import useSWR from 'swr'
 import Navigation from '@/components/Navigation'

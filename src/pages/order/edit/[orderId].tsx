@@ -1,10 +1,8 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import Head from 'next/head'
 import classNames from '../../../utils/ClassNames'
 import { Separator } from '@/components/ui/separator'
-const Container = dynamic(() => import('@/components/Container'), {
-  ssr: true,
-})
+import Container from "@/components/Container"
 import Navigation from '@/components/Navigation'
 import OrderSummary from '@/components/orders/OrderSummary'
 import OrderDetailsForm, {

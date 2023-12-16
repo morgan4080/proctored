@@ -1,9 +1,7 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import Head from 'next/head'
 import { Separator } from '@/components/ui/separator'
-const Container = dynamic(() => import('@/components/Container'), {
-  ssr: true,
-})
+import Container from "@/components/Container"
 import Navigation from '@/components/Navigation'
 import OrderSummary from '@/components/orders/OrderSummary'
 import OrderDetailsForm from '@/components/orders/OrderDetailsForm'
@@ -386,16 +384,15 @@ const CreateOrder = ({
                         value={sc.slug}
                         className={cn(
                           "font-sans",
-                          'data-[state=active]:ring-teal-500 data-[state=active]:ring-1 data-[state=active]:text-plumes data-[state=active]:shadow-lg data-[state=active]:bg-teal-300 data-[state=active]:shadow-green-200 p-3',
+                          'data-[state=active]:ring-blue-500 data-[state=active]:ring-1 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:bg-black/80 data-[state=active]:shadow-blue-200 p-3',
                         )}
                       >
-                        <FilePlus2 className="w-4 mr-2" />
                         <Link
                           href={`/order/create/${sc.slug}`}
-                          className="underline"
                         >
                           {sc.title}
                         </Link>
+                        <FilePlus2 className="w-4 ml-2" />
                       </TabsTrigger>
                     ))}
                   </TabsList>

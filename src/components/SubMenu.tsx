@@ -1,4 +1,4 @@
-import React, {ForwardedRef, forwardRef, useState} from 'react';
+import {ForwardedRef, forwardRef, useState} from 'react';
 import {cn} from "@/lib/utils";
 import {MenuCategory} from "@/lib/service_types";
 import {clsx} from "clsx";

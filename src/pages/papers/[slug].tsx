@@ -1,12 +1,10 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import ErrorPage from 'next/error'
 import type { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import Navigation from '@/components/Navigation'
 import Head from 'next/head'
 import classNames from '../../utils/ClassNames'
-const Container = dynamic(() => import('@/components/Container'), {
-  ssr: true,
-})
+import Container from "@/components/Container"
 import Footer from '@/components/Footer'
 const Toaster = dynamic(() => import('@/components/ui/toaster'), { ssr: false })
 import { EditorProvider, useCurrentEditor } from '@tiptap/react'

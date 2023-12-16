@@ -1,4 +1,3 @@
-import React from 'react'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import Link from 'next/link'
 import Head from 'next/head'

@@ -1,12 +1,10 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState, ChangeEvent } from 'react'
 import ErrorPage from 'next/error'
 import type { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import Navigation from '@/components/Navigation'
 import Head from 'next/head'
 import classNames from '../../utils/ClassNames'
-const Container = dynamic(() => import('@/components/Container'), {
-  ssr: true,
-})
+import Container from "@/components/Container"
 import Footer from '@/components/Footer'
 const Toaster = dynamic(() => import('@/components/ui/toaster'), { ssr: false })
 import { EditorProvider, useCurrentEditor } from '@tiptap/react'
@@ -220,7 +218,7 @@ const MenuBar = ({
   const { editor } = useCurrentEditor()
   const [colorState, setColorState] = useState('#000000')
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.value !== undefined) setColorState(event.target.value)
   }
 

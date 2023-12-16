@@ -1,10 +1,10 @@
 import {clsx} from "clsx";
-import React from "react";
+import {ReactNode} from "react";
 
 export function SlideWrapper(props: {
     index: number,
     hovering: number | null,
-    children: React.ReactNode
+    children: ReactNode
 }) {
     return (
         <div className={clsx(

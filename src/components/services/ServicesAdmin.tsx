@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { cn, createRecord, fetcher, slugify, updateRecord } from '@/lib/utils'
 import { Separator } from '@/components/ui/separator'
 import {
@@ -105,7 +105,7 @@ const ServicesAdmin = ({
     initialData: services,
   } as any)
 
-  const [updatedServices, setUpdatedServices] = React.useState(services)
+  const [updatedServices, setUpdatedServices] = useState(services)
 
   const { data: updatedCategoryData, mutate: mutateCategory } = useSWR(
     `/api/services?${qpc.toString()}`,
@@ -116,7 +116,7 @@ const ServicesAdmin = ({
   )
 
   const [updatedServiceCategory, setUpdatedServiceCategory] =
-    React.useState(serviceCategories)
+    useState(serviceCategories)
 
   const { data: updatedSubCategoryData, mutate: mutateSubCategory } = useSWR(
     `/api/services?${qpsc.toString()}`,
@@ -127,19 +127,19 @@ const ServicesAdmin = ({
   )
 
   const [updatedServiceSubCategory, setUpdatedServiceSubCategory] =
-    React.useState(serviceSubCategories)
+    useState(serviceSubCategories)
 
-  const [context, setContext] = React.useState('Create')
-  const [defaultID, setDefaultID] = React.useState('')
-  const [defaultTitle, setDefaultTitle] = React.useState('')
-  const [defaultSlug, setDefaultSlug] = React.useState('')
-  const [defaultExcerpt, setDefaultExcerpt] = React.useState('')
-  const [defaultDescription, setDefaultDescription] = React.useState('')
-  const [defaultCategory, setDefaultCategory] = React.useState('')
-  const [defaultSubCategory, setDefaultSubCategory] = React.useState('')
-  const [loading, setLoading] = React.useState(false)
-  const [showDialogue, setShowDialogue] = React.useState(false)
-  const [catDialogue, showCatDialogue] = React.useState(false)
+  const [context, setContext] = useState('Create')
+  const [defaultID, setDefaultID] = useState('')
+  const [defaultTitle, setDefaultTitle] = useState('')
+  const [defaultSlug, setDefaultSlug] = useState('')
+  const [defaultExcerpt, setDefaultExcerpt] = useState('')
+  const [defaultDescription, setDefaultDescription] = useState('')
+  const [defaultCategory, setDefaultCategory] = useState('')
+  const [defaultSubCategory, setDefaultSubCategory] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [showDialogue, setShowDialogue] = useState(false)
+  const [catDialogue, showCatDialogue] = useState(false)
 
   const categoryForm = useForm<z.infer<typeof formSchemaCategories>>({
     resolver: zodResolver(formSchemaCategories),
@@ -221,12 +221,12 @@ const ServicesAdmin = ({
   })
 
   const [serviceCategory, selectServiceCategory] =
-    React.useState<ServiceCategoriesWithSubCategories | null>(null)
+    useState<ServiceCategoriesWithSubCategories | null>(null)
   const [serviceSubCategory, selectServiceSubCategory] =
-    React.useState<ServiceSubCategories | null>(null)
-  const [categoryContext, setCategoryContext] = React.useState('CREATE')
-  const [categorySubContext, setCategorySubContext] = React.useState('EDIT')
-  const [subCategoryContext, setSubCategoryContext] = React.useState('CREATE')
+    useState<ServiceSubCategories | null>(null)
+  const [categoryContext, setCategoryContext] = useState('CREATE')
+  const [categorySubContext, setCategorySubContext] = useState('EDIT')
+  const [subCategoryContext, setSubCategoryContext] = useState('CREATE')
 
   const onSubmitCategory = (values: z.infer<typeof formSchemaCategories>) => {
     setLoading(true)

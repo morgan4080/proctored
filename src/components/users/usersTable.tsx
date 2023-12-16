@@ -1,4 +1,4 @@
-import React from 'react'
+import {useState} from 'react'
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -46,13 +46,13 @@ const UsersTable = ({
   setWriterDialogue: (open: boolean) => void
   setSelectedUser: (user: User) => void
 }) => {
-  const [sorting, setSorting] = React.useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+  const [sorting, setSorting] = useState<SortingState>([])
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(
     [],
   )
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({})
-  const [rowSelection, setRowSelection] = React.useState({})
+    useState<VisibilityState>({})
+  const [rowSelection, setRowSelection] = useState({})
 
   const columns: ColumnDef<User>[] = [
     {

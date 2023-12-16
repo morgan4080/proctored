@@ -1,5 +1,5 @@
 import { useForm } from 'react-hook-form'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import classNames from '../../utils/ClassNames'
 import { StoreDataType } from '@/lib/service_types'
 import { formatMoney } from '@/lib/utils'

@@ -1,10 +1,7 @@
-import React from 'react'
 import Head from 'next/head'
 import classNames from '@/utils/ClassNames'
 import Navigation from '@/components/Navigation'
-const Container = dynamic(() => import('@/components/Container'), {
-  ssr: true,
-})
+import Container from "@/components/Container"
 import { cn } from '@/lib/utils'
 import UsersAdmin from '@/components/users/usersAdmin'
 import {

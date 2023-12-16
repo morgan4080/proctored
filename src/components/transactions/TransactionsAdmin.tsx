@@ -1,7 +1,6 @@
-import React from 'react'
 import { cn } from '@/lib/utils'
 import { Separator } from '@/components/ui/separator'
-import { Transaction, TransactionWithOwnerAndOrder } from '@/lib/service_types'
+import { TransactionWithOwnerAndOrder } from '@/lib/service_types'
 import TransactionsTable from '@/components/transactions/TransactionsTable'
 
 const TransactionsAdmin = ({
