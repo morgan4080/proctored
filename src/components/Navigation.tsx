@@ -25,7 +25,7 @@ const INITIALMENU = [
   {
     name: 'Services',
     categories: [],
-    link: '#',
+    link: '#services',
   },
   {
     name: 'Papers',
@@ -40,7 +40,7 @@ const INITIALMENU = [
   {
     name: 'Account',
     categories: [],
-    link: '#',
+    link: '#account',
   },
 ]
 
@@ -188,6 +188,7 @@ const Navigation = () => {
                                     _id: 'me-orders-' + Math.random().toString(36).slice(2, 18),
                                     title: "Orders",
                                     slug: "",
+                                    excerpt: "prooctorowls orders"
                                   }
                                 ]
                               },
@@ -201,6 +202,7 @@ const Navigation = () => {
                                     _id: 'me-transactions-' + Math.random().toString(36).slice(2, 18),
                                     title: "Transaction",
                                     slug: "",
+                                    excerpt: "prooctorowls transactions"
                                   }
                                 ]
                               }
@@ -222,6 +224,7 @@ const Navigation = () => {
                                     _id: 'admin-users-' + Math.random().toString(36).slice(2, 18),
                                     title: "Users",
                                     slug: "",
+                                    excerpt: "prooctorowls users"
                                   }
                                 ]
                               },
@@ -235,6 +238,7 @@ const Navigation = () => {
                                     _id: 'admin-orders-' + Math.random().toString(36).slice(2, 18),
                                     title: "Orders",
                                     slug: "",
+                                    excerpt: "prooctorowls orders"
                                   }
                                 ]
                               },
@@ -248,6 +252,7 @@ const Navigation = () => {
                                     _id: 'admin-transactions-' + Math.random().toString(36).slice(2, 18),
                                     title: "Transactions",
                                     slug: "",
+                                    excerpt: "prooctorowls transactions"
                                   }
                                 ]
                               },
@@ -261,6 +266,7 @@ const Navigation = () => {
                                     _id: 'admin-services-' + Math.random().toString(36).slice(2, 18),
                                     title: "Services",
                                     slug: "",
+                                    excerpt: "prooctorowls services"
                                   }
                                 ]
                               },
@@ -274,6 +280,7 @@ const Navigation = () => {
                                     _id: 'admin-papers-' + Math.random().toString(36).slice(2, 18),
                                     title: "Papers",
                                     slug: "",
+                                    excerpt: "prooctorowls papers"
                                   }
                                 ]
                               },
@@ -287,6 +294,7 @@ const Navigation = () => {
                                     _id: 'admin-blogs-' + Math.random().toString(36).slice(2, 18),
                                     title: "Blogs",
                                     slug: "",
+                                    excerpt: "prooctorowls blogs"
                                   }
                                 ]
                               }
@@ -315,6 +323,7 @@ const Navigation = () => {
                               _id: 'login-' + Math.random().toString(36).slice(2, 18),
                               title: "Login",
                               slug: "",
+                              excerpt: "prooctorowls login"
                             }
                           ]
                         },
@@ -336,6 +345,7 @@ const Navigation = () => {
                               _id: 'signup-' + Math.random().toString(36).slice(2, 18),
                               title: "Signup",
                               slug: "",
+                              excerpt: "prooctorowls signup"
                             }
                           ]
                         },
@@ -363,7 +373,7 @@ const Navigation = () => {
         onMouseLeave={() => {
           setHovering(null)
         }}
-        className="flex items-center justify-between w-full z-10 max-w-7xl mx-auto px-4 sm:px-0 relative"
+        className="flex items-center justify-between w-full z-10 max-w-7xl mx-auto px-4 lg:px-0 relative"
       >
         <Link
           href="/"
@@ -374,10 +384,10 @@ const Navigation = () => {
             src="/logo.svg"
             width={14}
             height={14}
-            className="object-contain object-center w-16 overflow-hidden self-center"
+            className="object-contain object-center w-12 overflow-hidden self-center"
             alt="logo"
           />
-          <span className="absolute top-10 -right-14 hidden md:flex flex-wrap text-xs text-left">
+          <span className="absolute top-6 -right-16 hidden lg:flex flex-wrap text-sm font-semibold font-serif text-left">
             PROCTOR <br /> OWLS ™
           </span>
         </Link>
@@ -385,7 +395,7 @@ const Navigation = () => {
           ref={mobileMenu}
           role="menu"
           className={clsx(
-            'md:flex md:items-center z-[-1] md:z-auto md:static fixed w-full left-0 md:w-auto md:py-0 py-4 md:pl-0 pl-7 md:opacity-100 opacity-0 top-[-400px] transition-all ease-in duration-500 gap-14',
+            'lg:flex lg:items-center z-[-1] lg:z-auto lg:static fixed w-full left-0 lg:w-auto py-4 lg:py-0 pl-7 px-4 lg:pl-0 lg:opacity-100 opacity-0 top-[-400px] transition-all ease-in duration-500 gap-14',
           )}
         >
           {isOpen ? (
@@ -397,12 +407,9 @@ const Navigation = () => {
                     src="/logo.svg"
                     width={14}
                     height={14}
-                    className="object-contain object-center w-16 overflow-hidden self-center"
+                    className="object-contain object-center w-12 overflow-hidden self-center"
                     alt="logo"
                   />
-                </span>
-                <span className="flex flex-wrap pt-2 text-center text-white font-bold text-2xl">
-                  PROCTOR OWLS
                 </span>
               </span>
 
@@ -411,7 +418,7 @@ const Navigation = () => {
                   oCmenu()
                 }}
                 type="button"
-                className="p-2 absolute -top-2 right-2"
+                className="p-4"
               >
                 <svg
                   className="text-white w-8 h-8"
@@ -441,6 +448,7 @@ const Navigation = () => {
                   onHover(index, event.currentTarget)
                 }
               }}
+              className={clsx(item.categories.length > 0 && "pointer-events-none md:pointer-events-auto")}
             >
               <Link
                 role={`navigation-${item.name}`}
@@ -472,95 +480,97 @@ const Navigation = () => {
             </li>
           ))}
         </ul>
-        <div
-          role="mobile-menu-toggle-collapsed"
-          aria-expanded={isOpen}
-          aria-hidden={!isOpen}
-          className="flex items-start justify-between gap-5 md:hidden"
-        >
-          <button
-            onClick={() => {
-              oCmenu()
-            }}
-            type="button"
-            className="p-2"
+        <div className="flex space-between flex-row-reverse">
+          <div
+              role="mobile-menu-toggle-collapsed"
+              aria-expanded={isOpen}
+              aria-hidden={!isOpen}
+              className="flex items-start justify-between gap-5 lg:hidden"
           >
-            {isOpen ? (
-              <svg
-                className="text-white w-12 h-12"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-                aria-hidden="true"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M6 18L18 6M6 6l12 12"
-                ></path>
-              </svg>
-            ) : (
-              <svg
-                className="text-white w-12 h-12"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-                aria-hidden="true"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M3.75 6.75h16.5M3.75 12H12m-8.25 5.25h16.5"
-                ></path>
-              </svg>
-            )}
-          </button>
-        </div>
-        <Link
-          role="CTA"
-          href="/order/create"
-          className="self-stretch flex justify-between items-center gap-4 px-4 lg:px-0"
-        >
-          <div className="text-white text-base font-bold ">ORDER NOW</div>
-          <div className="self-center flex items-stretch gap-1 max-md:justify-center">
-            <Image
-              loading="lazy"
-              src="/Path%206.svg"
-              width={10}
-              height={10}
-              className="animate-pulse aspect-[0.6] object-contain object-center w-[9px] stroke-[2px] stroke-neutral-50 opacity-25 overflow-hidden shrink-0 max-w-full"
-              alt={''}
-            />
-            <Image
-              loading="lazy"
-              src="/Path%207.svg"
-              width={10}
-              height={10}
-              className="animate-pulse aspect-[0.6] object-contain object-center w-[9px] stroke-[2px] stroke-neutral-50 opacity-50 overflow-hidden shrink-0 max-w-full"
-              alt={''}
-            />
-            <Image
-              loading="lazy"
-              src="/Path%208.svg"
-              width={10}
-              height={10}
-              className="animate-pulse aspect-[0.6] object-contain object-center w-[9px] stroke-[2px] stroke-neutral-50 opacity-75 overflow-hidden shrink-0 max-w-full"
-              alt={''}
-            />
-            <Image
-              loading="lazy"
-              src="/Path%209.svg"
-              width={10}
-              height={10}
-              className="animate-pulse aspect-[0.6] object-contain object-center w-[9px] stroke-[2px] stroke-neutral-50 overflow-hidden shrink-0 max-w-full"
-              alt={''}
-            />
+            <button
+                onClick={() => {
+                  oCmenu()
+                }}
+                type="button"
+                className="p-2"
+            >
+              {isOpen ? (
+                  <svg
+                      className="text-white w-12 h-12"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                      aria-hidden="true"
+                  >
+                    <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M6 18L18 6M6 6l12 12"
+                    ></path>
+                  </svg>
+              ) : (
+                  <svg
+                      className="text-white w-12 h-12"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                      aria-hidden="true"
+                  >
+                    <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M3.75 6.75h16.5M3.75 12H12m-8.25 5.25h16.5"
+                    ></path>
+                  </svg>
+              )}
+            </button>
           </div>
-        </Link>
+          <Link
+              role="CTA"
+              href="/order/create"
+              className="flex justify-between items-center gap-4 pl-0 pr-8"
+          >
+            <div className="text-white text-base font-bold ">ORDER NOW</div>
+            <div className="self-center flex items-stretch gap-1 max-md:justify-center">
+              <Image
+                  loading="lazy"
+                  src="/Path%206.svg"
+                  width={10}
+                  height={10}
+                  className="animate-ripple aspect-[0.6] object-contain object-center w-[9px] stroke-[2px] stroke-neutral-50 opacity-25 overflow-hidden shrink-0 max-w-full"
+                  alt={''}
+              />
+              <Image
+                  loading="lazy"
+                  src="/Path%207.svg"
+                  width={10}
+                  height={10}
+                  className="animate-ripple aspect-[0.6] object-contain object-center w-[9px] stroke-[2px] stroke-neutral-50 opacity-50 overflow-hidden shrink-0 max-w-full"
+                  alt={''}
+              />
+              <Image
+                  loading="lazy"
+                  src="/Path%208.svg"
+                  width={10}
+                  height={10}
+                  className="animate-ripple aspect-[0.6] object-contain object-center w-[9px] stroke-[2px] stroke-neutral-50 opacity-75 overflow-hidden shrink-0 max-w-full"
+                  alt={''}
+              />
+              <Image
+                  loading="lazy"
+                  src="/Path%209.svg"
+                  width={10}
+                  height={10}
+                  className="animate-ripple aspect-[0.6] object-contain object-center w-[9px] stroke-[2px] stroke-neutral-50 overflow-hidden shrink-0 max-w-full"
+                  alt={''}
+              />
+            </div>
+          </Link>
+        </div>
 
         <div
             className={clsx(
@@ -572,20 +582,21 @@ const Navigation = () => {
             }}
         />
         <div
-          className={clsx(
-              "absolute top-20 -ml-24 w-[600px] duration-300",
-              hovering !== null ? "transition-all" : "opacity-0 pointer-events-none"
-          )}
-          style={{
-            left: popoverLeft || 0
-          }}
+            className={clsx(
+                "absolute top-16 -ml-24 w-[600px] duration-300",
+                hovering !== null ? "transition-all" : "opacity-0 pointer-events-none"
+            )}
+            style={{
+              left: popoverLeft || 0
+            }}
         >
-          <div style={{height: popoverHeight || 0}} className="bg-[#eff3f9] overflow-hidden transform-gpu rounded shadow">
+          <div style={{height: popoverHeight || 0}}
+               className="bg-[#eff3f9] overflow-hidden transform-gpu rounded shadow">
             <SlideWrapper index={1} hovering={hovering}>
-              <SubMenu ref={ref => refs.current[1] = ref} categories={menu[1].categories} className="" />
+              <SubMenu ref={ref => refs.current[1] = ref} categories={menu[1].categories} className=""/>
             </SlideWrapper>
             <SlideWrapper index={4} hovering={hovering}>
-              <SubMenu ref={ref => refs.current[4] = ref} categories={menu[4].categories} className="" />
+              <SubMenu ref={ref => refs.current[4] = ref} categories={menu[4].categories} className=""/>
             </SlideWrapper>
           </div>
         </div>

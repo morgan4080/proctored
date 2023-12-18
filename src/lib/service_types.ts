@@ -210,6 +210,6 @@ export type MenuCategory = {
     title: string
     slug: string
     description: string
-    items: { _id: string; title: string; slug: string }[]
+    items: { _id: string; title: string; excerpt: string; slug: string }[]
   }[]
 }

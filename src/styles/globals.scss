@@ -182,6 +182,10 @@ textarea::-ms-input-placeholder { /* Edge 12 -18 */
   @include typed("Proctored Exam", "Essay Writing", "Nursing School", [.04, null, null, .01], (caret-speed: .75, caret-width: 3px, caret-color: #ffffff));
 }
 
+.wrapLogo {
+  @include typed("Proctor", "Reseacrh", [.04, null, null, .01], (caret-speed: .75, caret-width: 3px, caret-color: #ffffff));
+}
+
 .menuBtn {
   outline: none;
   border: none;
@@ -286,4 +290,18 @@ circle {
   backdrop-filter: blur(10px);
   background: linear-gradient(336deg, rgba(0, 255, 0, 0.27), rgba(0,0,255,0) 70.71%), linear-gradient(217deg, rgb(0, 83, 152), rgba(255,0,0,0) 90.71%),
   linear-gradient(127deg, rgb(0, 83, 152), rgba(0,255,0,0) 90.71%);
+}
+
+@keyframes ripple {
+  0%, 100% {
+    transform: translateY(-10%) translateX(-10%) scale3d(1.3, 1.3, 1.3);
+    animation-timing-function: cubic-bezier(0.8,0,1,1);
+  }
+  50% {
+    transform: none;
+    animation-timing-function: cubic-bezier(0,0,0.2,1);
+  }
+}
+.animate-ripple {
+  animation: ripple 1s infinite;
 }

@@ -16,7 +16,7 @@ const SubMenu = forwardRef<HTMLDivElement, MenuContainerProps>(
     const [hoveredCat, setHoveredCat] = useState<number>(0)
     return <nav ref={ref as ForwardedRef<HTMLDivElement>} className={cn(props.className)}>
         <div className="p-1 gap-2 flex">
-            <div className="w-1/3 space-y-1">
+            <div className="w-1/3 space-y-1 pb-20">
                 {
                     props.categories.map((category, i) => (
                         <div key={i} className="group relative">
@@ -38,7 +38,7 @@ const SubMenu = forwardRef<HTMLDivElement, MenuContainerProps>(
                                     </div>
                                     <div>
                                         <dt className="sr-only">Description</dt>
-                                        <dd className="font-normal tracking-wide group-hover:text-slate-600 line-clamp-2">{category.description}</dd>
+                                        <dd className="font-normal text-xs tracking-wide group-hover:text-slate-600">{category.description}</dd>
                                     </div>
                                 </dl>
                                 <div className={clsx(
@@ -75,35 +75,40 @@ const SubMenu = forwardRef<HTMLDivElement, MenuContainerProps>(
                                     <span className="sr-only">
                                         {sub.description}
                                     </span>
-                                    <div className="flex flex-col gap-1.5 pb-4">
+                                    <div className="flex flex-col gap-1.5 pb-4 text-sm">
                                         {
                                             sub.items.map((item, i) => (
-                                                item._id.includes("login") ?
+                                                <div key={i}>
+                                                    {
+                                                        item._id.includes("login") ?
 
-                                                    <button key={i} type="button" onClick={() => signIn()} className="cursor-pointer text-left">
-                                                        <p className="tracking-normal font-semibold text-slate-600 hover:text-slate-800">{ item.title}</p>
-                                                    </button>
-
-                                                    :
-
-                                                    item._id.includes("signup") ?
-
-                                                        <button key={i} type="button" onClick={() => signIn()}
-                                                                className="cursor-pointer text-left">
-                                                            <p className="tracking-normal font-semibold text-slate-600 hover:text-slate-800">{item.title}</p>
-                                                        </button>
-
-                                                        :
-
-                                                        item._id.includes("admin")  || item._id.includes("me") ?
-
-                                                            <Link key={i} href={`/${props.categories[hoveredCat].slug}/${sub.slug}/${item.slug}`}>
+                                                            <button type="button" onClick={() => signIn()} className="cursor-pointer text-left hover:underline">
                                                                 <p className="tracking-normal font-semibold text-slate-600 hover:text-slate-800">{ item.title}</p>
-                                                            </Link>
+                                                            </button>
+
                                                             :
-                                                            <Link key={i} href={`/services/${props.categories[hoveredCat].slug}/${sub.slug}/${item.slug}`}>
-                                                                <p className="tracking-normal font-semibold text-slate-600 hover:text-slate-800">{ item.title}</p>
-                                                            </Link>
+
+                                                            item._id.includes("signup") ?
+
+                                                                <button type="button" onClick={() => signIn()}
+                                                                        className="cursor-pointer text-left hover:underline">
+                                                                    <p className="tracking-normal font-semibold text-slate-600 hover:text-slate-800">{item.title}</p>
+                                                                </button>
+
+                                                                :
+
+                                                                item._id.includes("admin")  || item._id.includes("me") ?
+
+                                                                    <Link href={`/${props.categories[hoveredCat].slug}/${sub.slug}/${item.slug}`} className="hover:underline">
+                                                                        <p className="tracking-normal font-semibold text-slate-600 hover:text-slate-800">{ item.title}</p>
+                                                                    </Link>
+                                                                    :
+                                                                    <Link href={`/services/${props.categories[hoveredCat].slug}/${sub.slug}/${item.slug}`} className="hover:underline">
+                                                                        <p className="tracking-normal font-semibold text-slate-600 hover:text-slate-800">{ item.title}</p>
+                                                                    </Link>
+                                                    }
+                                                    <p className="sr-only">{item.excerpt}</p>
+                                                </div>
                                             ))
                                         }
                                     </div>

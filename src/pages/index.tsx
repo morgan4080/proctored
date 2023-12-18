@@ -124,9 +124,11 @@ export default function Home({
   storedata,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const ref = useRef(null)
+  const ref2 = useRef(null)
   const line = useRef(null)
   const chooseWriterView = useRef(null)
   const isInView = useInView(ref, { once: false })
+  const isInView2 = useInView(ref2, { once: false })
   const chooseWriterInView = useInView(chooseWriterView, { once: false })
   const isLineInView = useInView(line, { once: false })
   const [completedOrders, setCompletedOrders] = useState(0)
@@ -284,7 +286,7 @@ export default function Home({
               />
             </svg>
             <div className="flex-1 mx-auto">
-              <motion.div
+              <div
                 ref={containerRef}
                 className="flex gap-8 px-8 sm:mx-auto whitespace-nowrap overflow-x-scroll horizontalScroll"
               >
@@ -395,7 +397,7 @@ export default function Home({
                     ))}
                   </motion.div>
                 ))}
-              </motion.div>
+              </div>
             </div>
           </div>
         </div>
@@ -808,7 +810,7 @@ export default function Home({
         <div className="w-full bg-gradient-to-br from-bermuda to-plumes">
           <Container className="xl:px-0 py-32">
             <div className="grid space-y-16 lg:space-y-0 lg:grid-cols-2 max-w-6xl mx-auto">
-              <div className="col-span-1 text-center md:text-left">
+              <div ref={ref2} className="col-span-1 text-center md:text-left">
                 <h1
                   className={classNames(
                     "font-sans",
@@ -825,7 +827,7 @@ export default function Home({
                   className="pt-4 space-x-2 flex items-center justify-center md:justify-start"
                   variants={container}
                   initial="hidden"
-                  animate={isInView ? 'show' : 'hidden'}
+                  animate={isInView2 ? 'show' : 'hidden'}
                 >
                   <motion.li variants={item}>
                     <PaymentIcons name={'visa'} />

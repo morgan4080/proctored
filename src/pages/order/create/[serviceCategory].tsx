@@ -33,7 +33,7 @@ import {
   DialogOverlay,
   DialogPortal,
 } from '@/components/ui/dialog'
-import { ChevronLeft, ChevronRight, FilePlus2, Loader2 } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-react'
 import { useSession } from 'next-auth/react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
@@ -352,7 +352,7 @@ const CreateOrder = ({
         </div>
         <Container
           className="xl:px-0"
-          parentClassName="pt-10 pb-32 bg-white w-full"
+          parentClassName="pt-4 pb-32 bg-white w-full"
         >
           <Tabs defaultValue={serviceCategory}>
             <div className="flex flex-col">
@@ -377,14 +377,15 @@ const CreateOrder = ({
                   className="flex w-auto whitespace-nowrap"
                   viewportRef={viewportRef}
                 >
-                  <TabsList className="flex p-2.5 h-16">
+                  <p className="text-xs px-1 font-sans">Choose service type:</p>
+                  <TabsList className="flex p-1.5 h-14 divide-x-2">
                     {serviceCategories.map((sc) => (
                       <TabsTrigger
                         key={sc._id}
                         value={sc.slug}
                         className={cn(
                           "font-sans",
-                          'data-[state=active]:ring-blue-500 data-[state=active]:ring-1 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:bg-black/80 data-[state=active]:shadow-blue-200 p-3',
+                          'rounded-none data-[state=active]:rounded-sm data-[state=active]:ring-blue-500 data-[state=active]:ring-1 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:bg-bermuda/90 data-[state=active]:shadow-blue-200 p-3',
                         )}
                       >
                         <Link
@@ -392,7 +393,6 @@ const CreateOrder = ({
                         >
                           {sc.title}
                         </Link>
-                        <FilePlus2 className="w-4 ml-2" />
                       </TabsTrigger>
                     ))}
                   </TabsList>
