@@ -1,4 +1,6 @@
-import NextAuth, { DefaultSession, NextAuthOptions } from 'next-auth'
+import NextAuth, {NextAuthOptions} from 'next-auth'
+import { authenticate } from "@/services/authService"
+// import type { GetServerSidePropsContext, NextApiRequest, NextApiResponse } from "next"
 // import Apple from "next-auth/providers/apple"
 // import Atlassian from "next-auth/providers/atlassian"
 // import Auth0 from "next-auth/providers/auth0"
@@ -24,6 +26,7 @@ import NextAuth, { DefaultSession, NextAuthOptions } from 'next-auth'
 // import GitHub from "next-auth/providers/github"
 // import Gitlab from "next-auth/providers/gitlab"
 import GoogleProvider from 'next-auth/providers/google'
+import CredentialsProvider from "next-auth/providers/credentials"
 import mongoClient from '@/lib/mongodb'
 import { User } from '@/lib/service_types'
 
@@ -35,6 +38,25 @@ export const authOptions: NextAuthOptions = {
       clientId: process.env.GOOGLE_ID,
       clientSecret: process.env.GOOGLE_SECRET,
     }),
+    /*CredentialsProvider({
+      name: 'Credentials',
+      credentials: {
+        email: { label: "Email", type: "text" },
+        password: { label: "Password", type: "password" }
+      },
+      async authorize (credentials, req) {
+        if (typeof credentials !== "undefined") {
+          const res = await authenticate(credentials.email, credentials.password)
+          if (typeof res !== "undefined") {
+            return { ...res.user, apiToken: res.token }
+          } else {
+            return null
+          }
+        } else {
+          return null
+        }
+      }
+    }),*/
   ],
   theme: {
     colorScheme: 'light',

@@ -3,7 +3,7 @@ import {cn} from "@/lib/utils";
 import {MenuCategory} from "@/lib/service_types";
 import {clsx} from "clsx";
 import Link from "next/link";
-import { signIn, signOut, useSession } from 'next-auth/react'
+import { signIn, signOut } from 'next-auth/react'
 import {ScrollArea} from "@/components/ui/scroll-area";
 
 type MenuContainerProps = {
@@ -82,13 +82,22 @@ const SubMenu = forwardRef<HTMLDivElement, MenuContainerProps>(
                                                     {
                                                         item._id.includes("login") ?
 
-                                                            <button type="button" onClick={() => signIn()} className="cursor-pointer text-left hover:underline">
-                                                                <p className="tracking-normal font-semibold text-slate-600 hover:text-slate-800">{ item.title}</p>
-                                                            </button>
+                                                                <button type="button" onClick={() => signIn()} className="cursor-pointer text-left hover:underline">
+                                                                    <p className="tracking-normal font-semibold text-slate-600 hover:text-slate-800">{ item.title}</p>
+                                                                </button>
 
                                                             :
 
-                                                            item._id.includes("signup") ?
+                                                                item._id.includes("logout") ?
+
+                                                                <button type="button" onClick={() => signOut()}
+                                                                        className="cursor-pointer text-left hover:underline">
+                                                                    <p className="tracking-normal font-semibold text-slate-600 hover:text-slate-800">{item.title}</p>
+                                                                </button>
+
+                                                                :
+
+                                                                item._id.includes("signup") ?
 
                                                                 <button type="button" onClick={() => signIn()}
                                                                         className="cursor-pointer text-left hover:underline">

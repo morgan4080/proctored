@@ -6,7 +6,7 @@ import {
   MenuType,
 } from '@/lib/service_types'
 import clsx from 'clsx'
-import {useSession} from "next-auth/react";
+import {signOut, useSession} from "next-auth/react";
 import SubMenu from "@/components/SubMenu";
 import {SlideWrapper} from "@/components/SlideWrapper";
 
@@ -141,7 +141,29 @@ const Navigation = () => {
                                 items: []
                               }
                             ]
-                          }
+                          },
+                          {
+                            _id: 'logout-' + Math.random().toString(36).slice(2, 18),
+                            title: "Logout",
+                            slug: "",
+                            description: "Clear current session",
+                            subcategories: [
+                              {
+                                _id: 'login-' + Math.random().toString(36).slice(2, 18),
+                                title: "LOGOUT",
+                                slug: "",
+                                description: "logout",
+                                items: [
+                                  {
+                                    _id: 'logout-' + Math.random().toString(36).slice(2, 18),
+                                    title: "Logout",
+                                    slug: "",
+                                    excerpt: "prooctorowls logout"
+                                  }
+                                ]
+                              },
+                            ]
+                          },
                         ]
                         break
                       case "admin":
@@ -167,7 +189,29 @@ const Navigation = () => {
                                 items: []
                               }
                             ]
-                          }
+                          },
+                          {
+                            _id: 'logout-' + Math.random().toString(36).slice(2, 18),
+                            title: "Logout",
+                            slug: "",
+                            description: "Clear current session",
+                            subcategories: [
+                                {
+                                  _id: 'login-' + Math.random().toString(36).slice(2, 18),
+                                  title: "LOGOUT",
+                                  slug: "",
+                                  description: "logout",
+                                  items: [
+                                    {
+                                      _id: 'logout-' + Math.random().toString(36).slice(2, 18),
+                                      title: "Logout",
+                                      slug: "",
+                                      excerpt: "prooctorowls logout"
+                                    }
+                                  ]
+                                },
+                            ]
+                          },
                         ]
                         break
                       case "superuser":
@@ -298,6 +342,28 @@ const Navigation = () => {
                                   }
                                 ]
                               }
+                            ]
+                          },
+                          {
+                            _id: 'logout-' + Math.random().toString(36).slice(2, 18),
+                            title: "Logout",
+                            slug: "",
+                            description: "Clear current session",
+                            subcategories: [
+                              {
+                                _id: 'login-' + Math.random().toString(36).slice(2, 18),
+                                title: "LOGOUT",
+                                slug: "",
+                                description: "logout",
+                                items: [
+                                  {
+                                    _id: 'logout-' + Math.random().toString(36).slice(2, 18),
+                                    title: "Logout",
+                                    slug: "",
+                                    excerpt: "prooctorowls logout"
+                                  }
+                                ]
+                              },
                             ]
                           }
                         ]
