@@ -9,7 +9,7 @@ export default function FAQS({Faqs}: Readonly<{ Faqs: FaqType[] }>) {
             <div
                 className={classNames(
                     "font-sans",
-                    'text-4xl max-w-xl lg:max-w-7xl mx-auto font-bold leading-none tracking-tight text-bermuda text-left',
+                    'text-4xl max-w-xl lg:max-w-7xl font-bold leading-none tracking-tight text-bermuda text-left',
                 )}
             >
                 <h2 className="max-w-5xl leading-snug">Frequently Asked Questions about Custom Writing.</h2>
@@ -23,12 +23,12 @@ export default function FAQS({Faqs}: Readonly<{ Faqs: FaqType[] }>) {
                 <AccordionItem key={`${faqIdx + faq.name}`} value={faqIdx + faq.name}>
                     <AccordionTrigger>
                         <div className="prose">
-                            <h3>{faq.name}</h3>
+                            <h3 className="text-left">{faq.name}</h3>
                         </div>
                     </AccordionTrigger>
                     <AccordionContent>
                         <div className="prose">
-                            <p>{faq.description}</p>
+                            <p className="text-left">{faq.description}</p>
                         </div>
                     </AccordionContent>
                 </AccordionItem>

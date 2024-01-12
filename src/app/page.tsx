@@ -1,22 +1,34 @@
 import { Metadata } from 'next';
-import HeroSection from "@/app/newarc/components/HeroSection";
-import WriterSection from "@/app/newarc/components/WriterSection";
-import {FaqType, StoreDataType, WriterType} from "@/lib/service_types";
-import HowTo from "@/app/newarc/components/HowTo";
-import Stats from "@/app/newarc/components/Stats";
-import Pricing from "@/app/newarc/components/Pricing";
-import Reviews, {ReviewsType} from "@/app/newarc/components/Reviews";
-import TrustGuarantees from "@/app/newarc/components/TrustGuarantees";
-import Values from "@/app/newarc/components/Values";
-import Faqs from "@/app/newarc/components/FAQS";
-import Features from "@/app/newarc/components/Features";
-import EssayWriter from "@/app/newarc/components/Content";
+import HeroSection from "@/app/components/HeroSection";
+import WriterSection from "@/app/components/WriterSection";
+import {FaqType, Service, StoreDataType, WriterType} from "@/lib/service_types";
+import HowTo from "@/app/components/HowTo";
+import Stats from "@/app/components/Stats";
+import Pricing from "@/app/components/Pricing";
+import Reviews, {ReviewsType} from "@/app/components/Reviews";
+import TrustGuarantees from "@/app/components/TrustGuarantees";
+import Values from "@/app/components/Values";
+import Faqs from "@/app/components/FAQS";
+import Features from "@/app/components/Features";
+import EssayWriter from "@/app/components/Content";
+import Blogs from "@/app/components/Blogs";
+import mongoClient from "@/lib/mongodb";
+const { clientPromise } = mongoClient;
 
 export const metadata: Metadata = {
-    title: 'Test Page',
+    title: 'Proctor Owls/ Research OWls | Homepage',
+    description: 'Offering Professional Help in Proctored Exams, Nursing Exams and Essay Writing',
 }
 
 export default async function Page() {
+    const client = await clientPromise
+    const db = client.db('proctor')
+    const blogs = await db
+        .collection<Service>('blogs')
+        .find({})
+        .sort({ metacritic: -1 })
+        .limit(3)
+        .toArray()
     const writers: WriterType[] = JSON.parse(await getWriters())
     const storeData: StoreDataType[] = JSON.parse(await getStoreData())
     const faqs: FaqType[] = JSON.parse(await getFAQS())
@@ -34,7 +46,13 @@ export default async function Page() {
             <Values values={values} />
             <Reviews average={average} totalCount={totalCount} counts={counts} reviews={reviews} />
             <TrustGuarantees />
-            {/*<EssayWriter />*/}
+            <EssayWriter />
+            <Blogs blogs={blogs.map((blog) => {
+                return {
+                    ...blog,
+                    _id: blog._id.toString(),
+                }
+            })} />
         </div>
     )
 }

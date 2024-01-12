@@ -7,6 +7,7 @@ import {getServerSession} from "next-auth";
 import type {Session} from "next-auth";
 import NavBar from "@/components/navigation/NavBar";
 import Footer from "@/components/Footer";
+import Script from "next/script";
 
 export const metadata: Metadata = {
     title: 'Proctor Owls/ Research OWls',
@@ -32,6 +33,7 @@ export default async function RootLayout({
     const menu = await getLinks(session, status)
     return (
         <html lang="en">
+        <Script src="https://fw-cdn.com/11081366/3816148.js"></Script>
         <body className="antialiased text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-900 relative">
         <NavBar menu={menu} session={session} status={status}/>
         <main className="min-h-screen">

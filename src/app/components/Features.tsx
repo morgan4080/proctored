@@ -8,7 +8,7 @@ export default function Features() {
             <h2
                 className={classNames(
                     "font-sans",
-                    'text-4xl max-w-xl lg:max-w-7xl mx-auto font-bold leading-none tracking-tight text-bermuda text-left',
+                    'text-4xl max-w-xl lg:max-w-7xl font-bold leading-none tracking-tight text-bermuda text-left',
                 )}
             >
                 Do You Need Academic help?

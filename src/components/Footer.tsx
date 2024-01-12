@@ -7,7 +7,7 @@ import Container from "@/components/Container"
 const Footer = () => {
   return (
     <footer>
-      <div className="bg-gradient-to-r from-gray-50 to-zinc-100 py-10 text-sm">
+      <div className="bg-reef/20 py-10 text-sm">
         <div className="max-w-7xl mx-auto px-4 lg:px-0 sm:grid sm:grid-cols-2 sm:gap-8 xl:col-span-3 text-center lg:text-left">
           <div className="md:grid md:grid-cols-2 md:gap-8">
             <div>
@@ -85,7 +85,7 @@ const Footer = () => {
           </div>
         </div>
       </div>
-      <div className="pb-6 bg-gradient-to-r from-gray-50 to-zinc-100">
+      <div className="py-4 bg-reef/30">
         <div className="mx-auto max-w-4xl space-y-2">
           <p
               className={classNames(
