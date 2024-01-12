@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react'
+import {useRef, useState} from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import {
@@ -10,9 +10,12 @@ import clsx from 'clsx'
 import SubMenu from "@/components/SubMenu";
 import {SlideWrapper} from "@/components/SlideWrapper";
 import {Session} from "next-auth";
+import {motion, useMotionValueEvent, useScroll} from "framer-motion";
 
 const NavBar = ({menu, session, status}: {menu: MenuType[], session: Session | null, status: "loading" | "authenticated" | "unauthenticated" }) => {
+    const { scrollY } = useScroll();
     const mobileMenu = useRef<HTMLUListElement | null>(null)
+    const [scrollYPosition, setScrollYPosition] = useState(0)
     const [isOpen, setOpen] = useState(false)
     const [hovering, setHovering] = useState<number | null>(null)
     const [popoverLeft, setPopoverLeft] = useState<number | null>(null)
@@ -49,8 +52,12 @@ const NavBar = ({menu, session, status}: {menu: MenuType[], session: Session | n
         }
     }
 
+    useMotionValueEvent(scrollY, "change", (latest) => {
+        setScrollYPosition(latest)
+    })
+
     return (
-        <header>
+        <motion.header className="fixed w-full top-0 z-[1000]" style={{ backdropFilter: "blur(10px)", backgroundColor: `rgba(0,83,152, ${scrollYPosition /1500})` }}>
             <nav
                 onMouseLeave={() => {
                     setHovering(null)
@@ -283,7 +290,7 @@ const NavBar = ({menu, session, status}: {menu: MenuType[], session: Session | n
                     </div>
                 </div>
             </nav>
-        </header>
+        </motion.header>
     )
 }
 

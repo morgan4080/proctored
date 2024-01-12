@@ -24,19 +24,14 @@ export default function Stats() {
         setAverageScore(`${getRandomNumber(40, 49) / 10}/5`)
     }, []);
 
-    return <Container className="xl:px-0 pb-28 pt-20 sm:py-28">
-        <div className="max-w-2xl md:mx-auto md:text-center xl:max-w-none">
-            <h2
-                className={classNames(
-                    "font-sans",
-                    'text-3xl tracking-tight sm:text-4xl md:text-5xl text-bermuda text-center',
-                )}
-            >
-                Proctor Owl Activity
+    return <Container className="xl:px-0 pb-28 pt-20 sm:py-28" parentClassName="w-full bg-reef">
+        <div className="mx-auto max-w-7xl">
+            <h2 className="text-3xl tracking-tight sm:text-4xl md:text-5xl text-bermuda text-left font-sans">
+                Site numbers
             </h2>
         </div>
-        <div className="mt-16 grid gap-16 md:gap-24 lg:gap-48 space-y-16 lg:space-y-0 lg:grid-cols-2 mx-auto">
-            <div className="flex items-center justify-center">
+        <div className="grid gap-16 md:gap-24 lg:gap-48 space-y-16 lg:space-y-0 lg:grid-cols-2 mx-auto pt-16">
+            <div className="flex items-center justify-start">
                 <div className="space-y-3">
                     <motion.h1
                         className={classNames(
@@ -146,7 +141,7 @@ export default function Stats() {
                                     opacity: 1,
                                     scale: 1,
                                     translateY: 0,
-                                    transition: { duration: 0.5, delay: 0.4 },
+                                    transition: {duration: 0.5, delay: 0.4},
                                 },
                             }}
                         >
@@ -157,12 +152,12 @@ export default function Stats() {
                             initial="hidden"
                             animate={isInView ? 'visible' : 'hidden'}
                             variants={{
-                                hidden: { opacity: 0, scale: 0.96, translateX: 40 },
+                                hidden: {opacity: 0, scale: 0.96, translateX: 40},
                                 visible: {
                                     opacity: 1,
                                     scale: 1,
                                     translateX: 0,
-                                    transition: { duration: 0.5, delay: 0.5 },
+                                    transition: {duration: 0.5, delay: 0.5},
                                 },
                             }}
                         >
@@ -191,7 +186,7 @@ export default function Stats() {
                                     opacity: 1,
                                     scale: 1,
                                     translateY: 0,
-                                    transition: { duration: 0.5, delay: 0.6 },
+                                    transition: {duration: 0.5, delay: 0.6},
                                 },
                             }}
                         >
@@ -202,12 +197,12 @@ export default function Stats() {
                             initial="hidden"
                             animate={isInView ? 'visible' : 'hidden'}
                             variants={{
-                                hidden: { opacity: 0, scale: 0.96, translateX: 40 },
+                                hidden: {opacity: 0, scale: 0.96, translateX: 40},
                                 visible: {
                                     opacity: 1,
                                     scale: 1,
                                     translateX: 0,
-                                    transition: { duration: 0.5, delay: 0.7 },
+                                    transition: {duration: 0.5, delay: 0.7},
                                 },
                             }}
                         >
@@ -234,7 +229,7 @@ export default function Stats() {
                                     opacity: 1,
                                     scale: 1,
                                     translateY: 0,
-                                    transition: { duration: 0.5, delay: 0.8 },
+                                    transition: {duration: 0.5, delay: 0.8},
                                 },
                             }}
                         >
@@ -245,12 +240,12 @@ export default function Stats() {
                             initial="hidden"
                             animate={isInView ? 'visible' : 'hidden'}
                             variants={{
-                                hidden: { opacity: 0, scale: 0.96, translateX: 40 },
+                                hidden: {opacity: 0, scale: 0.96, translateX: 40},
                                 visible: {
                                     opacity: 1,
                                     scale: 1,
                                     translateX: 0,
-                                    transition: { duration: 0.5, delay: 0.9 },
+                                    transition: {duration: 0.5, delay: 0.9},
                                 },
                             }}
                         >

@@ -19,11 +19,11 @@ export default async function RootLayout({
     // Layouts must accept a children prop.
     // This will be populated with nested layouts or pages
     children
-}: {
+}: Readonly<{
     children: ReactNode
-}) {
-    const session = await getServerSession(authOptions)
+}>) {
     let status: "loading" | "authenticated" | "unauthenticated" = "loading"
+    const session = await getServerSession(authOptions)
     if (session == null) {
         status = "unauthenticated"
     } else {

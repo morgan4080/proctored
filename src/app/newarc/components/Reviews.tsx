@@ -1,5 +1,6 @@
 import classNames from "@/utils/ClassNames";
 import Container from "@/components/Container";
+import Link from "next/link";
 
 
 
@@ -20,20 +21,23 @@ export type ReviewsType = {
     }[]
 }
 
-export default function Reviews({average, totalCount, counts, reviews}: ReviewsType) {
-    return <Container className="xl:px-0 pb-32 space-y-16 relative">
-        <div className="pt-20">
+export default function Reviews({average, totalCount, counts, reviews}: Readonly<ReviewsType>) {
+    return <Container className="xl:px-0 space-y-16 relative">
+        <div className="pt-20 max-w-4xl space-y-6 -mb-16">
             <h2
                 className={classNames(
                     "font-sans",
-                    'text-4xl max-w-sm sm:max-w-3xl mx-auto font-bold leading-none text-gray-900 text-center capitalize',
+                    'text-3xl leading-snug tracking-tight sm:text-4xl md:text-5xl text-slate-900 text-left',
                 )}
             >
                 Reviews, comments from customers and
                 community
             </h2>
+            <p className="text-xl mx-auto text-left tracking-tight text-slate-600">
+                Feel free to leave us a review.
+            </p>
         </div>
-        <div className="bg-white">
+        <div>
             <div
                 className="max-w-2xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:max-w-7xl lg:py-32 lg:px-8 lg:grid lg:grid-cols-12 lg:gap-x-8">
                 <div className="lg:col-span-4">
@@ -202,9 +206,9 @@ export default function Reviews({average, totalCount, counts, reviews}: ReviewsT
                         <p className="mt-1 text-sm text-gray-600">If you’ve used this product, share your thoughts with
                             other customers</p>
 
-                        <a href="#"
+                        <Link href="#"
                            className="mt-6 inline-flex w-full bg-white border border-gray-300 rounded-md py-2 px-8 items-center justify-center text-sm font-medium text-gray-900 hover:bg-gray-50 sm:w-auto lg:w-full">Write
-                            a review</a>
+                            a review</Link>
                     </div>
                 </div>
 

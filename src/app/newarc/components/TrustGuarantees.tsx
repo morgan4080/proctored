@@ -5,21 +5,19 @@ import Image from "next/image";
 export default function TrustGuarantees() {
     return <Container className="xl:px-0 pb-20" parentClassName="bg-reef w-full">
         <div className="space-y-2 pt-20 pb-16">
-            <h2
+            <p
                 className={classNames(
                     "font-sans",
-                    'text-5xl font-bold leading-none text-bermuda text-center',
+                    'mb-2 text-3xl tracking-tight sm:text-4xl md:text-5xl text-bermuda text-center',
                 )}
             >
                 Guarantees
-            </h2>
-            <p className="lg:text-md lg:max-w-lg mx-auto text-center text-gray-900">
-                We offer quick and transparent support.
             </p>
+            <h2 className="text-base font-semibold leading-7 text-zinc-600 text-center">Bang for the buck</h2>
         </div>
-        <div className="grid space-y-16 lg:space-y-0 lg:grid-cols-3 max-w-6xl mx-auto">
+        <div className="grid space-y-16 lg:space-y-0 lg:grid-cols-3 max-w-7xl mx-auto">
             <figure
-                className="relative flex flex-col-reverse items-center bg-slate-50 rounded-lg p-6 dark:bg-slate-800 dark:highlight-white/5">
+                className="relative flex flex-col-reverse items-center rounded-lg p-6">
                 <blockquote className="mt-6 text-slate-700 dark:text-slate-300">
                     <h5 className="font-bold text-2xl text-center">
                         100% money back
@@ -41,7 +39,7 @@ export default function TrustGuarantees() {
                 </figcaption>
             </figure>
             <figure
-                className="relative flex flex-col-reverse items-center bg-slate-50 rounded-lg p-6 dark:bg-slate-800 dark:highlight-white/5">
+                className="relative flex flex-col-reverse items-center rounded-lg p-6">
                 <blockquote className="mt-6 text-slate-700 dark:text-slate-300">
                     <h5 className="font-bold text-2xl text-center">
                         Free revisions
@@ -63,7 +61,7 @@ export default function TrustGuarantees() {
                 </figcaption>
             </figure>
             <figure
-                className="relative flex flex-col-reverse items-center bg-slate-50 rounded-lg p-6 dark:bg-slate-800 dark:highlight-white/5">
+                className="relative flex flex-col-reverse items-center rounded-lg p-6">
                 <blockquote className="mt-6 text-slate-700 dark:text-slate-300">
                     <h5 className="font-bold text-2xl text-center">
                         Safe payments

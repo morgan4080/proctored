@@ -10,19 +10,14 @@ export default function HowTo() {
     const isLineInView = useInView(line, { once: false })
     return <div className="bg-reef w-full">
         <Container className="xl:px-0 pb-28 pt-20 sm:py-32">
-            <div className="max-w-2xl md:mx-auto md:text-center xl:max-w-none">
-                <h2
-                    className={classNames(
-                        "font-sans",
-                        'text-3xl tracking-tight sm:text-4xl md:text-5xl text-bermuda text-center',
-                    )}
-                >
-                    How To Place An Order
+            <div className="mx-auto max-w-7xl">
+                <h2 className="text-3xl tracking-tight sm:text-4xl md:text-5xl text-bermuda text-left font-sans">
+                    Creating an order?
                 </h2>
             </div>
             <motion.div
                 ref={line}
-                className="mt-32 mb-20 grid lg:gap-8 lg:grid-cols-4 space-y-16 lg:space-y-0 mx-auto relative"
+                className="grid lg:gap-8 lg:grid-cols-4 space-y-16 lg:space-y-0 mx-auto relative pt-20"
             >
                 <motion.div className="flex flex-col">
                     <div className="flex-1 flex items-center justify-center pb-11">

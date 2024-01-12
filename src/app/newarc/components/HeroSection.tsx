@@ -6,7 +6,7 @@ const HeroArt = dynamic(() => import('@/components/HeroArt'), {
 });
 
 export default function HeroSection() {
-    return <div className="w-full -mt-44 md:-mt-44 lg:-mt-28 relative">
+    return <div className="w-full relative">
         <div className="absolute inset-0 w-full h-full designHero"></div>
         <Container className="xl:px-0 pb-24 pt-56 lg:pt-44 lg:pb-36" parentClassName="relative">
             <div className="lg:grid lg:grid-cols-2">

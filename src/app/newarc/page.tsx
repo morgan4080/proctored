@@ -8,8 +8,9 @@ import Pricing from "@/app/newarc/components/Pricing";
 import Reviews, {ReviewsType} from "@/app/newarc/components/Reviews";
 import TrustGuarantees from "@/app/newarc/components/TrustGuarantees";
 import Values from "@/app/newarc/components/Values";
-import FAQS from "@/app/newarc/components/FAQS";
+import Faqs from "@/app/newarc/components/FAQS";
 import Features from "@/app/newarc/components/Features";
+import EssayWriter from "@/app/newarc/components/Content";
 
 export const metadata: Metadata = {
     title: 'Test Page',
@@ -26,13 +27,14 @@ export default async function Page() {
             <HeroSection/>
             <WriterSection writers={writers} />
             <HowTo />
-            <Stats />
             <Pricing storedata={storeData} />
+            <Faqs Faqs={faqs} />
+            <Stats />
+            <Features />
+            <Values values={values} />
             <Reviews average={average} totalCount={totalCount} counts={counts} reviews={reviews} />
             <TrustGuarantees />
-            <Values values={values} />
-            <FAQS FAQs={faqs} />
-            <Features />
+            {/*<EssayWriter />*/}
         </div>
     )
 }
