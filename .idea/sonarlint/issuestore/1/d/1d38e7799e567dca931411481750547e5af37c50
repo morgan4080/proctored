@@ -1,0 +1,9 @@
+
+Vtypescript:S6754$":useState call is not destructured into value + setter pair(»Œ™¨
+Vtypescript:S18540"5Remove this useless assignment to variable "message".(âÚµªýÿÿÿÿ
+wtypescript:S6582s"[Prefer using an optional chain expression instead, as it's more concise and easier to read.(†ˆÈÑ
+etypescript:S3358w"DExtract this nested ternary operation into an independent statement.(ªÐŸ§ýÿÿÿÿ
+Vtypescript:S1135Ä"4Complete the task associated to this "TODO" comment.(­õ‰«ùÿÿÿÿ
+Vtypescript:S1135È"4Complete the task associated to this "TODO" comment.(­õ‰«ùÿÿÿÿ
+qtypescript:S3776Ù"TRefactor this function to reduce its Cognitive Complexity from 19 to the 15 allowed.(†÷¢¿
+Stypescript:S6749¢"1Passing a fragment to an HTML element is useless.(™åÑðüÿÿÿÿ

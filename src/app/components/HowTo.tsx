@@ -11,7 +11,7 @@ export default function HowTo() {
     return <div className="bg-reef w-full">
         <Container className="xl:px-0 pb-28 pt-20 sm:py-32">
             <div className="mx-auto max-w-7xl">
-                <h2 className="text-3xl tracking-tight sm:text-4xl md:text-5xl text-bermuda text-left font-sans">
+                <h2 className="text-3xl tracking-tight sm:text-4xl md:text-5xl text-bermuda text-center lg:text-left font-sans">
                     Creating an order?
                 </h2>
             </div>

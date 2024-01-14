@@ -9,8 +9,8 @@ const EssayWriter = () => {
                 <p className="mt-6 text-xl leading-8">
                     Wondering why you should order an essay at our essay writing service? “What’s in it for me?” you might wonder. It’s a fair question! Here are several results of choosing to order a piece online. We are sure, they will speak louder than any of our words:
                 </p>
-                <div className="mt-10 max-w-6xl">
-                    <ul className="max-w-6xl space-y-8 text-gray-600">
+                <div className="mt-10 max-w-7xl">
+                    <ul className="max-w-7xl space-y-8 text-gray-600">
                         <li className="flex gap-x-3">
                             <CheckCircleIcon className="mt-1 h-5 w-5 flex-none text-bermuda" aria-hidden="true"/>
                             <span>

@@ -45,7 +45,7 @@ export default function Features() {
                 matter what subject you need an essay for, we have got it all
                 covered.
             </p>
-            <ul className="mt-8 max-w-6xl space-y-8 text-gray-600">
+            <ul className="mt-8 max-w-7xl space-y-8 text-gray-600">
                 <li className="flex gap-x-3">
                     <CheckCircleIcon className="mt-1 h-5 w-5 flex-none text-bermuda" aria-hidden="true"/>
                     <span>

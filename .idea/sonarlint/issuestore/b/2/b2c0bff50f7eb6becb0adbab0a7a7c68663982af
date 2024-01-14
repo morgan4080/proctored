@@ -1,0 +1,11 @@
+
+ptypescript:S3776"TRefactor this function to reduce its Cognitive Complexity from 43 to the 15 allowed.(Ç£¦“
+ntypescript:S4325"RThis assertion is unnecessary since it does not change the type of the expression.(œ–çÙ
+?typescript:S6479"Do not use Array index in keys(‘éþâùÿÿÿÿ
+etypescript:S3358."DExtract this nested ternary operation into an independent statement.(Û·ÙËÿÿÿÿÿ
+etypescript:S33586"DExtract this nested ternary operation into an independent statement.(Û·ÙËÿÿÿÿÿ
+?typescript:S6479E"Do not use Array index in keys(Ê¹¹óþÿÿÿÿ
+:typescript:S6479Q"Do not use Array index in keys(þ‹üÞ
+`typescript:S3358["DExtract this nested ternary operation into an independent statement.(ÊÐô×
+etypescript:S3358d"DExtract this nested ternary operation into an independent statement.(óš ¯ýÿÿÿÿ
+`typescript:S3358m"DExtract this nested ternary operation into an independent statement.(²ªí’

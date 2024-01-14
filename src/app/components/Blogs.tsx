@@ -9,17 +9,15 @@ const Blogs = ({blogs}: {blogs: Service[]}) => {
         <div className="w-full bg-reef">
             <Container className="xl:px-0 pb-20">
                 <div className="space-y-2 pt-20 pb-16">
-                    <h2
+                    <p
                         className={classNames(
                             "font-sans",
-                            'text-bermuda font-bold text-[52px] tracking-tight leading-[63px] capitalize text-center',
+                            'mb-2 text-3xl tracking-tight sm:text-4xl md:text-5xl text-bermuda text-center',
                         )}
                     >
                         Blog
-                    </h2>
-                    <p className="text-2xl lg:max-w-lg mx-auto text-center text-zinc-800">
-                        Read about matters writing.
                     </p>
+                    <h2 className="text-base font-semibold leading-7 text-zinc-600 text-center">Read about matters writing.</h2>
                 </div>
 
                 <div
@@ -35,10 +33,10 @@ const Blogs = ({blogs}: {blogs: Service[]}) => {
                                     </div>
                                     <div className="group relative">
                                         <h3 className="mt-3 text-lg font-semibold leading-6 text-gray-900 group-hover:text-gray-600">
-                                            <a href="#">
+                                            <Link href={'/blogs/' + blog.slug}>
                                                 <span className="absolute inset-0"></span>
                                                 {blog.title}
-                                            </a>
+                                            </Link>
                                         </h3>
                                         <p className="mt-5 line-clamp-3 text-sm leading-6 text-gray-600">
                                             {blog.excerpt}
@@ -56,15 +54,6 @@ const Blogs = ({blogs}: {blogs: Service[]}) => {
                             </CardContent>
                         </Card>
                     ))}
-                </div>
-
-                <div className="flex justify-center align-center pt-16">
-                    <Link
-                        href="/order/create"
-                        className="bg-teal-300 w-44 py-3 px-8 text-xl rounded-2xl text-black font-semibold hidden lg:inline-block mt-4 transform hover:scale-105 transition ease-in-out duration-100"
-                    >
-                        Order Now
-                    </Link>
                 </div>
             </Container>
         </div>

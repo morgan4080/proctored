@@ -16,24 +16,18 @@ import mongoClient from "@/lib/mongodb";
 const { clientPromise } = mongoClient;
 
 export const metadata: Metadata = {
-    title: 'Proctor Owls/ Research OWls | Homepage',
+    title: 'Proctor Owls/ Research Owls | Homepage',
     description: 'Offering Professional Help in Proctored Exams, Nursing Exams and Essay Writing',
 }
 
-export default async function Page() {
-    const client = await clientPromise
-    const db = client.db('proctor')
-    const blogs = await db
-        .collection<Service>('blogs')
-        .find({})
-        .sort({ metacritic: -1 })
-        .limit(3)
-        .toArray()
-    const writers: WriterType[] = JSON.parse(await getWriters())
-    const storeData: StoreDataType[] = JSON.parse(await getStoreData())
-    const faqs: FaqType[] = JSON.parse(await getFAQS())
+export default async function Page({searchParams}: Readonly<{ searchParams: Record<any, any> }>) {
+    const {review, rating} = searchParams
+    const writers = await getWriters()
+    const storeData = await getStoreData()
+    const faqs = await getFAQS()
     const {average, totalCount, counts, reviews} = await getReviews()
     const values = await getCompanyValues()
+    const blogs = await getBlogPartial()
     return (
         <div className='flex min-h-screen flex-col items-center justify-between relative'>
             <HeroSection/>
@@ -44,35 +38,34 @@ export default async function Page() {
             <Stats />
             <Features />
             <Values values={values} />
-            <Reviews average={average} totalCount={totalCount} counts={counts} reviews={reviews} />
+            <Reviews average={average} totalCount={totalCount} counts={counts} reviews={reviews} review={review} rating={rating}/>
             <TrustGuarantees />
             <EssayWriter />
-            <Blogs blogs={blogs.map((blog) => {
-                return {
-                    ...blog,
-                    _id: blog._id.toString(),
-                }
-            })} />
+            <Blogs blogs={blogs} />
         </div>
     )
 }
 
-async function getWriters(): Promise<string> {
+async function getWriters(): Promise<WriterType[]> {
     const res = await fetch(process.env.NEXTAUTH_URL + '/api/writers')
     if (!res.ok) {
         throw new Error("Could not fetch writers")
     }
 
-    return res.json()
+    const writers = await res.json()
+
+    return JSON.parse(writers)
 }
 
-async function getStoreData(): Promise<string> {
+async function getStoreData(): Promise<StoreDataType[]> {
     const res = await fetch(process.env.NEXTAUTH_URL + '/api/storedata')
     if (!res.ok) {
         throw new Error("Could not fetch store data")
     }
 
-    return res.json()
+    const store_data = await res.json()
+
+    return JSON.parse(store_data)
 }
 
 async function getReviews(): Promise<ReviewsType> {
@@ -92,21 +85,7 @@ async function getReviews(): Promise<ReviewsType> {
                 rating: 5,
                 subject: ``,
                 description: `
-                <p>This is the bag of my dreams. I took it on my last vacation and was able to fit an absurd amount of snacks for the many long and hungry flights.</p>
-            `,
-                created: new Date().toDateString(),
-                user: {
-                    name: 'Emily Selman',
-                    image:
-                        'https://images.unsplash.com/photo-1502685104226-ee32379fefbe?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=256&h=256&q=80',
-                }
-            },
-            {
-                id: 1,
-                rating: 5,
-                subject: ``,
-                description: `
-                <p>This is the bag of my dreams. I took it on my last vacation and was able to fit an absurd amount of snacks for the many long and hungry flights.</p>
+                <p>They were very professional, and I am happy with the work. They helped me a lot and saved me a huge amount of time. I will be very happy to contact them for future academic work again.</p>
             `,
                 created: new Date().toDateString(),
                 user: {
@@ -154,11 +133,33 @@ async function getCompanyValues() {
     ];
 }
 
-async function getFAQS() {
+async function getFAQS(): Promise<FaqType[]> {
     const res = await fetch(process.env.NEXTAUTH_URL + '/api/faqs')
     if (!res.ok) {
         throw new Error("Could not fetch faqs")
     }
 
-    return res.json()
+    const faqs = await res.json()
+
+    return JSON.parse(faqs)
+}
+
+async function getBlogPartial() {
+    const client = await clientPromise
+    const db = client.db('proctor')
+    const blogs = await db
+        .collection<Service>('blogs')
+        .find({})
+        .sort({ metacritic: -1 })
+        .limit(3)
+        .toArray()
+
+
+    return blogs.map((blog) => {
+        return {
+            ...blog,
+            _id: blog._id.toString(),
+        }
+      }
+    )
 }

@@ -11,11 +11,13 @@ import SubMenu from "@/components/SubMenu";
 import {SlideWrapper} from "@/components/SlideWrapper";
 import {Session} from "next-auth";
 import {motion, useMotionValueEvent, useScroll} from "framer-motion";
+import {ArrowLeft} from "lucide-react";
 
 const NavBar = ({menu, session, status}: {menu: MenuType[], session: Session | null, status: "loading" | "authenticated" | "unauthenticated" }) => {
     const { scrollY } = useScroll();
     const mobileMenu = useRef<HTMLUListElement | null>(null)
     const [scrollYPosition, setScrollYPosition] = useState(0)
+    const [currentItem, setCurrentItem] = useState<MenuType | null>(null)
     const [isOpen, setOpen] = useState(false)
     const [hovering, setHovering] = useState<number | null>(null)
     const [popoverLeft, setPopoverLeft] = useState<number | null>(null)
@@ -57,7 +59,7 @@ const NavBar = ({menu, session, status}: {menu: MenuType[], session: Session | n
     })
 
     return (
-        <motion.header className="fixed w-full top-0 z-[1000]" style={{ backdropFilter: "blur(10px)", backgroundColor: `rgba(0,83,152, ${scrollYPosition /1500})` }}>
+        <motion.header className="fixed lg:w-full top-0 z-[1000]" style={{ backdropFilter: "blur(10px)", backgroundColor: `rgba(0,83,152, ${scrollYPosition /1500})` }}>
             <nav
                 onMouseLeave={() => {
                     setHovering(null)
@@ -87,87 +89,199 @@ const NavBar = ({menu, session, status}: {menu: MenuType[], session: Session | n
                         'lg:flex lg:items-center z-[-1] lg:z-auto lg:static fixed w-full left-0 lg:w-auto py-4 lg:py-0 pl-7 px-4 lg:pl-0 lg:opacity-100 opacity-0 top-[-400px] transition-all ease-in duration-500 gap-14',
                     )}
                 >
-                    {isOpen ? (
-                        <li className="flex mb-6 items-center justify-between relative">
-                            <span className="flex items-center space-x-6">
-                                <span className="rounded-md">
-                                      <Image
-                                          loading="lazy"
-                                          src="/logo.svg"
-                                          width={14}
-                                          height={14}
-                                          className="object-contain object-center w-12 overflow-hidden self-center"
-                                          alt="logo"
-                                      />
-                                </span>
-                            </span>
+                    {currentItem ?
+                        <div
+                            className="mx-auto grid max-w-7xl grid-cols-1 gap-x-8 gap-y-4 px-6 pt-8 pb-8 lg:grid-cols-2 lg:px-8 bg-white rounded-md">
 
-                            <button
-                                onClick={() => {
-                                    oCmenu()
-                                }}
-                                type="button"
-                                className="p-4"
-                            >
-                                <svg
-                                    className="text-white w-8 h-8"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth="1.5"
-                                    viewBox="0 0 24 24"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    aria-hidden="true"
+                            <div className="flex mb-4 items-center justify-between relative">
+                                <span className="flex items-center space-x-4">
+                                    <button type="button" onClick={() => {
+                                        setCurrentItem(null)
+                                    }} className="rounded-md bg-bermuda">
+                                        <ArrowLeft className="w-8 text-white"/>
+                                    </button>
+                                    <span
+                                        className="flex-wrap text-sm font-semibold font-serif text-left text-black/80">
+                                        {currentItem?.name}
+                                    </span>
+                                </span>
+                                <button
+                                    onClick={() => {
+                                        setCurrentItem(null)
+                                        oCmenu()
+                                    }}
+                                    type="button"
                                 >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        d="M6 18L18 6M6 6l12 12"
-                                    ></path>
-                                </svg>
-                            </button>
-                        </li>
-                    ) : null}
+                                    <svg
+                                        className="text-bermuda w-8 h-8"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        strokeWidth="1.5"
+                                        viewBox="0 0 24 24"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        aria-hidden="true"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            d="M6 18L18 6M6 6l12 12"
+                                        ></path>
+                                    </svg>
+                                </button>
+                            </div>
 
-                    {menu.map((item, index) => (
-                        <li
-                            key={index}
-                            role="menuitem"
-                            onMouseEnter={(event) => {
-                                if (item.categories.length > 0) {
-                                    onHover(index, event.currentTarget)
+                            <div className="grid grid-cols-1 gap-10 sm:gap-8 lg:grid-cols-2">
+
+                                {
+                                    currentItem.categories.map((category, index) => (
+                                        <article
+                                            key={category._id}
+                                            className="relative isolate flex max-w-2xl flex-col gap-x-8 gap-y-6 sm:flex-row sm:items-start lg:flex-col lg:items-stretch">
+
+                                            <div>
+
+                                                <h4 className="mt-2 text-sm font-semibold leading-6 text-gray-900">
+                                                    <Link
+                                                        href="#"> {/*Link to order of type category slug if item is service*/}{/*Have different look for account menu*/}
+                                                        <span className="absolute inset-0"></span>
+                                                        {category.title}
+                                                    </Link>
+                                                </h4>
+                                                <div className="mt-4">
+                                                    {category.subcategories.map((sub, index) => (
+                                                        sub.items.length > 0 ?
+                                                            <div
+                                                                key={sub._id}
+                                                                className="flex flex-col group h-full"
+                                                            >
+                                                                <h4 className="text-zinc-800/50 text-[12px] pb-1.5 font-[600]">
+                                                                    {sub.title}
+                                                                </h4>
+                                                                <span className="sr-only">
+                                                                {sub.description}
+                                                            </span>
+                                                                <div className="flex flex-col gap-1.5 pb-4 text-sm">
+
+                                                                </div>
+
+                                                            </div>
+                                                            :
+                                                            null
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </article>
+                                    ))
                                 }
-                            }}
-                            className={clsx(item.categories.length > 0 && "pointer-events-none md:pointer-events-auto")}
-                        >
-                            <Link
-                                role={`navigation-${item.name}`}
-                                href={item.link}
-                                className="self-stretch flex flex-col"
-                            >
-                                <span className="flex items-center space-x-1 text-white text-base font-semibold">
-                                  <span>{item.name}</span>
-                                  <svg
-                                      className={clsx(
-                                          'text-white w-3 h-3',
-                                          item.categories.length > 0 ? 'block' : 'hidden',
-                                      )}
-                                      fill="none"
-                                      stroke="currentColor"
-                                      strokeWidth="2"
-                                      viewBox="0 0 24 24"
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      aria-hidden="true"
-                                  >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        d="M19.5 8.25l-7.5 7.5-7.5-7.5"
-                                    ></path>
-                                  </svg>
-                                </span>
-                            </Link>
-                        </li>
-                    ))}
+
+                            </div>
+                        </div>
+                        :
+                        (
+                            <>
+                                {isOpen ? (
+                                    <li className="flex mb-6 items-center justify-between relative">
+                                        <span className="flex items-center space-x-6">
+                                            <span className="rounded-md">
+                                                  <Image
+                                                      loading="lazy"
+                                                      src="/logo.svg"
+                                                      width={14}
+                                                      height={14}
+                                                      className="object-contain object-center w-12 overflow-hidden self-center"
+                                                      alt="logo"
+                                                  />
+                                            </span>
+                                            <span
+                                                className="flex-wrap text-sm font-semibold font-serif text-left text-white/80">
+                                                PROCTOR <br/> OWLS ™
+                                            </span>
+                                        </span>
+
+                                        <button
+                                            onClick={() => {
+                                                oCmenu()
+                                            }}
+                                            type="button"
+                                            className="p-4"
+                                        >
+                                            <svg
+                                                className="text-white w-8 h-8"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                strokeWidth="1.5"
+                                                viewBox="0 0 24 24"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                aria-hidden="true"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    d="M6 18L18 6M6 6l12 12"
+                                                ></path>
+                                            </svg>
+                                        </button>
+                                    </li>
+                                ) : null}
+
+                                {menu.map((item, index) => (
+                                    <div key={`${(index + 1)}` + item.name} className="relative">
+                                        {
+                                            item.categories.length > 0 ?
+                                                <button onClick={(event) => {
+                                                    if (item.categories.length > 0) {
+                                                        setCurrentItem(item)
+                                                    }
+                                                }} type="button"
+                                                        className="absolute h-full w-full pointer-events-auto lg:pointer-events-none">
+
+                                                </button>
+                                                :
+                                                null
+                                        }
+
+                                        <li
+                                            role="menuitem"
+                                            onMouseEnter={(event) => {
+                                                if (item.categories.length > 0) {
+                                                    onHover(index, event.currentTarget)
+                                                }
+                                            }}
+                                            className={clsx(item.categories.length > 0 && "pointer-events-none lg:pointer-events-auto")}
+                                        >
+                                            <Link
+                                                role={`navigation-${item.name}`}
+                                                href={item.link}
+                                                className="self-stretch flex flex-col"
+                                            >
+                                                <span className="flex items-center space-x-1 text-white text-base font-semibold">
+                                                  <span>{item.name}</span>
+                                                  <svg
+                                                      className={clsx(
+                                                          'text-white w-3 h-3',
+                                                          item.categories.length > 0 ? 'block' : 'hidden',
+                                                      )}
+                                                      fill="none"
+                                                      stroke="currentColor"
+                                                      strokeWidth="2"
+                                                      viewBox="0 0 24 24"
+                                                      xmlns="http://www.w3.org/2000/svg"
+                                                      aria-hidden="true"
+                                                  >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+                                                    ></path>
+                                                  </svg>
+                                                </span>
+                                            </Link>
+                                        </li>
+                                    </div>
+                                ))}
+                            </>
+                        )
+                    }
                 </ul>
                 <div className="flex space-between flex-row-reverse">
                     <div

@@ -26,7 +26,7 @@ export default function Stats() {
 
     return <Container className="xl:px-0 pb-28 pt-20 sm:py-28" parentClassName="w-full bg-reef">
         <div className="mx-auto max-w-7xl">
-            <h2 className="text-3xl tracking-tight sm:text-4xl md:text-5xl text-bermuda text-left font-sans">
+            <h2 className="text-3xl tracking-tight sm:text-4xl md:text-5xl text-bermuda text-center lg:text-left font-sans">
                 Site numbers
             </h2>
         </div>

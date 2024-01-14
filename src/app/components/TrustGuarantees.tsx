@@ -1,6 +1,7 @@
 import Container from "@/components/Container";
 import classNames from "@/utils/ClassNames";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function TrustGuarantees() {
     return <Container className="xl:px-0 pb-20" parentClassName="bg-reef w-full">
@@ -80,6 +81,14 @@ export default function TrustGuarantees() {
                     />
                 </figcaption>
             </figure>
+        </div>
+        <div className="flex justify-center align-center pt-16">
+            <Link
+                href="/order/create"
+                className="bg-teal-300 w-44 py-3 px-8 text-xl rounded-2xl text-black font-semibold hidden lg:inline-block mt-4 transform hover:scale-105 transition ease-in-out duration-100"
+            >
+                Order Now
+            </Link>
         </div>
     </Container>
 }
