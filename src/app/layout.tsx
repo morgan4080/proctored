@@ -36,14 +36,65 @@ export default async function RootLayout({
         <Script src="https://fw-cdn.com/11081366/3816148.js"></Script>
         <body className="antialiased text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-900 relative">
         <NavBar menu={menu} session={session} status={status}/>
-        <main className="min-h-screen">
-            {children}
-        </main>
+        {children}
         <Footer/>
         </body>
         </html>
     )
 }
+
+const commonNavOptions = [
+    {
+        _id: 'me-' + Math.random().toString(36).slice(2, 18),
+        title: "Profile",
+        slug: "me",
+        description: "Your account details",
+        subcategories: [
+            {
+                _id: 'me-orders-' + Math.random().toString(36).slice(2, 18),
+                title: "Your Orders",
+                slug: "orders",
+                description: "orders",
+                items: [
+                    {
+                        _id: 'me-orders-' + Math.random().toString(36).slice(2, 18),
+                        title: "Orders",
+                        slug: "",
+                        excerpt: "prooctorowls orders"
+                    }
+                ]
+            },
+            {
+                _id: 'me-transactions-' + Math.random().toString(36).slice(2, 18),
+                title: "Your Transactions",
+                slug: "transactions",
+                description: "transactions",
+                items: [
+                    {
+                        _id: 'me-transactions-' + Math.random().toString(36).slice(2, 18),
+                        title: "Transaction",
+                        slug: "",
+                        excerpt: "prooctorowls transactions"
+                    }
+                ]
+            },
+            {
+                _id: 'logout-' + Math.random().toString(36).slice(2, 18),
+                title: "Log out",
+                slug: "",
+                description: "logout",
+                items: [
+                    {
+                        _id: 'logout-' + Math.random().toString(36).slice(2, 18),
+                        title: "Logout",
+                        slug: "",
+                        excerpt: "proctor owls logout"
+                    }
+                ]
+            },
+        ]
+    }
+]
 
 const getLinks = async (session: Session | null, status: "loading" | "authenticated" | "unauthenticated"): Promise<NavMenuDataType[]> => {
     const res = await fetch(process.env.NEXTAUTH_URL + '/api/services?links=true')
@@ -84,95 +135,13 @@ const getLinks = async (session: Session | null, status: "loading" | "authentica
                             if (user) {
                                 switch (user.userRole) {
                                     case "user":
-                                        m.categories = [
-                                            {
-                                                _id: 'me-' + Math.random().toString(36).slice(2, 18),
-                                                title: "Profile",
-                                                slug: "me",
-                                                description: "Your account details",
-                                                subcategories: [
-                                                    {
-                                                        _id: 'me-orders-' + Math.random().toString(36).slice(2, 18),
-                                                        title: "Orders",
-                                                        slug: "orders",
-                                                        description: "orders",
-                                                        items: []
-                                                    },
-                                                    {
-                                                        _id: 'me-transactions-' + Math.random().toString(36).slice(2, 18),
-                                                        title: "Transactions",
-                                                        slug: "transactions",
-                                                        description: "transactions",
-                                                        items: []
-                                                    }
-                                                ]
-                                            }
-                                        ]
+                                        m.categories = commonNavOptions
                                         break
                                     case "admin":
-                                        m.categories = [
-                                            {
-                                                _id: 'me-' + Math.random().toString(36).slice(2, 18),
-                                                title: "Profile",
-                                                slug: "me",
-                                                description: "Your account details",
-                                                subcategories: [
-                                                    {
-                                                        _id: 'me-orders-' + Math.random().toString(36).slice(2, 18),
-                                                        title: "Orders",
-                                                        slug: "orders",
-                                                        description: "orders",
-                                                        items: []
-                                                    },
-                                                    {
-                                                        _id: 'me-transactions-' + Math.random().toString(36).slice(2, 18),
-                                                        title: "Transactions",
-                                                        slug: "transactions",
-                                                        description: "transactions",
-                                                        items: []
-                                                    }
-                                                ]
-                                            }
-                                        ]
+                                        m.categories = commonNavOptions
                                         break
                                     case "superuser":
                                         m.categories = [
-                                            {
-                                                _id: 'me-' + Math.random().toString(36).slice(2, 18),
-                                                title: "Profile",
-                                                slug: "me",
-                                                description: "Your account details",
-                                                subcategories: [
-                                                    {
-                                                        _id: 'me-orders-' + Math.random().toString(36).slice(2, 18),
-                                                        title: "Your Orders",
-                                                        slug: "orders",
-                                                        description: "orders",
-                                                        items: [
-                                                            {
-                                                                _id: 'me-orders-' + Math.random().toString(36).slice(2, 18),
-                                                                title: "Orders",
-                                                                slug: "",
-                                                                excerpt: "prooctorowls orders"
-                                                            }
-                                                        ]
-                                                    },
-                                                    {
-                                                        _id: 'me-transactions-' + Math.random().toString(36).slice(2, 18),
-                                                        title: "Your Transactions",
-                                                        slug: "transactions",
-                                                        description: "transactions",
-                                                        items: [
-                                                            {
-                                                                _id: 'me-transactions-' + Math.random().toString(36).slice(2, 18),
-                                                                title: "Transaction",
-                                                                slug: "",
-                                                                excerpt: "prooctorowls transactions"
-                                                            }
-                                                        ]
-                                                    }
-                                                ]
-                                            },
                                             {
                                                 _id: 'admin-' + Math.random().toString(36).slice(2, 18),
                                                 title: "Admin Dashboard",
@@ -264,7 +233,8 @@ const getLinks = async (session: Session | null, status: "loading" | "authentica
                                                         ]
                                                     }
                                                 ]
-                                            }
+                                            },
+                                            ...commonNavOptions
                                         ]
                                         break
                                 }

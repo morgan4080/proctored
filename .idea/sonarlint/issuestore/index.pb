@@ -79,3 +79,7 @@ J
 next.config.js,8/1/811a6d5a2e04fadb44d8eec365f2fa8af5c4facf
 J
 src/components/SubMenu.tsx,b/2/b2c0bff50f7eb6becb0adbab0a7a7c68663982af
+M
+src/components/Navigation.tsx,4/6/4616cc989076d7805422c925f6f61b3462bac0ec
+R
+"src/app/components/HeroSection.tsx,d/d/dd588a1bea5702e397b13c5a7823cd5c30569e2e

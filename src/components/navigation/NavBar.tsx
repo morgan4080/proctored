@@ -12,6 +12,7 @@ import {SlideWrapper} from "@/components/SlideWrapper";
 import {Session} from "next-auth";
 import {motion, useMotionValueEvent, useScroll} from "framer-motion";
 import {ArrowLeft} from "lucide-react";
+import {signIn, signOut} from "next-auth/react";
 
 const NavBar = ({menu, session, status}: {menu: MenuType[], session: Session | null, status: "loading" | "authenticated" | "unauthenticated" }) => {
     const { scrollY } = useScroll();
@@ -27,6 +28,7 @@ const NavBar = ({menu, session, status}: {menu: MenuType[], session: Session | n
     const refs = useRef<(HTMLElement | null)[]>([])
 
     function onHover(index: number, el: HTMLElement) {
+        console.log("wth", el.offsetLeft)
         setPopoverLeft(el.offsetLeft)
         setPopoverHeight(refs.current[index]?.offsetHeight || null)
         setTimeout(() => {
@@ -59,7 +61,7 @@ const NavBar = ({menu, session, status}: {menu: MenuType[], session: Session | n
     })
 
     return (
-        <motion.header className="fixed lg:w-full top-0 z-[1000]" style={{ backdropFilter: "blur(10px)", backgroundColor: `rgba(0,83,152, ${scrollYPosition /1500})` }}>
+        <motion.header className="fixed w-full top-0 z-[1000]" style={{ backdropFilter: "blur(10px)", backgroundColor: `rgba(0,83,152, ${scrollYPosition /1500})` }}>
             <nav
                 onMouseLeave={() => {
                     setHovering(null)
@@ -86,14 +88,13 @@ const NavBar = ({menu, session, status}: {menu: MenuType[], session: Session | n
                     ref={mobileMenu}
                     role="menu"
                     className={clsx(
-                        'lg:flex lg:items-center z-[-1] lg:z-auto lg:static fixed w-full left-0 lg:w-auto py-4 lg:py-0 pl-7 px-4 lg:pl-0 lg:opacity-100 opacity-0 top-[-400px] transition-all ease-in duration-500 gap-14',
+                        'lg:flex lg:items-center z-[-1] lg:z-auto lg:static fixed w-full left-0 lg:w-auto py-4 lg:py-0 px-4 lg:pl-0 lg:opacity-100 opacity-0 top-[-400px] transition-all ease-in duration-500 gap-14',
                     )}
                 >
                     {currentItem ?
-                        <div
-                            className="mx-auto grid max-w-7xl grid-cols-1 gap-x-8 gap-y-4 px-6 pt-8 pb-8 lg:grid-cols-2 lg:px-8 bg-white rounded-md">
+                        <div className="p-4 -mx-2 -my-2 h-full bg-white rounded-md overflow-y-scroll z-[2000]">
 
-                            <div className="flex mb-4 items-center justify-between relative">
+                            <div className="flex items-center justify-between relative">
                                 <span className="flex items-center space-x-4">
                                     <button type="button" onClick={() => {
                                         setCurrentItem(null)
@@ -130,24 +131,19 @@ const NavBar = ({menu, session, status}: {menu: MenuType[], session: Session | n
                                 </button>
                             </div>
 
-                            <div className="grid grid-cols-1 gap-10 sm:gap-8 lg:grid-cols-2">
+                            <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 mt-4">
 
                                 {
                                     currentItem.categories.map((category, index) => (
                                         <article
                                             key={category._id}
-                                            className="relative isolate flex max-w-2xl flex-col gap-x-8 gap-y-6 sm:flex-row sm:items-start lg:flex-col lg:items-stretch">
+                                            className="relative isolate flex max-w-2xl flex-col gap-x-2 gap-y-4 sm:flex-row sm:items-start lg:flex-col lg:items-stretch">
 
                                             <div>
-
-                                                <h4 className="mt-2 text-sm font-semibold leading-6 text-gray-900">
-                                                    <Link
-                                                        href="#"> {/*Link to order of type category slug if item is service*/}{/*Have different look for account menu*/}
-                                                        <span className="absolute inset-0"></span>
-                                                        {category.title}
-                                                    </Link>
+                                                <h4 className="text-sm font-semibold leading-6 text-gray-900">
+                                                    {category.title}
                                                 </h4>
-                                                <div className="mt-4">
+                                                <div className="mt-2">
                                                     {category.subcategories.map((sub, index) => (
                                                         sub.items.length > 0 ?
                                                             <div
@@ -160,9 +156,46 @@ const NavBar = ({menu, session, status}: {menu: MenuType[], session: Session | n
                                                                 <span className="sr-only">
                                                                 {sub.description}
                                                             </span>
-                                                                <div className="flex flex-col gap-1.5 pb-4 text-sm">
+                                                                {
+                                                                    sub.items.map((item, i) => {
+                                                                        let element
 
-                                                                </div>
+                                                                        if (item._id.includes("login") || item._id.includes("signup")) {
+                                                                            element = <button type="button" onClick={() => signIn()}
+                                                                                              className="cursor-pointer text-left hover:underline">
+                                                                                <p className="tracking-normal font-semibold text-slate-600 hover:text-slate-800">{"› " +item.title}</p>
+                                                                            </button>
+                                                                        } else
+
+                                                                        if (item._id.includes("logout")) {
+                                                                            element = <button type="button" onClick={() => signOut()}
+                                                                                              className="cursor-pointer text-left hover:underline">
+                                                                                <p className="tracking-normal font-semibold text-slate-600 hover:text-slate-800">{"› " +item.title}</p>
+                                                                            </button>
+                                                                        } else
+
+                                                                        if (item._id.includes("admin") || item._id.includes("me")) {
+                                                                            element = <Link
+                                                                                href={`/${category.slug}/${sub.slug}/${item.slug}`}
+                                                                                className="hover:underline">
+                                                                                <p className="tracking-normal font-semibold text-slate-600 hover:text-slate-800">{"› " +item.title}</p>
+                                                                            </Link>
+                                                                        } else {
+                                                                            element = <Link
+                                                                                href={`/services/${category.slug}/${sub.slug}/${item.slug}`}
+                                                                                className="hover:underline">
+                                                                                <p className="tracking-normal font-semibold text-slate-600 hover:text-slate-800">{"› " + item.title}</p>
+                                                                            </Link>
+                                                                        }
+
+                                                                        return (
+                                                                            <div key={item._id}>
+                                                                                {element}
+                                                                                <p className="sr-only">{item.excerpt}</p>
+                                                                            </div>
+                                                                        )
+                                                                    })
+                                                                }
 
                                                             </div>
                                                             :
@@ -225,29 +258,32 @@ const NavBar = ({menu, session, status}: {menu: MenuType[], session: Session | n
                                 ) : null}
 
                                 {menu.map((item, index) => (
-                                    <div key={`${(index + 1)}` + item.name} className="relative">
+                                    <li key={`${(index + 1)}` + item.name} className="relative">
                                         {
                                             item.categories.length > 0 ?
-                                                <button onClick={(event) => {
-                                                    if (item.categories.length > 0) {
-                                                        setCurrentItem(item)
-                                                    }
-                                                }} type="button"
-                                                        className="absolute h-full w-full pointer-events-auto lg:pointer-events-none">
-
-                                                </button>
+                                                <button
+                                                    onClick={(event) => {
+                                                        if (item.categories.length > 0) {
+                                                            setCurrentItem(item)
+                                                        }
+                                                    }}
+                                                    type="button"
+                                                    className="absolute h-full w-full pointer-events-auto lg:pointer-events-none"
+                                                />
                                                 :
                                                 null
                                         }
 
-                                        <li
-                                            role="menuitem"
+                                        <button
+                                            type="button"
                                             onMouseEnter={(event) => {
                                                 if (item.categories.length > 0) {
-                                                    onHover(index, event.currentTarget)
+                                                    if (event.currentTarget.parentElement) {
+                                                        onHover(index, event.currentTarget.parentElement)
+                                                    }
                                                 }
                                             }}
-                                            className={clsx(item.categories.length > 0 && "pointer-events-none lg:pointer-events-auto")}
+                                            className={clsx("w-full", item.categories.length > 0 && "pointer-events-none lg:pointer-events-auto")}
                                         >
                                             <Link
                                                 role={`navigation-${item.name}`}
@@ -276,16 +312,17 @@ const NavBar = ({menu, session, status}: {menu: MenuType[], session: Session | n
                                                   </svg>
                                                 </span>
                                             </Link>
-                                        </li>
-                                    </div>
+                                        </button>
+                                    </li>
                                 ))}
                             </>
                         )
                     }
                 </ul>
+
+
                 <div className="flex space-between flex-row-reverse">
                     <div
-                        role="mobile-menu-toggle-collapsed"
                         aria-expanded={isOpen}
                         aria-hidden={!isOpen}
                         className="flex items-start justify-between gap-5 lg:hidden"

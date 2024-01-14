@@ -29,7 +29,7 @@ export default async function Page({searchParams}: Readonly<{ searchParams: Reco
     const values = await getCompanyValues()
     const blogs = await getBlogPartial()
     return (
-        <div className='flex min-h-screen flex-col items-center justify-between relative'>
+        <main className='flex min-h-screen flex-col items-center justify-between overflow-x-hidden relative'>
             <HeroSection/>
             <WriterSection writers={writers} />
             <HowTo />
@@ -42,7 +42,7 @@ export default async function Page({searchParams}: Readonly<{ searchParams: Reco
             <TrustGuarantees />
             <EssayWriter />
             <Blogs blogs={blogs} />
-        </div>
+        </main>
     )
 }
 

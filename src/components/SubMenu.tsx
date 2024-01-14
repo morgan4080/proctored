@@ -77,48 +77,44 @@ const SubMenu = forwardRef<HTMLDivElement, MenuContainerProps>(
                                     </span>
                                     <div className="flex flex-col gap-1.5 pb-4 text-sm">
                                         {
-                                            sub.items.map((item, i) => (
-                                                <div key={i}>
-                                                    {
-                                                        item._id.includes("login") ?
+                                            sub.items.map((item, i) => {
+                                                let element
 
-                                                                <button type="button" onClick={() => signIn()} className="cursor-pointer text-left hover:underline">
-                                                                    <p className="tracking-normal font-semibold text-slate-600 hover:text-slate-800">{ item.title}</p>
-                                                                </button>
+                                                if (item._id.includes("login") || item._id.includes("signup")) {
+                                                    element = <button type="button" onClick={() => signIn()}
+                                                                      className="cursor-pointer text-left hover:underline">
+                                                        <p className="tracking-normal font-semibold text-slate-600 hover:text-slate-800">{"› " +item.title}</p>
+                                                    </button>
+                                                } else
 
-                                                            :
+                                                if (item._id.includes("logout")) {
+                                                    element = <button type="button" onClick={() => signOut()}
+                                                                      className="cursor-pointer text-left hover:underline">
+                                                        <p className="tracking-normal font-semibold text-slate-600 hover:text-slate-800">{"› " +item.title}</p>
+                                                    </button>
+                                                } else
 
-                                                                item._id.includes("logout") ?
+                                                if (item._id.includes("admin") || item._id.includes("me")) {
+                                                    element = <Link
+                                                        href={`/${props.categories[hoveredCat].slug}/${sub.slug}/${item.slug}`}
+                                                        className="hover:underline">
+                                                        <p className="tracking-normal font-semibold text-slate-600 hover:text-slate-800">{"› " +item.title}</p>
+                                                    </Link>
+                                                } else {
+                                                    element = <Link
+                                                        href={`/services/${props.categories[hoveredCat].slug}/${sub.slug}/${item.slug}`}
+                                                        className="hover:underline">
+                                                        <p className="tracking-normal font-semibold text-slate-600 hover:text-slate-800">{"› " + item.title}</p>
+                                                    </Link>
+                                                }
 
-                                                                <button type="button" onClick={() => signOut()}
-                                                                        className="cursor-pointer text-left hover:underline">
-                                                                    <p className="tracking-normal font-semibold text-slate-600 hover:text-slate-800">{item.title}</p>
-                                                                </button>
-
-                                                                :
-
-                                                                item._id.includes("signup") ?
-
-                                                                <button type="button" onClick={() => signIn()}
-                                                                        className="cursor-pointer text-left hover:underline">
-                                                                    <p className="tracking-normal font-semibold text-slate-600 hover:text-slate-800">{item.title}</p>
-                                                                </button>
-
-                                                                :
-
-                                                                item._id.includes("admin")  || item._id.includes("me") ?
-
-                                                                    <Link href={`/${props.categories[hoveredCat].slug}/${sub.slug}/${item.slug}`} className="hover:underline">
-                                                                        <p className="tracking-normal font-semibold text-slate-600 hover:text-slate-800">{ item.title}</p>
-                                                                    </Link>
-                                                                    :
-                                                                    <Link href={`/services/${props.categories[hoveredCat].slug}/${sub.slug}/${item.slug}`} className="hover:underline">
-                                                                        <p className="tracking-normal font-semibold text-slate-600 hover:text-slate-800">{ item.title}</p>
-                                                                    </Link>
-                                                    }
-                                                    <p className="sr-only">{item.excerpt}</p>
-                                                </div>
-                                            ))
+                                                return (
+                                                    <div key={item._id}>
+                                                        {element}
+                                                        <p className="sr-only">{item.excerpt}</p>
+                                                    </div>
+                                                )
+                                            })
                                         }
                                     </div>
                                 </div>
