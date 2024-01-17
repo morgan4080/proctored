@@ -61,7 +61,7 @@ const NavBar = ({menu, session, status}: {menu: MenuType[], session: Session | n
     })
 
     return (
-        <motion.header className="fixed w-full top-0 z-[1000]" style={{ backdropFilter: "blur(10px)", backgroundColor: `rgba(0,83,152, ${scrollYPosition /1500})` }}>
+        <motion.header className="fixed w-full top-0 z-[1000]" style={{ backdropFilter: "blur(10px)", backgroundColor: session && session.navigationBackground == 'transparent' ? `rgba(0,83,152, ${scrollYPosition /1500})` : `rgba(0,83,152, 0.8)` }}>
             <nav
                 onMouseLeave={() => {
                     setHovering(null)

@@ -33,11 +33,11 @@ export default async function RootLayout({
     const menu = await getLinks(session, status)
     return (
         <html lang="en">
-        <Script src="https://fw-cdn.com/11081366/3816148.js"></Script>
+        <Script strategy="lazyOnload" src="https://embed.tawk.to/65a818438d261e1b5f548a32/1hkc9tj37"></Script>
         <body className="antialiased text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-900 relative">
-        <NavBar menu={menu} session={session} status={status}/>
-        {children}
-        <Footer/>
+            <NavBar menu={menu} session={session} status={status} />
+            {children}
+            <Footer/>
         </body>
         </html>
     )

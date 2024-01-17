@@ -6,6 +6,7 @@ import { User } from '@/lib/service_types'
 declare module 'next-auth' {
   interface Session extends DefaultSession {
     user?: User & { image?: string | null }
+    navigationBackground: string
   }
 }
 

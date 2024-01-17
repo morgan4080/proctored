@@ -118,6 +118,7 @@ export const authOptions: NextAuthOptions = {
       if (token.user) {
         session.user = { ...token.user, image: session.user?.image }
       }
+      session.navigationBackground = "transparent"
       return session
     },
   },

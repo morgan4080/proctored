@@ -1,10 +1,0 @@
-
-Htypescript:S1128	",Remove this unused import of 'useAnimation'.(æ®Å
-Ntypescript:S6759x"-Mark the props of the component as read-only.(áçÅéıÿÿÿÿ
-}typescript:S6582š"[Prefer using an optional chain expression instead, as it's more concise and easier to read.(—¦¶Áúÿÿÿÿ
-@typescript:S6479§"Do not use Array index in keys(Ê¹¹óşÿÿÿÿ
-;typescript:S6479Õ"Do not use Array index in keys(ğÑ¾›
-}typescript:S6819¹"`Use <menu>, <ol>, or <ul> instead of the "list" role to ensure accessibility across all devices.(ÆÑÉã
-;typescript:S6479ä"Do not use Array index in keys(×çÙÙ
-;typescript:S6479Ò"Do not use Array index in keys(™Ùí„
-–typescript:S6844"øThe href attribute requires a valid value to be accessible. Provide a valid, navigable address as the href value. If you cannot provide a valid href, but still need the element to resemble a link, use a button and change it with appropriate styles.(¼Åùæ
