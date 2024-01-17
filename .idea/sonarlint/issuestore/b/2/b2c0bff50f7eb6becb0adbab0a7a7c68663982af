@@ -1,0 +1,7 @@
+
+wtypescript:S3776"TRefactor this function to reduce its Cognitive Complexity from 26 to the 15 allowed.(Ç£¦“8¾ÿÅ»Ğ1
+utypescript:S4325"RThis assertion is unnecessary since it does not change the type of the expression.(œ–çÙ8ÀÿÅ»Ğ1
+Ftypescript:S6479"Do not use Array index in keys(‘éşâùÿÿÿÿ8ÀÿÅ»Ğ1
+ltypescript:S3358."DExtract this nested ternary operation into an independent statement.(Û·ÙËÿÿÿÿÿ8ÀÿÅ»Ğ1
+ltypescript:S33586"DExtract this nested ternary operation into an independent statement.(Û·ÙËÿÿÿÿÿ8ÁÿÅ»Ğ1
+Ftypescript:S6479E"Do not use Array index in keys(Ê¹¹óşÿÿÿÿ8ÁÿÅ»Ğ1

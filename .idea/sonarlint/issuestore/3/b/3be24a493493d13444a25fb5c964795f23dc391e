@@ -1,0 +1,9 @@
+
+btypescript:S6754":useState call is not destructured into value + setter pair(ú´…ÿÿÿÿÿ8¦¢°“Ğ1
+’typescript:S6606!"jPrefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator.(ôŞ™›ûÿÿÿÿ8¨¢°“Ğ1
+ttypescript:S6847A"RNon-interactive elements should not be assigned mouse or keyboard event listeners.(İºŠ8î¢çÄÑ1
+jtypescript:S6842Y"BNon-interactive elements should not be assigned interactive roles.(È¤¥¿üÿÿÿÿ8î¢çÄÑ1
+xtypescript:S3776„"TRefactor this function to reduce its Cognitive Complexity from 16 to the 15 allowed.(—˜Ú–8ï¢çÄÑ1
+typescript:S6606¥"jPrefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator.(æÎ‰8ğ¢çÄÑ1
+typescript:S6606®"jPrefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator.(æÎ‰8ó¢çÄÑ1
+typescript:S6606±"jPrefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator.(ëú—ã8õ¢çÄÑ1

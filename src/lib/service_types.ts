@@ -182,7 +182,7 @@ export type WriterType = {
   orders_complete: number
   rating: number
   reviewCount: number
-  featured_work: {
+  featured_work: { // an order
     title: string
     paper_type: string
     subject: string
