@@ -19,6 +19,9 @@ import {
     getStoreData,
     getWriters
 } from "@/commons/utility_functions";
+import GED from "@/app/components/GED";
+import TEAS from "@/app/components/TEAS";
+import PROCTORED from "@/app/components/PROCTORED";
 
 export const metadata: Metadata = {
     title: 'Proctor Owls/ Research Owls | Homepage',
@@ -36,9 +39,12 @@ export default async function Page({searchParams}: Readonly<{ searchParams: Reco
     return (
         <main className='flex min-h-screen flex-col items-center justify-between overflow-x-hidden relative'>
             <HeroSection/>
+            <GED />
+            <TEAS />
+            <PROCTORED />
+            <Pricing storedata={storeData} />
             <WriterSection writers={writers} />
             <HowTo />
-            <Pricing storedata={storeData} />
             <Faqs Faqs={faqs} />
             <Stats />
             <Features />

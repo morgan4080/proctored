@@ -6,6 +6,7 @@ import PaymentIcons from "@/components/transactions/PaymentIcons";
 import PriceCalc from "@/components/transactions/PriceCalc";
 import {useRef} from "react";
 import {StoreDataType} from "@/lib/service_types";
+import Link from "next/link";
 
 export default function Pricing({ storedata }: { storedata: StoreDataType[] }) {
     const ref2 = useRef(null)
@@ -36,8 +37,14 @@ export default function Pricing({ storedata }: { storedata: StoreDataType[] }) {
                         Find out what your paper will cost
                     </h1>
                     <p className="my-6 text-white/80 font-normal text-xl">
-                        Prices start at $13.5 for writing and $8.5 for editing.
+                        Find out what the service will cost.
                     </p>
+                    <Link className="bg-teal-300 w-44 py-3 px-8 text-xl rounded-2xl text-black font-semibold hidden lg:inline-block mt-4 transform hover:scale-105 transition ease-in-out duration-100"
+                       href="/order/create" element-id="95">Order Now</Link>
+
+                </div>
+                <div className="col-span-1 scale-125 flex items-center justify-center lg:justify-end">
+                    {/*<PriceCalc storedata={storedata}/>*/}
                     <motion.ul
                         role="list"
                         className="pt-4 space-x-2 flex items-center justify-center md:justify-start"
@@ -55,9 +62,6 @@ export default function Pricing({ storedata }: { storedata: StoreDataType[] }) {
                             <PaymentIcons name={'union'}/>
                         </motion.li>
                     </motion.ul>
-                </div>
-                <div className="col-span-1 scale-125 flex items-center justify-center lg:justify-end">
-                    <PriceCalc storedata={storedata}/>
                 </div>
             </div>
         </Container>
