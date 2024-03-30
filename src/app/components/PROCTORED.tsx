@@ -108,7 +108,7 @@ export default function PROCTORED () {
                         </dt>
 
                         <dd className="inline">
-                            Proctored examinations really influence the classroom. It is a gateway to endless possibilities for students. No matter whether it is to study further or find a job, the results of these exams determine someone's future. As well as an academic milestone, a high school diploma often comes only after passing the tests that determine entry (You must pass to get in). Parents are proud, and young people expect it will bring them better jobs.
+                            Proctored examinations really influence the classroom. It is a gateway to endless possibilities for students. No matter whether it is to study further or find a job, the results of these exams determine someone&apos;s future. As well as an academic milestone, a high school diploma often comes only after passing the tests that determine entry (You must pass to get in). Parents are proud, and young people expect it will bring them better jobs.
                         </dd>
                     </div>
                 </div>
