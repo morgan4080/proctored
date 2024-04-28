@@ -7,6 +7,7 @@ import Loader from "@/components/Loader";
 import {useEffect, useState} from "react";
 import {Router} from "next/router";
 import NProgress from "nprogress";
+import {PayPalScriptProvider} from "@paypal/react-paypal-js";
 
 export default function App({
   Component,
@@ -30,12 +31,21 @@ export default function App({
 
     }, [Router])
   return (
-    <>
-        <Script src="https://embed.tawk.to/65a818438d261e1b5f548a32/1hkc9tj37"></Script>
-        <SessionProvider session={session}>
-            {isLoading && <Loader/>}
-            <Component {...pageProps} />
-        </SessionProvider>
-    </>
+      <>
+          <Script src="https://embed.tawk.to/65a818438d261e1b5f548a32/1hkc9tj37"></Script>
+          <Script src={`https://www.paypal.com/sdk/js?client-id=${process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID}`}></Script>
+          <SessionProvider session={session}>
+              {isLoading && <Loader/>}
+              <PayPalScriptProvider
+                  options={{
+                      clientId: `${process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID}`,
+                      currency: 'USD',
+                      intent: 'capture'
+                  }}
+              >
+              <Component {...pageProps} />
+              </PayPalScriptProvider>
+          </SessionProvider>
+      </>
   )
 }

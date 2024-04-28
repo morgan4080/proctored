@@ -43,7 +43,7 @@ export default async function Page({params}: Readonly<{params: Record<any, any>}
                 defaultOpen={false}
             >
                 <DialogContent className="sm:max-w-[425px]">
-                    <PaymentMethod/>
+                    {/*<PaymentMethod amount={tot}/>*/}
                 </DialogContent>
             </Dialog>
             <Dialog open={false} defaultOpen={false}>

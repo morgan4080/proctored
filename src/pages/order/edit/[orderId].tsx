@@ -768,7 +768,7 @@ const EditOrder = ({
         </main>
         <Dialog open={checkout} defaultOpen={false}>
           <DialogContent className="sm:max-w-[425px]">
-            <PaymentMethod />
+            <PaymentMethod  amount={totalAmount} user_id={order.userId}/>
           </DialogContent>
         </Dialog>
         <Dialog open={loading} defaultOpen={false}>

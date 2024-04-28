@@ -954,7 +954,7 @@ const CreateOrder = ({
         }}
       >
         <DialogContent className="sm:max-w-[425px]">
-          <PaymentMethod />
+          <PaymentMethod  amount={totalAmount}  user_id={`${session && session.user ? session.user._id : ''}`}/>
         </DialogContent>
       </Dialog>
       <Dialog open={loading} defaultOpen={false}>

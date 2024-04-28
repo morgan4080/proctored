@@ -372,6 +372,7 @@ const NavBar = ({menu, session, status}: {menu: MenuType[], session: Session | n
                     <Link
                         role="CTA"
                         href="/order/create"
+                        target="_blank"
                         className="flex justify-between items-center gap-4 pl-0 pr-8"
                     >
                         <div className="text-white text-base font-bold ">ORDER NOW</div>
