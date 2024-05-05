@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import Head from 'next/head'
 import classNames from '../../../utils/ClassNames'
 import { Separator } from '@/components/ui/separator'
-import Container from "@/components/Container"
+import Container from '@/components/Container'
 import Navigation from '@/components/Navigation'
 import OrderSummary from '@/components/orders/OrderSummary'
 import OrderDetailsForm, {
@@ -325,7 +325,7 @@ const EditOrder = ({
         </Head>
         <main
           className={classNames(
-            "font-serif",
+            'font-serif',
             'flex min-h-screen flex-col relative',
           )}
         >
@@ -341,9 +341,7 @@ const EditOrder = ({
               <div className="lg:flex lg:items-center lg:justify-center">
                 <div className="min-w-0 flex-1">
                   <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl flex gap-4 items-center">
-                    <span className={classNames("font-sans")}>
-                      Edit Order{' '}
-                    </span>
+                    <span className={classNames('font-sans')}>Edit Order </span>
                   </h2>
                 </div>
                 <div className="flex relative justify-end">
@@ -353,7 +351,7 @@ const EditOrder = ({
                         key={sc._id}
                         value={sc.slug}
                         className={cn(
-                          "font-sans",
+                          'font-sans',
                           'data-[state=active]:ring-bermuda/20 data-[state=active]:ring-1 data-[state=active]:shadow-lg data-[state=active]:shadow-yellow-200',
                         )}
                       >
@@ -768,7 +766,7 @@ const EditOrder = ({
         </main>
         <Dialog open={checkout} defaultOpen={false}>
           <DialogContent className="sm:max-w-[425px]">
-            <PaymentMethod />
+            <PaymentMethod totalAmount={totalAmount} orderId={order._id} />
           </DialogContent>
         </Dialog>
         <Dialog open={loading} defaultOpen={false}>

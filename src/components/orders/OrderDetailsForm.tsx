@@ -46,6 +46,10 @@ import { Order, StoreDataType } from '@/lib/service_types'
 
 function formatRange(range: { from: Date; to: Date }, locale: string) {
   const { from, to } = range
+  // if (isNaN(from.getTime()) || isNaN(to.getTime())) {
+  //   // Handle invalid dates, e.g., return a default value or throw an error
+  //   return 'Invalid date range'
+  // }
   return new Intl.DateTimeFormat(locale, {
     month: 'long',
     day: 'numeric',

@@ -76,12 +76,14 @@ export type Job = {
 
 export type User = {
   _id: string
-  email: string
+  email?: string
   name: string
+  password: string
   userRole: 'user' | 'admin' | 'superuser'
   is_writer: boolean
   orders: number
   writer_profile: Writer | null
+  jobs: []
 }
 
 export interface Order {
@@ -107,6 +109,7 @@ export interface Order {
   writerId: string
   transactionId: string
   serviceCategoryId: string
+  paymentStatus: string | null
   totalPrice: string
 }
 
@@ -182,7 +185,8 @@ export type WriterType = {
   orders_complete: number
   rating: number
   reviewCount: number
-  featured_work: { // an order
+  featured_work: {
+    // an order
     title: string
     paper_type: string
     subject: string

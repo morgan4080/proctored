@@ -113,6 +113,7 @@ export default async function handler(
               subject: 'ORDER ID:' + insertedId.toString(),
               text: 'TEST.' + JSON.stringify(req.body),
             }
+            console.log(req.body)
             const info = await transporter.sendMail(mailOptions)
             const response = {
               data: {
@@ -121,9 +122,11 @@ export default async function handler(
                 ...req.body,
                 ...info,
               },
+
               message: 'Order created Successfully',
               status: 200,
             }
+            console.log(response)
             res.status(200).json(response)
           } else {
             res.status(500).json({

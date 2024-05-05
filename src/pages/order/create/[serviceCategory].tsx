@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import Head from 'next/head'
 import { Separator } from '@/components/ui/separator'
-import Container from "@/components/Container"
+import Container from '@/components/Container'
 import Navigation from '@/components/Navigation'
 import OrderSummary from '@/components/orders/OrderSummary'
 import OrderDetailsForm from '@/components/orders/OrderDetailsForm'
@@ -194,6 +194,7 @@ const CreateOrder = ({
               {
                 _id: orderId,
                 ...data,
+                paymentStatus: 'pending',
               },
               '/api/orders',
             )
@@ -255,7 +256,12 @@ const CreateOrder = ({
               })
           } else {
             createRecord(
-              { ...data, writerId: null, transactionId: null },
+              {
+                ...data,
+                writerId: null,
+                transactionId: null,
+                paymentStatus: 'pending',
+              },
               '/api/orders',
             )
               .then((res) => {
@@ -344,9 +350,7 @@ const CreateOrder = ({
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main
-        className={cn("font-serif", 'flex min-h-screen flex-col relative')}
-      >
+      <main className={cn('font-serif', 'flex min-h-screen flex-col relative')}>
         <div className="bg-bermuda/95 w-full">
           <Navigation />
         </div>
@@ -384,13 +388,11 @@ const CreateOrder = ({
                         key={sc._id}
                         value={sc.slug}
                         className={cn(
-                          "font-sans",
+                          'font-sans',
                           'rounded-none data-[state=active]:rounded-sm data-[state=active]:ring-blue-500 data-[state=active]:ring-1 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:bg-bermuda/90 data-[state=active]:shadow-blue-200 p-3',
                         )}
                       >
-                        <Link
-                          href={`/order/create/${sc.slug}`}
-                        >
+                        <Link href={`/order/create/${sc.slug}`}>
                           {sc.title}
                         </Link>
                       </TabsTrigger>
@@ -954,7 +956,7 @@ const CreateOrder = ({
         }}
       >
         <DialogContent className="sm:max-w-[425px]">
-          <PaymentMethod />
+          <PaymentMethod totalAmount={totalAmount} orderId={orderId} />
         </DialogContent>
       </Dialog>
       <Dialog open={loading} defaultOpen={false}>

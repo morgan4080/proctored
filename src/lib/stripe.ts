@@ -1,12 +1,7 @@
-import 'server-only'
+import { loadStripe } from '@stripe/stripe-js'
 
-import Stripe from 'stripe'
+const stripePromise = loadStripe(
+  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY as string,
+)
 
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
-  // https://github.com/stripe/stripe-node#configuration
-  apiVersion: '2023-10-16',
-  appInfo: {
-    name: 'gibson',
-    url: 'https://www.proctorowls.com',
-  },
-})
+export default stripePromise
