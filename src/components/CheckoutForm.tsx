@@ -14,31 +14,53 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { UsdConverter } from '@/utils/UsdConverter'
+import { number } from 'zod'
 
 interface CheckoutFormProps {
   amount: number
+  orderId: string | null
 }
 
-const CheckoutForm: React.FC<CheckoutFormProps> = ({ amount }) => {
+const CheckoutForm: React.FC<CheckoutFormProps> = ({ amount, orderId }) => {
   const router = useRouter()
   const stripe = useStripe()
   const elements = useElements()
+
+  console.log('ORDER ID:', orderId)
+  console.log('AMOUNT:', amount)
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     if (!stripe || !elements) return
 
-    const { error } = await stripe.confirmPayment({
+    const result = await stripe.confirmPayment({
       elements,
-      confirmParams: {
-        return_url: `${window.location.origin}/success`,
-      },
+      confirmParams: {},
+      redirect: 'if_required',
     })
-
-    if (error) {
-      console.log('[error]', error)
-    } else {
-      router.push('/success')
+    if (result) {
+      try {
+        const response = await fetch(`/api/paymentstatus/${orderId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ paymentStatus: 'confirmed' }),
+        })
+        if (response.ok) {
+          console.log('Payment successful and status updated!')
+          console.log(response)
+          router.push(`/success?orderId=${orderId}&amount=${amount}`)
+        } else {
+          console.error('Error updating payment status:', await response.json())
+        }
+      } catch (error) {
+        console.error('Payment status updating error:', error)
+      }
+    }
+    if (result.error) {
+      console.log('PAYMENT ERROR:', result.error)
     }
   }
 
@@ -56,7 +78,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ amount }) => {
         </CardContent>
         <CardFooter>
           <Button className="w-full" type="submit" disabled={!stripe}>
-            Pay Now ${amount / 100}
+            Pay Now ${UsdConverter(Number(amount))}
           </Button>
         </CardFooter>
       </form>

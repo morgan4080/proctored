@@ -1,4 +1,4 @@
-// pages/api/order/[orderId].ts
+// pages/api/paymentstatus/[orderId].ts
 
 import { NextApiRequest, NextApiResponse } from 'next'
 import { ObjectId } from 'mongodb'

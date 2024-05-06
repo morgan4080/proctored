@@ -10,6 +10,7 @@ const OrdersAdmin = ({
   current: boolean
   orders: OrderWithOwnerAndTransactionAndWriter[]
 }) => {
+  console.log(orders)
   return (
     <div className={cn('space-y-6 hidden', current && 'block')}>
       <div>

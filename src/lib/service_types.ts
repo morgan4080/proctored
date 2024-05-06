@@ -109,7 +109,8 @@ export interface Order {
   writerId: string
   transactionId: string
   serviceCategoryId: string
-  paymentStatus: string | null
+  paymentStatus: 'pending' | 'confirmed'
+  orderStatus: 'pending' | 'in-progress' | 'completed'
   totalPrice: string
 }
 

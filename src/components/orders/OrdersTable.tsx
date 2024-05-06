@@ -1,4 +1,4 @@
-import {useState} from 'react'
+import { useState } from 'react'
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -46,11 +46,8 @@ const OrdersTable = ({
   orders: OrderWithOwnerAndTransactionAndWriter[]
 }) => {
   const [sorting, setSorting] = useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(
-    [],
-  )
-  const [columnVisibility, setColumnVisibility] =
-    useState<VisibilityState>({})
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = useState({})
   const { data: session } = useSession()
   const assignWriter = () => {}
@@ -157,28 +154,40 @@ const OrdersTable = ({
       },
     },
     {
-      accessorKey: 'transaction',
+      accessorKey: 'paymentStatus',
       header: () => <div className="text-xs">Payment Status</div>,
       cell: ({ row }) => (
         <div className="text-xs">
-          {row.getValue('transaction') == undefined ? (
-            <span className="inline-flex items-center rounded-full bg-yellow-50 px-2 py-1 text-xs font-normal text-yellow-800 ring-1 ring-inset ring-yellow-600/20">
-              pending
+          {row.getValue('paymentStatus') === 'confirmed' ? (
+            <span className="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-normal text-green-700 ring-1 ring-inset ring-green-600/20">
+              completed
             </span>
           ) : (
-            <span className="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-normal text-green-700 ring-1 ring-inset ring-green-600/20">
-              success
+            <span className="inline-flex items-center rounded-full bg-yellow-50 px-2 py-1 text-xs font-normal text-yellow-800 ring-1 ring-inset ring-yellow-600/20">
+              pending
             </span>
           )}
         </div>
       ),
     },
     {
-      id: 'status',
+      id: 'orderStatus',
       header: () => <div className="text-xs">Order Status</div>,
       cell: ({ row }) => (
         <div className="text-xs">
-          {JSON.stringify(row.getValue('transaction'))}
+          {row.getValue('orderStatus') == '' ? (
+            <span className="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-normal text-green-700 ring-1 ring-inset ring-green-600/20">
+              completed
+            </span>
+          ) : row.getValue('orderStatus') == '' ? (
+            <span className="inline-flex items-start rounded-full bg-green-50 px-2 py-1 text-xs font-normal text-green-900 ring-1 ring-inset ring-green-500/20">
+              in_progress
+            </span>
+          ) : (
+            <span className="inline-flex items-center rounded-full bg-yellow-50 px-2 py-1 text-xs font-normal text-yellow-800 ring-1 ring-inset ring-yellow-600/20">
+              pending
+            </span>
+          )}
         </div>
       ),
     },
