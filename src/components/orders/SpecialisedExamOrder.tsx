@@ -31,6 +31,8 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Calendar } from '@/components/ui/calendar'
 import { format, parse, set } from 'date-fns'
+import { useSession } from 'next-auth/react'
+import Link from 'next/link'
 
 const ACCEPTED_FILE_TYPES = [
   'image/png',
@@ -135,6 +137,7 @@ const SpecialisedExamOrder = ({
   proceedWithData: (data: ProctoredFormValues) => void
   reportValues: (data: ProctorReportValues) => void
 }) => {
+  const { data: session, status } = useSession()
   const defValues =
     order == null
       ? defaultValues
@@ -454,9 +457,18 @@ const SpecialisedExamOrder = ({
           )}
         />
         <span className="flex pt-6">
-          <Button type="submit" className="ml-auto">
-            Submit Order
-          </Button>
+          {status === 'authenticated' ? (
+            <Button type="submit" className="ml-auto">
+              Submit Order
+            </Button>
+          ) : (
+            <Link
+              href="/login"
+              className="ml-auto inline-flex items-center rounded-md bg-gray-500 text-white ring-1 ring-inset ring-green-600/20 px-3 py-2 text-sm font-semibold shadow-sm hover:bg-black hover:text-white"
+            >
+              Sign in to continue
+            </Link>
+          )}
         </span>
       </form>
     </Form>

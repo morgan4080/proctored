@@ -5,11 +5,20 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import { useSession } from 'next-auth/react'
+import { useEffect } from 'react'
 
 const LoginPage = () => {
   const router = useRouter()
+  const { status } = useSession()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+
+  useEffect(() => {
+    if (status === 'authenticated') {
+      router.push('/me/orders')
+    }
+  }, [status, router])
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()

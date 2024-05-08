@@ -10,14 +10,6 @@ export default withAuth({
       const token = await getToken({ req })
       const user = token?.user
 
-      if (pathname === '/login' || pathname === '/signup') {
-        if (user) {
-          return false
-        }
-
-        return true
-      }
-
       if (
         user &&
         (pathname.startsWith('/admin') || pathname.startsWith('/user'))
@@ -31,10 +23,8 @@ export default withAuth({
 
 export const config = {
   matcher: [
-    '/login',
-    '/signup',
     '/admin/:path*',
-    '/order/:path*',
+    '/order/create/edit/:path*',
     '/user/:path*',
     '/me/:path*',
   ],

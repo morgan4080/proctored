@@ -5,12 +5,21 @@ import { FcGoogle } from 'react-icons/fc'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { useRouter } from 'next/router'
+import { useSession } from 'next-auth/react'
+import { useEffect } from 'react'
 
 const SignUpPage = () => {
   const router = useRouter()
+  const { status } = useSession()
   const [email, setEmail] = useState('')
   const [name, setName] = useState('')
   const [password, setPassword] = useState('')
+
+  useEffect(() => {
+    if (status === 'authenticated') {
+      router.push('/me/orders')
+    }
+  }, [status, router])
 
   const handleSubmit = async (e: any) => {
     e.preventDefault()

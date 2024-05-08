@@ -5,7 +5,8 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from './auth/[...nextauth]'
 import nodemailer from 'nodemailer'
 import { OrderWithOwnerAndTransactionAndWriter } from '@/lib/service_types'
-
+import OrderTempalteHtml from '@/utils/orderTemplateHtml'
+import OrderUpdateTemplate from '@/utils/OrderUpdateTemplate'
 const { clientPromise } = mongoClient
 
 type ResponseData = {
@@ -68,11 +69,19 @@ export default async function handler(
           )
 
           if (acknowledged) {
+            const orderData = {
+              duration: req.body.duration,
+              service: req.body.service,
+              attachments: req.body.attachments,
+              totalPrice: req.body.totalPrice,
+              paymentStatus: req.body.paymentStatus,
+            }
             const mailOptions = {
               from: 'proctorowls@gmail.com',
               to: session.user.email,
-              subject: 'UPDATED ORDER ID:' + req.body._id,
-              text: JSON.stringify(req.body),
+              subject: 'YOUR ORDER ID: ' + req.body._id,
+              html: OrderUpdateTemplate(session, orderData),
+              // text: JSON.stringify(req.body),
             }
             const info = await transporter.sendMail(mailOptions)
             const response = {
@@ -107,11 +116,19 @@ export default async function handler(
               serviceCategoryId: new ObjectId(req.body.serviceCategoryId),
             })
           if (acknowledged) {
+            const orderData = {
+              duration: req.body.duration,
+              service: req.body.service,
+              attachments: req.body.attachments,
+              totalPrice: req.body.totalPrice,
+              paymentStatus: req.body.paymentStatus,
+            }
             const mailOptions = {
               from: 'murungi.mutugi@gmail.com',
               to: session.user.email,
               subject: 'ORDER ID:' + insertedId.toString(),
-              text: 'TEST.' + JSON.stringify(req.body),
+              html: OrderTempalteHtml(session, orderData),
+              // text: 'TEST.' + JSON.stringify(req.body),
             }
             console.log(req.body)
             const info = await transporter.sendMail(mailOptions)

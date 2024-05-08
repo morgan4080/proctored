@@ -39,7 +39,9 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ amount, orderId }) => {
       confirmParams: {},
       redirect: 'if_required',
     })
-    if (result) {
+    if (result.error) {
+      console.log('PAYMENT ERROR:', result.error)
+    } else {
       try {
         const response = await fetch(`/api/paymentstatus/${orderId}`, {
           method: 'PUT',
@@ -50,17 +52,14 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ amount, orderId }) => {
         })
         if (response.ok) {
           console.log('Payment successful and status updated!')
-          console.log(response)
-          router.push(`/success?orderId=${orderId}&amount=${amount}`)
+          window.location.href = `/success?orderId=${orderId}&amount=${amount}`
+          // router.replace(`/success?orderId=${orderId}&amount=${amount}`)
         } else {
           console.error('Error updating payment status:', await response.json())
         }
       } catch (error) {
         console.error('Payment status updating error:', error)
       }
-    }
-    if (result.error) {
-      console.log('PAYMENT ERROR:', result.error)
     }
   }
 
